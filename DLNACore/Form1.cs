@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using System.Collections.Generic;
 
 namespace DLNAPlayer
 {
@@ -13,12 +14,17 @@ namespace DLNAPlayer
             InitializeComponent();
         }
         private MediaServer MServer = null;
-        private static MemoryStream filestream;
+        private static string ip = "";
+        private static int port = 9090;
+        private static List<String> MediaFileLocation = new List<string> { };
+        private string path;
+
         private void CmdSSDP_Click(object sender, EventArgs e)
         {
             DLNA.SSDP.Start();//Start a service as this will take a long time
             Thread.Sleep(5000);//Wait for each TV/Device to reply to the broadcast
             DLNA.SSDP.Stop();//Stop the service if it has not stopped already
+            MediaRenderers.Items.Clear();
             for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
             {
                 XmlDocument RendererXML = new XmlDocument();
@@ -32,35 +38,20 @@ namespace DLNAPlayer
             //    this.textBox1.Text = "Are you sure that your smart TV and devices are turned on !";
 
         }
-        
+
         private void Form1_Load(object sender, EventArgs e)
         {
             IPandPortTxt.Text = Extentions.Helper.GetMyIP() + ":9090";
             ApplyServerIPAndPort();
-            //filestream = new MemoryStream();
-            //FileStream temp = new FileStream(file), FileMode.Open);
 
-            //MServer = new MediaServer("192.168.11.41", 9090);
-            //MServer.FS = new MemoryStream();
-            //temp.CopyTo(MServer.FS);
             //temp.Close();
             //MServer.Start();
         }
-        
+
         private void CmdPlay_Click(object sender, EventArgs e)
         {
-            DLNA.DLNADevice Device = new DLNA.DLNADevice("http://192.168.11.80:49152/description.xml");//You will need to Keep a referance to each device so that you can stop it playing or what ever and don't need to keep calling "IsConnected();"
-            if (Device.IsConnected())//Will make sure that the device is switched on and runs a avtransport:1 service protocol
-            {//Best to use an IP-Address and not a machine name because the TV/Device might not be able to resolve a machine/domain name
-                //string test = Device.GetPosition();
-                string Reply = Device.TryToPlayFile("http://192.168.11.41:9090/file.flac");
-                if (Reply == "OK")
-                { }
-                //    this.textBox1.Text += Environment.NewLine + "Playing to " + Device.FriendlyName;
-                else
-                    MessageBox.Show("Error playing file");
-
-            }
+            if (MediaFiles.SelectedIndex != -1)
+                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex]);
         }
 
         private void ClearQueue_Click(object sender, EventArgs e)
@@ -72,8 +63,11 @@ namespace DLNAPlayer
         {
             string[] filepath = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in filepath)
-                if (!System.IO.Directory.Exists(path))
-                    MediaFiles.Items.Add(path);
+                if (!Directory.Exists(path))
+                {
+                    MediaFileLocation.Add(path);
+                    MediaFiles.Items.Add(Path.GetFileName(path));
+                }
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -84,7 +78,7 @@ namespace DLNAPlayer
 
         private void ApplyServerIP_Click(object sender, EventArgs e)
         {
-            ApplyServerIPAndPort(); 
+            ApplyServerIPAndPort();
         }
         private void ApplyServerIPAndPort()
         {
@@ -92,14 +86,40 @@ namespace DLNAPlayer
             {
                 MServer.Stop();
                 string[] parseIPandPort = IPandPortTxt.Text.Split(':');
-                string ip = parseIPandPort[0];
-                int port = 9090;
+                ip = parseIPandPort[0];
+                port = 9090;
                 if (!String.IsNullOrEmpty(parseIPandPort[1]))
                     port = Convert.ToInt32(parseIPandPort[1]);
                 else
                     MServer = new MediaServer(ip, port);
                 MServer.Start();
             }
+        }
+
+        private void MediaFiles_DoubleClick(object sender, EventArgs e)
+        {
+            LoadFile(MediaFileLocation[MediaFiles.SelectedIndex]);
+        }
+        private void LoadFile(string file_to_play)
+        {
+            if (MediaRenderers.SelectedIndex != -1)
+            {
+                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                if (Device.IsConnected())
+                {
+                    Device.StopPlay();
+                    FileStream MediaFile = new FileStream(MediaFileLocation[MediaFiles.SelectedIndex], FileMode.Open);
+                    MediaFile.CopyTo(MServer.FS);
+                    string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file.flac");
+                    if (Reply == "OK")
+                    { }
+                    //    this.textBox1.Text += Environment.NewLine + "Playing to " + Device.FriendlyName;
+                    else
+                        MessageBox.Show("Error playing file");
+                }
+            }
+            else
+                MessageBox.Show("No renderer selected");
         }
     }
 }

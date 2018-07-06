@@ -43,6 +43,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.ClearQueue = new System.Windows.Forms.Button();
             this.Stop = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -120,6 +121,7 @@
             this.MediaFiles.Name = "MediaFiles";
             this.MediaFiles.Size = new System.Drawing.Size(999, 472);
             this.MediaFiles.TabIndex = 7;
+            this.MediaFiles.DoubleClick += new System.EventHandler(this.MediaFiles_DoubleClick);
             // 
             // tableLayoutPanel1
             // 
@@ -179,6 +181,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.ClearQueue);
             this.panel2.Controls.Add(this.Stop);
             this.panel2.Controls.Add(this.label1);
@@ -210,6 +213,15 @@
             this.Stop.TabIndex = 8;
             this.Stop.Text = "Stop";
             this.Stop.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(955, 513);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "label4";
             // 
             // Form1
             // 
@@ -249,6 +261,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button ApplyServerIP;
         private System.Windows.Forms.TextBox IPandPortTxt;
+        private System.Windows.Forms.Label label4;
     }
 }
 

@@ -27,7 +27,7 @@ namespace DLNA
         }
         public static void Stop()
         {//OK time is up so lets return our DLNA server list
-            Thread.Sleep(9000);
+            Thread.Sleep(5000);
             Running = false;
             try
             {
