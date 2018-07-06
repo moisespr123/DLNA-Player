@@ -37,9 +37,12 @@
             this.MediaFiles = new System.Windows.Forms.ListBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ApplyServerIP = new System.Windows.Forms.Button();
+            this.IPandPortTxt = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.Stop = new System.Windows.Forms.Button();
             this.ClearQueue = new System.Windows.Forms.Button();
+            this.Stop = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -49,9 +52,9 @@
             // 
             this.ScanRenderers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScanRenderers.Location = new System.Drawing.Point(9, 504);
+            this.ScanRenderers.Location = new System.Drawing.Point(3, 454);
             this.ScanRenderers.Name = "ScanRenderers";
-            this.ScanRenderers.Size = new System.Drawing.Size(233, 23);
+            this.ScanRenderers.Size = new System.Drawing.Size(239, 23);
             this.ScanRenderers.TabIndex = 0;
             this.ScanRenderers.Text = "Scan Media Renderers";
             this.ScanRenderers.UseVisualStyleBackColor = true;
@@ -86,7 +89,7 @@
             this.MediaRenderers.FormattingEnabled = true;
             this.MediaRenderers.Location = new System.Drawing.Point(3, 28);
             this.MediaRenderers.Name = "MediaRenderers";
-            this.MediaRenderers.Size = new System.Drawing.Size(239, 472);
+            this.MediaRenderers.Size = new System.Drawing.Size(239, 420);
             this.MediaRenderers.TabIndex = 4;
             // 
             // label1
@@ -109,7 +112,6 @@
             // 
             // MediaFiles
             // 
-            this.MediaFiles.AllowDrop = true;
             this.MediaFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -137,6 +139,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.ApplyServerIP);
+            this.panel1.Controls.Add(this.IPandPortTxt);
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.MediaRenderers);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.ScanRenderers);
@@ -145,6 +150,32 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(245, 536);
             this.panel1.TabIndex = 0;
+            // 
+            // ApplyServerIP
+            // 
+            this.ApplyServerIP.Location = new System.Drawing.Point(160, 504);
+            this.ApplyServerIP.Name = "ApplyServerIP";
+            this.ApplyServerIP.Size = new System.Drawing.Size(75, 23);
+            this.ApplyServerIP.TabIndex = 9;
+            this.ApplyServerIP.Text = "Apply";
+            this.ApplyServerIP.UseVisualStyleBackColor = true;
+            this.ApplyServerIP.Click += new System.EventHandler(this.ApplyServerIP_Click);
+            // 
+            // IPandPortTxt
+            // 
+            this.IPandPortTxt.Location = new System.Drawing.Point(3, 506);
+            this.IPandPortTxt.Name = "IPandPortTxt";
+            this.IPandPortTxt.Size = new System.Drawing.Size(151, 20);
+            this.IPandPortTxt.TabIndex = 8;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(3, 490);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(148, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "IP and Port number for server:";
             // 
             // panel2
             // 
@@ -160,16 +191,6 @@
             this.panel2.Size = new System.Drawing.Size(1014, 536);
             this.panel2.TabIndex = 1;
             // 
-            // Stop
-            // 
-            this.Stop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Stop.Location = new System.Drawing.Point(300, 504);
-            this.Stop.Name = "Stop";
-            this.Stop.Size = new System.Drawing.Size(75, 23);
-            this.Stop.TabIndex = 8;
-            this.Stop.Text = "Stop";
-            this.Stop.UseVisualStyleBackColor = true;
-            // 
             // ClearQueue
             // 
             this.ClearQueue.Location = new System.Drawing.Point(7, 504);
@@ -179,6 +200,16 @@
             this.ClearQueue.Text = "Clear Queue";
             this.ClearQueue.UseVisualStyleBackColor = true;
             this.ClearQueue.Click += new System.EventHandler(this.ClearQueue_Click);
+            // 
+            // Stop
+            // 
+            this.Stop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Stop.Location = new System.Drawing.Point(300, 504);
+            this.Stop.Name = "Stop";
+            this.Stop.Size = new System.Drawing.Size(75, 23);
+            this.Stop.TabIndex = 8;
+            this.Stop.Text = "Stop";
+            this.Stop.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -215,6 +246,9 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button Stop;
         private System.Windows.Forms.Button ClearQueue;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button ApplyServerIP;
+        private System.Windows.Forms.TextBox IPandPortTxt;
     }
 }
 

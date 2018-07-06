@@ -37,14 +37,15 @@ public static class Extentions
         {//Might return the wrong NC ip but you need the one connected to the router
             IPHostEntry host;
             host = Dns.GetHostEntry(Dns.GetHostName());
+            string ipAddress = "";
             foreach (IPAddress ip in host.AddressList)
             {
                 if (ip.AddressFamily.ToString() == "InterNetwork")
                 {
-                    return ip.ToString();
+                    ipAddress = ip.ToString();
                 }
             }
-            return "192.168.1.10";
+            return ipAddress;
 
         }
     }

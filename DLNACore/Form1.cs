@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
-using System.Text;
 using System.Windows.Forms;
-using System.Net;
 using System.IO;
 using System.Xml;
 
@@ -14,7 +12,8 @@ namespace DLNAPlayer
         {
             InitializeComponent();
         }
-
+        private MediaServer MServer = null;
+        private static MemoryStream filestream;
         private void CmdSSDP_Click(object sender, EventArgs e)
         {
             DLNA.SSDP.Start();//Start a service as this will take a long time
@@ -33,11 +32,13 @@ namespace DLNAPlayer
             //    this.textBox1.Text = "Are you sure that your smart TV and devices are turned on !";
 
         }
-        private MediaServer MServer = null;
+        
         private void Form1_Load(object sender, EventArgs e)
         {
+            IPandPortTxt.Text = Extentions.Helper.GetMyIP() + ":9090";
+            ApplyServerIPAndPort();
             //filestream = new MemoryStream();
-            //FileStream temp = new FileStream((@"C:\Users\Moises Cardona\Music\Re-Encoded\2NE1 - Crush\1 - 2 - Come Back Home.flac"), FileMode.Open);
+            //FileStream temp = new FileStream(file), FileMode.Open);
 
             //MServer = new MediaServer("192.168.11.41", 9090);
             //MServer.FS = new MemoryStream();
@@ -45,7 +46,7 @@ namespace DLNAPlayer
             //temp.Close();
             //MServer.Start();
         }
-        public static MemoryStream filestream;
+        
         private void CmdPlay_Click(object sender, EventArgs e)
         {
             DLNA.DLNADevice Device = new DLNA.DLNADevice("http://192.168.11.80:49152/description.xml");//You will need to Keep a referance to each device so that you can stop it playing or what ever and don't need to keep calling "IsConnected();"
@@ -79,6 +80,26 @@ namespace DLNAPlayer
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 e.Effect = DragDropEffects.Copy;
+        }
+
+        private void ApplyServerIP_Click(object sender, EventArgs e)
+        {
+            ApplyServerIPAndPort(); 
+        }
+        private void ApplyServerIPAndPort()
+        {
+            if (MServer != null && MServer.Running)
+            {
+                MServer.Stop();
+                string[] parseIPandPort = IPandPortTxt.Text.Split(':');
+                string ip = parseIPandPort[0];
+                int port = 9090;
+                if (!String.IsNullOrEmpty(parseIPandPort[1]))
+                    port = Convert.ToInt32(parseIPandPort[1]);
+                else
+                    MServer = new MediaServer(ip, port);
+                MServer.Start();
+            }
         }
     }
 }
