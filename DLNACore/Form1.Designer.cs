@@ -41,9 +41,11 @@
             this.IPandPortTxt = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
             this.ClearQueue = new System.Windows.Forms.Button();
             this.Stop = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
+            this.PreviousButton = new System.Windows.Forms.Button();
+            this.NextButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -81,6 +83,7 @@
             this.Pause.TabIndex = 3;
             this.Pause.Text = "Pause";
             this.Pause.UseVisualStyleBackColor = true;
+            this.Pause.Click += new System.EventHandler(this.Pause_Click);
             // 
             // MediaRenderers
             // 
@@ -155,6 +158,7 @@
             // 
             // ApplyServerIP
             // 
+            this.ApplyServerIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ApplyServerIP.Location = new System.Drawing.Point(160, 504);
             this.ApplyServerIP.Name = "ApplyServerIP";
             this.ApplyServerIP.Size = new System.Drawing.Size(75, 23);
@@ -165,6 +169,8 @@
             // 
             // IPandPortTxt
             // 
+            this.IPandPortTxt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.IPandPortTxt.Location = new System.Drawing.Point(3, 506);
             this.IPandPortTxt.Name = "IPandPortTxt";
             this.IPandPortTxt.Size = new System.Drawing.Size(151, 20);
@@ -172,6 +178,7 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(3, 490);
             this.label3.Name = "label3";
@@ -181,6 +188,8 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.NextButton);
+            this.panel2.Controls.Add(this.PreviousButton);
             this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.ClearQueue);
             this.panel2.Controls.Add(this.Stop);
@@ -193,6 +202,15 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1014, 536);
             this.panel2.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(955, 513);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "label4";
             // 
             // ClearQueue
             // 
@@ -213,15 +231,29 @@
             this.Stop.TabIndex = 8;
             this.Stop.Text = "Stop";
             this.Stop.UseVisualStyleBackColor = true;
+            this.Stop.Click += new System.EventHandler(this.Stop_Click);
             // 
-            // label4
+            // PreviousButton
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(955, 513);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "label4";
+            this.PreviousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.PreviousButton.Location = new System.Drawing.Point(381, 504);
+            this.PreviousButton.Name = "PreviousButton";
+            this.PreviousButton.Size = new System.Drawing.Size(75, 23);
+            this.PreviousButton.TabIndex = 11;
+            this.PreviousButton.Text = "Previous";
+            this.PreviousButton.UseVisualStyleBackColor = true;
+            this.PreviousButton.Click += new System.EventHandler(this.PreviousButton_Click);
+            // 
+            // NextButton
+            // 
+            this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.NextButton.Location = new System.Drawing.Point(462, 504);
+            this.NextButton.Name = "NextButton";
+            this.NextButton.Size = new System.Drawing.Size(75, 23);
+            this.NextButton.TabIndex = 12;
+            this.NextButton.Text = "Next";
+            this.NextButton.UseVisualStyleBackColor = true;
+            this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // Form1
             // 
@@ -262,6 +294,8 @@
         private System.Windows.Forms.Button ApplyServerIP;
         private System.Windows.Forms.TextBox IPandPortTxt;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button NextButton;
+        private System.Windows.Forms.Button PreviousButton;
     }
 }
 

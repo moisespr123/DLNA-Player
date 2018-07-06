@@ -16,8 +16,9 @@ namespace DLNAPlayer
         private MediaServer MServer = null;
         private static string ip = "";
         private static int port = 9090;
+        private static int trackNum = -1;
+        private static bool paused = false;
         private static List<String> MediaFileLocation = new List<string> { };
-        private string path;
 
         private void CmdSSDP_Click(object sender, EventArgs e)
         {
@@ -27,10 +28,18 @@ namespace DLNAPlayer
             MediaRenderers.Items.Clear();
             for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
             {
+                String deviceInfo = "";
                 XmlDocument RendererXML = new XmlDocument();
-                RendererXML.Load(DLNA.SSDP.Renderers[i]);
-                XmlElement rootXML = RendererXML.DocumentElement;
-                String deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                try
+                {
+                    RendererXML.Load(DLNA.SSDP.Renderers[i]);
+                    XmlElement rootXML = RendererXML.DocumentElement;
+                    deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                }
+                catch
+                {
+                    deviceInfo = DLNA.SSDP.Renderers[i];
+                }
                 MediaRenderers.Items.Add(deviceInfo);
             }
             //this.textBox1.Text = DLNA.SSDP.Servers;//Best to save this string to a file or windows registry as we don't want to keep looking for devices on the network
@@ -51,12 +60,23 @@ namespace DLNAPlayer
         private void CmdPlay_Click(object sender, EventArgs e)
         {
             if (MediaFiles.SelectedIndex != -1)
+            {
                 LoadFile(MediaFileLocation[MediaFiles.SelectedIndex]);
+                trackNum = MediaFiles.SelectedIndex;
+            }
+            else if (MediaFiles.Items.Count > 0)
+            {
+                LoadFile(MediaFileLocation[0]);
+                trackNum = 0;
+                MediaFiles.SelectedIndex = 0;
+            }
+
         }
 
         private void ClearQueue_Click(object sender, EventArgs e)
         {
             MediaFiles.Items.Clear();
+            trackNum = -1;
         }
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
@@ -82,23 +102,20 @@ namespace DLNAPlayer
         }
         private void ApplyServerIPAndPort()
         {
-            if (MServer != null && MServer.Running)
-            {
-                MServer.Stop();
-                string[] parseIPandPort = IPandPortTxt.Text.Split(':');
-                ip = parseIPandPort[0];
-                port = 9090;
-                if (!String.IsNullOrEmpty(parseIPandPort[1]))
-                    port = Convert.ToInt32(parseIPandPort[1]);
-                else
-                    MServer = new MediaServer(ip, port);
-                MServer.Start();
-            }
+            string[] parseIPandPort = IPandPortTxt.Text.Split(':');
+            ip = parseIPandPort[0];
+            port = 9090;
+            if (!String.IsNullOrEmpty(parseIPandPort[1]))
+                port = Convert.ToInt32(parseIPandPort[1]);
+            if (MServer != null) if (MServer.Running) MServer.Stop();
+            MServer = new MediaServer(ip, port);
+            MServer.Start();
         }
 
         private void MediaFiles_DoubleClick(object sender, EventArgs e)
         {
             LoadFile(MediaFileLocation[MediaFiles.SelectedIndex]);
+            trackNum = MediaFiles.SelectedIndex;
         }
         private void LoadFile(string file_to_play)
         {
@@ -108,8 +125,10 @@ namespace DLNAPlayer
                 if (Device.IsConnected())
                 {
                     Device.StopPlay();
-                    FileStream MediaFile = new FileStream(MediaFileLocation[MediaFiles.SelectedIndex], FileMode.Open);
+                    FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                    MServer.FS = new MemoryStream();
                     MediaFile.CopyTo(MServer.FS);
+                    MediaFile.Close();
                     string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file.flac");
                     if (Reply == "OK")
                     { }
@@ -120,6 +139,60 @@ namespace DLNAPlayer
             }
             else
                 MessageBox.Show("No renderer selected");
+        }
+
+        private void Pause_Click(object sender, EventArgs e)
+        {
+            if (MediaRenderers.SelectedIndex != -1)
+            {
+                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                if (Device.IsConnected())
+                {
+                    if (paused)
+                    {
+                        Device.StartPlay(0);
+                        paused = false;
+                        Pause.Text = "Pause";
+                    }
+                    else
+                    {
+                        Device.Pause();
+                        paused = true;
+                        Pause.Text = "Resume";
+                    }
+                }
+            }
+        }
+        private void Stop_Click(object sender, EventArgs e)
+        {
+            if (MediaRenderers.SelectedIndex != -1)
+            {
+                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                if (Device.IsConnected())
+                {
+                    Device.StopPlay();
+                }
+            }
+        }
+
+        private void PreviousButton_Click(object sender, EventArgs e)
+        {
+            if (MediaFiles.Items.Count > 0 && trackNum > 0)
+            {
+                LoadFile(MediaFileLocation[trackNum - 1]);
+                MediaFiles.SelectedIndex = trackNum - 1;
+                trackNum--;
+            }
+        }
+
+        private void NextButton_Click(object sender, EventArgs e)
+        {
+            if (MediaFiles.Items.Count > 0 && trackNum < MediaFiles.Items.Count - 1)
+            {
+                LoadFile(MediaFileLocation[trackNum + 1]);
+                MediaFiles.SelectedIndex = trackNum + 1;
+                trackNum++;
+            }
         }
     }
 }

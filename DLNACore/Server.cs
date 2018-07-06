@@ -140,7 +140,7 @@ namespace DLNAPlayer
             {
                 SocServer.Listen(0);
                 TempClient = SocServer.Accept();
-                //Thread.Sleep(250);
+                Thread.Sleep(250);
                 byte[] Buf = new byte[3000];
                 int Size = TempClient.Receive(Buf, SocketFlags.None);
                 MemoryStream MS = new MemoryStream();
@@ -153,31 +153,22 @@ namespace DLNAPlayer
                 }
                 else if (Request.ToUpper().StartsWith("GET /") && Request.ToUpper().IndexOf("HTTP/1.") > -1)
                 {
-
-                    //Form1.filestream.Position = 0;
-                    //FS = new MemoryStream();
-                    //Form1.filestream.CopyTo(FS);
-                    bool HasRange = false;
-                    TempFileName = Request.ChopOffBefore("GET /").ChopOffAfter("HTTP/1.").Trim();
-                    TempFileName = DecodeUrl(TempFileName);
-                    if (Request.ToLower().IndexOf("range: ") > -1)
+                    try
                     {
-                        HasRange = true;//We can stream this if it's a movie using ranges
-                        string Range = Request.ToLower().ChopOffBefore("range: ").ChopOffAfter("-").ChopOffAfter(Environment.NewLine).Replace("bytes=", "");
-                        long.TryParse(Range, out TempRange);
-                    }
-                    else
-                        TempRange = 0;
-                    if (!HasRange || TempFileName.ToLower().EndsWith(".jpg") || TempFileName.ToLower().EndsWith(".png") || TempFileName.ToLower().EndsWith(".gif") || TempFileName.ToLower().EndsWith(".mp3"))
-                    {
-                        Thread THSend = new Thread(SendFile);
-                        THSend.Start();
-                    }
-                    else
-                    {//Movies need to be streamed for best results if they use a byte-range
+                        TempFileName = Request.ChopOffBefore("GET /").ChopOffAfter("HTTP/1.").Trim();
+                        TempFileName = DecodeUrl(TempFileName);
+                        if (Request.ToLower().IndexOf("range: ") > -1)
+                        {
+                            string Range = Request.ToLower().ChopOffBefore("range: ").ChopOffAfter("-").ChopOffAfter(Environment.NewLine).Replace("bytes=", "");
+                            long.TryParse(Range, out TempRange);
+                        }
+                        else
+                            TempRange = 0;
                         Thread THStream = new Thread(StreamFile);
-                        THStream.Start();
+                        if (ClientCount == 0)
+                            THStream.Start();
                     }
+                    catch { }
                 }
                 else
                     TempClient.Close();
@@ -211,11 +202,15 @@ namespace DLNAPlayer
 
                     if (Client.Connected)
                     {
-                        try { FS.Read(Buf, 0, Buf.Length); Client.Send(Buf); }
-                        catch { ChunkSize = 0; }//Will force exit of the loop
+                        try {
+                            FS.Read(Buf, 0, Buf.Length);
+                            Client.Send(Buf); }
+                        catch {
+                            ChunkSize = 0;
+                        }//Will force exit of the loop
                     }
                     BytesSent += Buf.Length;
-                    //if (ChunkSize > 0) Thread.Sleep(100);
+                    if (ChunkSize > 0) Thread.Sleep(100);
                 }
                 ClientCount--;
                 Client.Close();
@@ -246,10 +241,7 @@ namespace DLNAPlayer
             string FileName = TempFileName.ToLower();
             string ContentType = GetContentType(FileName);
             Socket Client = this.TempClient;
-            this.TempClient = null;//Server is ready to recive more requests now
-                                   //if (LastFileName != FileName) //Should use a lock here but i will risk it
-                                   //{
-                                   //}
+            this.TempClient = null;
             string Reply = ContentString(Range, ContentType, FS.Length);
             Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
             byte[] Buf = new byte[ChunkSize];
@@ -269,8 +261,8 @@ namespace DLNAPlayer
                 BytesSent += Buf.Length;
                 if (Client.Connected)
                 {
-                    try { Client.Send(Buf); }
-                    catch { } //ByteToSend = 0; }//Force an exit}
+                    try { Client.Send(Buf); Thread.Sleep(100); }
+                    catch { ByteToSend = 0; }//Force an exit}
                 }
             }
             Client.Close();

@@ -257,7 +257,12 @@ namespace DLNA
             SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
             return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
         }
-
+        public string Pause()
+        {//If we are playing music tracks and not just a movie then clear our queue of tracks
+            if (!this.Connected) this.Connected = this.IsConnected();
+            if (!this.Connected) return "#ERROR# Not connected";
+            return Pause(this.ControlURL, 0);
+        }
         private string Pause(string ControlURL, int Instance)
         {//Called to pause playing a movie or a music track
             string XML = XMLHead;
