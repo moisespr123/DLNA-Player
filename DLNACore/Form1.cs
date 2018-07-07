@@ -70,6 +70,7 @@ namespace DLNAPlayer
         private void ClearQueue_Click(object sender, EventArgs e)
         {
             MediaFiles.Items.Clear();
+            MediaFileLocation.Clear();
             trackNum = -1;
         }
 
