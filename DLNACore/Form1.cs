@@ -125,7 +125,7 @@ namespace DLNAPlayer
                     MServer.FS = new MemoryStream();
                     MediaFile.CopyTo(MServer.FS);
                     MediaFile.Close();
-                    string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file.flac");
+                    string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file");
                     if (Reply == "OK")
                     {
                         if (!timer1.Enabled)
@@ -134,9 +134,9 @@ namespace DLNAPlayer
                     else
                         MessageBox.Show("Error playing file");
                 }
-                else
-                    MessageBox.Show("No renderer selected");
             }
+            else
+                MessageBox.Show("No renderer selected");
         }
 
         private void Pause_Click(object sender, EventArgs e)
