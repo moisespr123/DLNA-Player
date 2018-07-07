@@ -135,6 +135,7 @@ namespace DLNAPlayer
                             MServer.FS = new MemoryStream();
                             MediaFile.CopyTo(MServer.FS);
                             MediaFile.Close();
+                            Thread.Sleep(100);
                             string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file");
                             if (Reply == "OK")
                             {
@@ -235,7 +236,7 @@ namespace DLNAPlayer
                 "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
                 "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device");
         }
-        
+
         private async void timer1_Tick(object sender, EventArgs e)
         {
             await Task.Run(() =>
@@ -252,15 +253,21 @@ namespace DLNAPlayer
                             string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
                             try
                             {
-                                TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
-                                TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
-                                TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
-                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
-                                trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
-                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) == 0) //(trackDurationString == trackPositionString)
+                                if (trackDurationString != "NOT_IMPLEMENTED" && trackPositionString != "NOT_IMPLEMENTED")
                                 {
-                                    timer1.Stop();
-                                    PlayNextTrack();
+                                    TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
+                                    TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                                    TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
+                                    if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
+                                    {
+                                        trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
+                                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) == 0)
+                                        {
+                                            timer1.Stop();
+                                            PlayNextTrack();
+                                        }
+                                    }
                                 }
                             }
                             catch { }
