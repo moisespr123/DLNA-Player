@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.ScanRenderers = new System.Windows.Forms.Button();
             this.PlayBtn = new System.Windows.Forms.Button();
             this.Pause = new System.Windows.Forms.Button();
@@ -41,11 +42,12 @@
             this.IPandPortTxt = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
+            this.NextButton = new System.Windows.Forms.Button();
+            this.PreviousButton = new System.Windows.Forms.Button();
+            this.runtimeLabel = new System.Windows.Forms.Label();
             this.ClearQueue = new System.Windows.Forms.Button();
             this.Stop = new System.Windows.Forms.Button();
-            this.PreviousButton = new System.Windows.Forms.Button();
-            this.NextButton = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -190,7 +192,7 @@
             // 
             this.panel2.Controls.Add(this.NextButton);
             this.panel2.Controls.Add(this.PreviousButton);
-            this.panel2.Controls.Add(this.label4);
+            this.panel2.Controls.Add(this.runtimeLabel);
             this.panel2.Controls.Add(this.ClearQueue);
             this.panel2.Controls.Add(this.Stop);
             this.panel2.Controls.Add(this.label1);
@@ -203,14 +205,36 @@
             this.panel2.Size = new System.Drawing.Size(1014, 536);
             this.panel2.TabIndex = 1;
             // 
-            // label4
+            // NextButton
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(955, 513);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "label4";
+            this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.NextButton.Location = new System.Drawing.Point(462, 504);
+            this.NextButton.Name = "NextButton";
+            this.NextButton.Size = new System.Drawing.Size(75, 23);
+            this.NextButton.TabIndex = 12;
+            this.NextButton.Text = "Next";
+            this.NextButton.UseVisualStyleBackColor = true;
+            this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
+            // 
+            // PreviousButton
+            // 
+            this.PreviousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.PreviousButton.Location = new System.Drawing.Point(381, 504);
+            this.PreviousButton.Name = "PreviousButton";
+            this.PreviousButton.Size = new System.Drawing.Size(75, 23);
+            this.PreviousButton.TabIndex = 11;
+            this.PreviousButton.Text = "Previous";
+            this.PreviousButton.UseVisualStyleBackColor = true;
+            this.PreviousButton.Click += new System.EventHandler(this.PreviousButton_Click);
+            // 
+            // runtimeLabel
+            // 
+            this.runtimeLabel.AutoSize = true;
+            this.runtimeLabel.Location = new System.Drawing.Point(903, 509);
+            this.runtimeLabel.Name = "runtimeLabel";
+            this.runtimeLabel.Size = new System.Drawing.Size(102, 13);
+            this.runtimeLabel.TabIndex = 10;
+            this.runtimeLabel.Text = "00:00:00 / 00:00:00";
             // 
             // ClearQueue
             // 
@@ -233,27 +257,9 @@
             this.Stop.UseVisualStyleBackColor = true;
             this.Stop.Click += new System.EventHandler(this.Stop_Click);
             // 
-            // PreviousButton
+            // timer1
             // 
-            this.PreviousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PreviousButton.Location = new System.Drawing.Point(381, 504);
-            this.PreviousButton.Name = "PreviousButton";
-            this.PreviousButton.Size = new System.Drawing.Size(75, 23);
-            this.PreviousButton.TabIndex = 11;
-            this.PreviousButton.Text = "Previous";
-            this.PreviousButton.UseVisualStyleBackColor = true;
-            this.PreviousButton.Click += new System.EventHandler(this.PreviousButton_Click);
-            // 
-            // NextButton
-            // 
-            this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NextButton.Location = new System.Drawing.Point(462, 504);
-            this.NextButton.Name = "NextButton";
-            this.NextButton.Size = new System.Drawing.Size(75, 23);
-            this.NextButton.TabIndex = 12;
-            this.NextButton.Text = "Next";
-            this.NextButton.UseVisualStyleBackColor = true;
-            this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -293,9 +299,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button ApplyServerIP;
         private System.Windows.Forms.TextBox IPandPortTxt;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label runtimeLabel;
         private System.Windows.Forms.Button NextButton;
         private System.Windows.Forms.Button PreviousButton;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

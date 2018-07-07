@@ -48,7 +48,7 @@ namespace DLNAPlayer
         {
             IPandPortTxt.Text = Extentions.Helper.GetMyIP() + ":9090";
             ApplyServerIPAndPort();
-
+            timer1.Interval = 1000;
             //temp.Close();
             //MServer.Start();
         }
@@ -120,6 +120,7 @@ namespace DLNAPlayer
                 DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
                 if (Device.IsConnected())
                 {
+                    if (timer1.Enabled) timer1.Stop();
                     Device.StopPlay();
                     FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
                     MServer.FS = new MemoryStream();
@@ -127,14 +128,16 @@ namespace DLNAPlayer
                     MediaFile.Close();
                     string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file.flac");
                     if (Reply == "OK")
-                    { }
-                    //    this.textBox1.Text += Environment.NewLine + "Playing to " + Device.FriendlyName;
+                    {
+                        if (!timer1.Enabled)
+                            timer1.Start();
+                    }
                     else
                         MessageBox.Show("Error playing file");
                 }
+                else
+                    MessageBox.Show("No renderer selected");
             }
-            else
-                MessageBox.Show("No renderer selected");
         }
 
         private void Pause_Click(object sender, EventArgs e)
@@ -149,12 +152,14 @@ namespace DLNAPlayer
                         Device.StartPlay(0);
                         paused = false;
                         Pause.Text = "Pause";
+                        if (!timer1.Enabled) timer1.Start();
                     }
                     else
                     {
                         Device.Pause();
                         paused = true;
                         Pause.Text = "Resume";
+                        if (timer1.Enabled) timer1.Stop();
                     }
                 }
             }
@@ -167,6 +172,7 @@ namespace DLNAPlayer
                 if (Device.IsConnected())
                 {
                     Device.StopPlay();
+                    if (timer1.Enabled) timer1.Stop();
                 }
             }
         }
@@ -188,6 +194,18 @@ namespace DLNAPlayer
                 LoadFile(MediaFileLocation[trackNum + 1]);
                 MediaFiles.SelectedIndex = trackNum + 1;
                 trackNum++;
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+            if (Device.IsConnected())
+            {
+                string info = Device.GetPosition();
+                string info1 = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
+                string info2 = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
+                runtimeLabel.Text = info2 + " / " + info1;
             }
         }
     }
