@@ -230,7 +230,7 @@
             this.trackProgress.Name = "trackProgress";
             this.trackProgress.Size = new System.Drawing.Size(220, 45);
             this.trackProgress.TabIndex = 14;
-            this.trackProgress.Scroll += new System.EventHandler(this.trackProgress_Scroll);
+            this.trackProgress.MouseUp += new System.Windows.Forms.MouseEventHandler(this.trackProgress_MouseUp);
             // 
             // AboutLink
             // 
