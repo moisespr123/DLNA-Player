@@ -329,7 +329,6 @@
         private System.Windows.Forms.Button ScanRenderers;
         private System.Windows.Forms.Button PlayBtn;
         private System.Windows.Forms.Button Pause;
-        private System.Windows.Forms.ListBox MediaRenderers;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListBox MediaFiles;
@@ -348,6 +347,7 @@
         private System.Windows.Forms.LinkLabel AboutLink;
         private System.Windows.Forms.TrackBar trackProgress;
         private System.Windows.Forms.Label TrackPositionLabel;
+        public System.Windows.Forms.ListBox MediaRenderers;
     }
 }
 

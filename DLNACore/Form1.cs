@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Windows.Forms;
 using System.IO;
-using System.Xml;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace DLNAPlayer
 {
@@ -19,29 +19,34 @@ namespace DLNAPlayer
         private static int trackNum = -1;
         private static bool paused = false;
         private static List<String> MediaFileLocation = new List<string> { };
-
         private void CmdSSDP_Click(object sender, EventArgs e)
         {
-            DLNA.SSDP.Start();//Start a service as this will take a long time
-            Thread.Sleep(5000);//Wait for each TV/Device to reply to the broadcast
-            DLNA.SSDP.Stop();//Stop the service if it has not stopped already
-            MediaRenderers.Items.Clear();
-            for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
+            Thread TH = new Thread(() =>
             {
-                String deviceInfo = "";
-                XmlDocument RendererXML = new XmlDocument();
-                try
+                ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scanning..."; });
+                DLNA.SSDP.Start();//Start a service as this will take a long time
+                Thread.Sleep(5000);//Wait for each TV/Device to reply to the broadcast
+                DLNA.SSDP.Stop();//Stop the service if it has not stopped already
+                MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Clear(); });
+                for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
                 {
-                    RendererXML.Load(DLNA.SSDP.Renderers[i]);
-                    XmlElement rootXML = RendererXML.DocumentElement;
-                    deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                    String deviceInfo = "";
+                    XmlDocument RendererXML = new XmlDocument();
+                    try
+                    {
+                        RendererXML.Load(DLNA.SSDP.Renderers[i]);
+                        XmlElement rootXML = RendererXML.DocumentElement;
+                        deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                    }
+                    catch
+                    {
+                        deviceInfo = DLNA.SSDP.Renderers[i];
+                    }
+                    MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
                 }
-                catch
-                {
-                    deviceInfo = DLNA.SSDP.Renderers[i];
-                }
-                MediaRenderers.Items.Add(deviceInfo);
-            }
+                ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scan Media Renderers"; });
+            });
+            TH.Start();
         }
 
         private void Form1_Load(object sender, EventArgs e)
