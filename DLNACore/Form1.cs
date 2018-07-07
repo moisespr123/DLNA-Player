@@ -238,26 +238,29 @@ namespace DLNAPlayer
 
         private void trackProgress_Scroll(object sender, EventArgs e)
         {
-            Thread TH = new Thread(() =>
+            if (MediaRenderers.SelectedIndex != -1)
             {
-                Invoke((MethodInvoker)delegate
+                Thread TH = new Thread(() =>
                 {
-                    TimeSpan positionToGo = TimeSpan.FromSeconds(trackProgress.Value);
-                    DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                    if (Device.IsConnected())
-                        Device.Seek(String.Format("{0:c}", positionToGo));
-                });
-            });
-            TH.Start();
-        }
+                    Invoke((MethodInvoker)delegate
+                    {
 
+                        TimeSpan positionToGo = TimeSpan.FromSeconds(trackProgress.Value);
+                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                        if (Device.IsConnected())
+                            Device.Seek(String.Format("{0:c}", positionToGo));
+                    });
+                });
+                TH.Start();
+            }
+        }
         private async void timer1_Tick(object sender, EventArgs e)
         {
             await Task.Run(() =>
             {
                 MediaRenderers.Invoke((MethodInvoker)delegate
                 {
-                if  (MediaRenderers.SelectedIndex != -1)
+                    if (MediaRenderers.SelectedIndex != -1)
                     {
                         DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
                         if (Device.IsConnected())
