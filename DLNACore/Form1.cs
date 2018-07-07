@@ -49,8 +49,6 @@ namespace DLNAPlayer
             IPandPortTxt.Text = Extentions.Helper.GetMyIP() + ":9090";
             ApplyServerIPAndPort();
             timer1.Interval = 1000;
-            //temp.Close();
-            //MServer.Start();
         }
 
         private void CmdPlay_Click(object sender, EventArgs e)
@@ -203,27 +201,30 @@ namespace DLNAPlayer
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-            if (Device.IsConnected())
+            if (MediaRenderers.SelectedIndex != -1)
             {
-                string info = Device.GetPosition();
-                string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
-                string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
-                try
+                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                if (Device.IsConnected())
                 {
-                    TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
-                    TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
-                    TrackDurationLabel.Text = trackDurationString;
-                    TrackPositionLabel.Text = trackPositionString;
-                    trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds);
-                    trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds);
-                    if (trackDurationString == trackPositionString)
+                    string info = Device.GetPosition();
+                    string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
+                    string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
+                    try
                     {
-                        timer1.Stop();
-                        PlayNextTrack();
+                        TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
+                        TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                        TrackDurationLabel.Text = trackDurationString;
+                        TrackPositionLabel.Text = trackPositionString;
+                        trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds);
+                        trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds);
+                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 1) //(trackDurationString == trackPositionString)
+                        {
+                            timer1.Stop();
+                            PlayNextTrack();
+                        }
                     }
+                    catch { }
                 }
-                catch { }
             }
         }
 
@@ -244,5 +245,6 @@ namespace DLNAPlayer
             if (Device.IsConnected())
                 Device.Seek(String.Format("{0:c}", positionToGo));
         }
+
     }
 }

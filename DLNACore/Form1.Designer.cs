@@ -214,7 +214,7 @@
             // 
             // TrackPositionLabel
             // 
-            this.TrackPositionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.TrackPositionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.TrackPositionLabel.AutoSize = true;
             this.TrackPositionLabel.Location = new System.Drawing.Point(627, 490);
             this.TrackPositionLabel.Name = "TrackPositionLabel";
@@ -224,6 +224,8 @@
             // 
             // trackProgress
             // 
+            this.trackProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.trackProgress.Location = new System.Drawing.Point(682, 484);
             this.trackProgress.Name = "trackProgress";
             this.trackProgress.Size = new System.Drawing.Size(220, 45);
@@ -232,6 +234,7 @@
             // 
             // AboutLink
             // 
+            this.AboutLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AboutLink.AutoSize = true;
             this.AboutLink.Location = new System.Drawing.Point(970, 514);
             this.AboutLink.Name = "AboutLink";
