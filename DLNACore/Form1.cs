@@ -262,8 +262,9 @@ namespace DLNAPlayer
                                     if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
                                     {
                                         trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
-                                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) == 0)
+                                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 1)
                                         {
+                                            Thread.Sleep(1000);
                                             timer1.Stop();
                                             PlayNextTrack();
                                         }
