@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Collections.Generic;
 using System.Xml;
+using System.Threading.Tasks;
 
 namespace DLNAPlayer
 {
@@ -53,7 +54,7 @@ namespace DLNAPlayer
         {
             IPandPortTxt.Text = Extentions.Helper.GetMyIP() + ":9090";
             ApplyServerIPAndPort();
-            timer1.Interval = 1000;
+            timer1.Interval = 500;
         }
 
         private void CmdPlay_Click(object sender, EventArgs e)
@@ -119,66 +120,86 @@ namespace DLNAPlayer
         }
         private void LoadFile(string file_to_play)
         {
-            if (MediaRenderers.SelectedIndex != -1)
+            Thread TH = new Thread(() =>
             {
-                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                if (Device.IsConnected())
+                Invoke((MethodInvoker)delegate
                 {
-                    if (timer1.Enabled) timer1.Stop();
-                    Device.StopPlay();
-                    FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                    MServer.FS = new MemoryStream();
-                    MediaFile.CopyTo(MServer.FS);
-                    MediaFile.Close();
-                    string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file");
-                    if (Reply == "OK")
+                    if (MediaRenderers.SelectedIndex != -1)
                     {
-                        if (!timer1.Enabled)
-                            timer1.Start();
+                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                        if (Device.IsConnected())
+                        {
+                            if (timer1.Enabled) timer1.Stop();
+                            Device.StopPlay();
+                            FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                            MServer.FS = new MemoryStream();
+                            MediaFile.CopyTo(MServer.FS);
+                            MediaFile.Close();
+                            string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file");
+                            if (Reply == "OK")
+                            {
+                                if (!timer1.Enabled) timer1.Start();
+                            }
+                            else
+                                MessageBox.Show("Error playing file");
+                        }
                     }
                     else
-                        MessageBox.Show("Error playing file");
-                }
-            }
-            else
-                MessageBox.Show("No renderer selected");
+                        MessageBox.Show("No renderer selected");
+                });
+            });
+            TH.Start();
         }
 
         private void Pause_Click(object sender, EventArgs e)
         {
-            if (MediaRenderers.SelectedIndex != -1)
+            Thread TH = new Thread(() =>
             {
-                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                if (Device.IsConnected())
+                Invoke((MethodInvoker)delegate
                 {
-                    if (paused)
+                    if (MediaRenderers.SelectedIndex != -1)
                     {
-                        Device.StartPlay(0);
-                        paused = false;
-                        Pause.Text = "Pause";
-                        if (!timer1.Enabled) timer1.Start();
+                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                        if (Device.IsConnected())
+                        {
+                            if (paused)
+                            {
+                                Device.StartPlay(0);
+                                paused = false;
+                                Pause.Text = "Pause";
+                                if (!timer1.Enabled) timer1.Start();
+                            }
+                            else
+                            {
+                                Device.Pause();
+                                paused = true;
+                                Pause.Text = "Resume";
+                                if (timer1.Enabled) timer1.Stop();
+                            }
+                        }
                     }
-                    else
-                    {
-                        Device.Pause();
-                        paused = true;
-                        Pause.Text = "Resume";
-                        if (timer1.Enabled) timer1.Stop();
-                    }
-                }
-            }
+                });
+            });
+            TH.Start();
         }
         private void Stop_Click(object sender, EventArgs e)
         {
-            if (MediaRenderers.SelectedIndex != -1)
+            Thread TH = new Thread(() =>
             {
-                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                if (Device.IsConnected())
+                Invoke((MethodInvoker)delegate
                 {
-                    Device.StopPlay();
-                    if (timer1.Enabled) timer1.Stop();
-                }
-            }
+                    if (MediaRenderers.SelectedIndex != -1)
+                    {
+                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                        if (Device.IsConnected())
+                        {
+                            Device.StopPlay();
+                            if (timer1.Enabled) timer1.Stop();
+                        }
+                    }
+                });
+            });
+            TH.Start();
         }
 
         private void PreviousButton_Click(object sender, EventArgs e)
@@ -205,35 +226,6 @@ namespace DLNAPlayer
                 trackNum++;
             }
         }
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            if (MediaRenderers.SelectedIndex != -1)
-            {
-                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                if (Device.IsConnected())
-                {
-                    string info = Device.GetPosition();
-                    string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
-                    string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
-                    try
-                    {
-                        TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
-                        TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
-                        TrackDurationLabel.Text = trackDurationString;
-                        TrackPositionLabel.Text = trackPositionString;
-                        trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds);
-                        trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds);
-                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 1) //(trackDurationString == trackPositionString)
-                        {
-                            timer1.Stop();
-                            PlayNextTrack();
-                        }
-                    }
-                    catch { }
-                }
-            }
-        }
-
         private void AboutLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
@@ -246,11 +238,51 @@ namespace DLNAPlayer
 
         private void trackProgress_Scroll(object sender, EventArgs e)
         {
-            TimeSpan positionToGo = TimeSpan.FromSeconds(trackProgress.Value);
-            DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-            if (Device.IsConnected())
-                Device.Seek(String.Format("{0:c}", positionToGo));
+            Thread TH = new Thread(() =>
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    TimeSpan positionToGo = TimeSpan.FromSeconds(trackProgress.Value);
+                    DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                    if (Device.IsConnected())
+                        Device.Seek(String.Format("{0:c}", positionToGo));
+                });
+            });
+            TH.Start();
         }
 
+        private async void timer1_Tick(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                MediaRenderers.Invoke((MethodInvoker)delegate
+                {
+                if  (MediaRenderers.SelectedIndex != -1)
+                    {
+                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                        if (Device.IsConnected())
+                        {
+                            string info = Device.GetPosition();
+                            string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
+                            string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
+                            try
+                            {
+                                TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
+                                TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                                TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
+                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
+                                trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
+                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 1) //(trackDurationString == trackPositionString)
+                                {
+                                    timer1.Stop();
+                                    PlayNextTrack();
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                });
+            });
+        }
     }
 }

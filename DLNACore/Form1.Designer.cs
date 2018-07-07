@@ -343,11 +343,11 @@
         private System.Windows.Forms.Label TrackDurationLabel;
         private System.Windows.Forms.Button NextButton;
         private System.Windows.Forms.Button PreviousButton;
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.LinkLabel AboutLink;
         private System.Windows.Forms.TrackBar trackProgress;
         private System.Windows.Forms.Label TrackPositionLabel;
         public System.Windows.Forms.ListBox MediaRenderers;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

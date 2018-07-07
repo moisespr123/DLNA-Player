@@ -45,7 +45,7 @@ namespace DLNA
             ReturnCode = 0;
             int ContentLength = 0;
             int HeadLength = 0;
-            Thread.Sleep(50);
+            Thread.Sleep(20);
             MemoryStream MS = new MemoryStream();
             byte[] buffer = new byte[8000];
             int Count = 0;
@@ -69,7 +69,6 @@ namespace DLNA
                         return Encoding.UTF8.GetString(MS.ToArray());
                     }
                 }
-                Thread.Sleep(50);
             }
             if (CloseOnExit) Soc.Close();
             string HTML = Encoding.UTF8.GetString(MS.ToArray());
