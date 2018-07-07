@@ -188,8 +188,8 @@ namespace DLNA
             
         }
 
-        private string XMLHead = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" + Environment.NewLine + "<SOAP-ENV:Body>" + Environment.NewLine;
-        private string XMLFoot = "</SOAP-ENV:Body>" + Environment.NewLine + "</SOAP-ENV:Envelope>" + Environment.NewLine;
+        private readonly string XMLHead = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" + Environment.NewLine + "<SOAP-ENV:Body>" + Environment.NewLine;
+        private readonly string XMLFoot = "</SOAP-ENV:Body>" + Environment.NewLine + "</SOAP-ENV:Envelope>" + Environment.NewLine;
         public string GetPosition()
         {//Returns the current position for the track that is playing on the DLNA server
             return GetPosition(this.ControlURL);
@@ -254,6 +254,23 @@ namespace DLNA
             XML += XMLFoot + Environment.NewLine;
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
             string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#Stop", this.IP, this.Port) + XML;
+            SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
+            return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+        }
+
+        public string Seek(string position)
+        {
+            if (!this.Connected) this.Connected = this.IsConnected();
+            if (!this.Connected) return "#ERROR# Not connected";
+            return Seek(this.ControlURL, 0, position);
+        }
+        private string Seek(string ControlURL, int Instance, string position)
+        {//Called to stop playing a movie or a music track
+            string XML = XMLHead;
+            XML += "<u:Seek xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID>" + Instance + "</InstanceID><Unit>REL_TIME</Unit><Target>" + position + "</Target></u:Seek>" + Environment.NewLine;
+            XML += XMLFoot + Environment.NewLine;
+            Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
+            string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#Seek", this.IP, this.Port) + XML;
             SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
             return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
         }

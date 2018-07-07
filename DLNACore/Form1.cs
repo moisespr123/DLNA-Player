@@ -189,6 +189,11 @@ namespace DLNAPlayer
 
         private void NextButton_Click(object sender, EventArgs e)
         {
+            PlayNextTrack();
+        }
+
+        private void PlayNextTrack()
+        {
             if (MediaFiles.Items.Count > 0 && trackNum < MediaFiles.Items.Count - 1)
             {
                 LoadFile(MediaFileLocation[trackNum + 1]);
@@ -196,17 +201,48 @@ namespace DLNAPlayer
                 trackNum++;
             }
         }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
             if (Device.IsConnected())
             {
                 string info = Device.GetPosition();
-                string info1 = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
-                string info2 = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
-                runtimeLabel.Text = info2 + " / " + info1;
+                string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
+                string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
+                try
+                {
+                    TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
+                    TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                    TrackDurationLabel.Text = trackDurationString;
+                    TrackPositionLabel.Text = trackPositionString;
+                    trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds);
+                    trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds);
+                    if (trackDurationString == trackPositionString)
+                    {
+                        timer1.Stop();
+                        PlayNextTrack();
+                    }
+                }
+                catch { }
             }
+        }
+
+        private void AboutLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
+                "Version 0.1" + Environment.NewLine +
+                "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
+                "This software cointains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
+                "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
+                "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device");
+        }
+
+        private void trackProgress_Scroll(object sender, EventArgs e)
+        {
+            TimeSpan positionToGo = TimeSpan.FromSeconds(trackProgress.Value);
+            DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+            if (Device.IsConnected())
+                Device.Seek(String.Format("{0:c}", positionToGo));
         }
     }
 }

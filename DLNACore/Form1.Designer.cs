@@ -42,15 +42,19 @@
             this.IPandPortTxt = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.TrackPositionLabel = new System.Windows.Forms.Label();
+            this.trackProgress = new System.Windows.Forms.TrackBar();
+            this.AboutLink = new System.Windows.Forms.LinkLabel();
             this.NextButton = new System.Windows.Forms.Button();
             this.PreviousButton = new System.Windows.Forms.Button();
-            this.runtimeLabel = new System.Windows.Forms.Label();
+            this.TrackDurationLabel = new System.Windows.Forms.Label();
             this.ClearQueue = new System.Windows.Forms.Button();
             this.Stop = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).BeginInit();
             this.SuspendLayout();
             // 
             // ScanRenderers
@@ -68,9 +72,9 @@
             // PlayBtn
             // 
             this.PlayBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PlayBtn.Location = new System.Drawing.Point(138, 504);
+            this.PlayBtn.Location = new System.Drawing.Point(138, 480);
             this.PlayBtn.Name = "PlayBtn";
-            this.PlayBtn.Size = new System.Drawing.Size(75, 23);
+            this.PlayBtn.Size = new System.Drawing.Size(75, 49);
             this.PlayBtn.TabIndex = 2;
             this.PlayBtn.Text = "Play";
             this.PlayBtn.UseVisualStyleBackColor = true;
@@ -79,9 +83,9 @@
             // Pause
             // 
             this.Pause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Pause.Location = new System.Drawing.Point(219, 504);
+            this.Pause.Location = new System.Drawing.Point(219, 480);
             this.Pause.Name = "Pause";
-            this.Pause.Size = new System.Drawing.Size(75, 23);
+            this.Pause.Size = new System.Drawing.Size(75, 49);
             this.Pause.TabIndex = 3;
             this.Pause.Text = "Pause";
             this.Pause.UseVisualStyleBackColor = true;
@@ -112,9 +116,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(3, 6);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(94, 13);
+            this.label2.Size = new System.Drawing.Size(91, 13);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Select  a renderer:";
+            this.label2.Text = "Select a renderer:";
             // 
             // MediaFiles
             // 
@@ -124,7 +128,7 @@
             this.MediaFiles.FormattingEnabled = true;
             this.MediaFiles.Location = new System.Drawing.Point(6, 28);
             this.MediaFiles.Name = "MediaFiles";
-            this.MediaFiles.Size = new System.Drawing.Size(999, 472);
+            this.MediaFiles.Size = new System.Drawing.Size(999, 446);
             this.MediaFiles.TabIndex = 7;
             this.MediaFiles.DoubleClick += new System.EventHandler(this.MediaFiles_DoubleClick);
             // 
@@ -161,7 +165,7 @@
             // ApplyServerIP
             // 
             this.ApplyServerIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyServerIP.Location = new System.Drawing.Point(160, 504);
+            this.ApplyServerIP.Location = new System.Drawing.Point(167, 504);
             this.ApplyServerIP.Name = "ApplyServerIP";
             this.ApplyServerIP.Size = new System.Drawing.Size(75, 23);
             this.ApplyServerIP.TabIndex = 9;
@@ -175,7 +179,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.IPandPortTxt.Location = new System.Drawing.Point(3, 506);
             this.IPandPortTxt.Name = "IPandPortTxt";
-            this.IPandPortTxt.Size = new System.Drawing.Size(151, 20);
+            this.IPandPortTxt.Size = new System.Drawing.Size(158, 20);
             this.IPandPortTxt.TabIndex = 8;
             // 
             // label3
@@ -190,9 +194,12 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.TrackPositionLabel);
+            this.panel2.Controls.Add(this.trackProgress);
+            this.panel2.Controls.Add(this.AboutLink);
             this.panel2.Controls.Add(this.NextButton);
             this.panel2.Controls.Add(this.PreviousButton);
-            this.panel2.Controls.Add(this.runtimeLabel);
+            this.panel2.Controls.Add(this.TrackDurationLabel);
             this.panel2.Controls.Add(this.ClearQueue);
             this.panel2.Controls.Add(this.Stop);
             this.panel2.Controls.Add(this.label1);
@@ -205,12 +212,41 @@
             this.panel2.Size = new System.Drawing.Size(1014, 536);
             this.panel2.TabIndex = 1;
             // 
+            // TrackPositionLabel
+            // 
+            this.TrackPositionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.TrackPositionLabel.AutoSize = true;
+            this.TrackPositionLabel.Location = new System.Drawing.Point(627, 490);
+            this.TrackPositionLabel.Name = "TrackPositionLabel";
+            this.TrackPositionLabel.Size = new System.Drawing.Size(49, 13);
+            this.TrackPositionLabel.TabIndex = 15;
+            this.TrackPositionLabel.Text = "00:00:00";
+            // 
+            // trackProgress
+            // 
+            this.trackProgress.Location = new System.Drawing.Point(682, 484);
+            this.trackProgress.Name = "trackProgress";
+            this.trackProgress.Size = new System.Drawing.Size(220, 45);
+            this.trackProgress.TabIndex = 14;
+            this.trackProgress.Scroll += new System.EventHandler(this.trackProgress_Scroll);
+            // 
+            // AboutLink
+            // 
+            this.AboutLink.AutoSize = true;
+            this.AboutLink.Location = new System.Drawing.Point(970, 514);
+            this.AboutLink.Name = "AboutLink";
+            this.AboutLink.Size = new System.Drawing.Size(35, 13);
+            this.AboutLink.TabIndex = 13;
+            this.AboutLink.TabStop = true;
+            this.AboutLink.Text = "About";
+            this.AboutLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutLink_LinkClicked);
+            // 
             // NextButton
             // 
             this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NextButton.Location = new System.Drawing.Point(462, 504);
+            this.NextButton.Location = new System.Drawing.Point(462, 480);
             this.NextButton.Name = "NextButton";
-            this.NextButton.Size = new System.Drawing.Size(75, 23);
+            this.NextButton.Size = new System.Drawing.Size(75, 49);
             this.NextButton.TabIndex = 12;
             this.NextButton.Text = "Next";
             this.NextButton.UseVisualStyleBackColor = true;
@@ -219,28 +255,30 @@
             // PreviousButton
             // 
             this.PreviousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PreviousButton.Location = new System.Drawing.Point(381, 504);
+            this.PreviousButton.Location = new System.Drawing.Point(381, 480);
             this.PreviousButton.Name = "PreviousButton";
-            this.PreviousButton.Size = new System.Drawing.Size(75, 23);
+            this.PreviousButton.Size = new System.Drawing.Size(75, 49);
             this.PreviousButton.TabIndex = 11;
             this.PreviousButton.Text = "Previous";
             this.PreviousButton.UseVisualStyleBackColor = true;
             this.PreviousButton.Click += new System.EventHandler(this.PreviousButton_Click);
             // 
-            // runtimeLabel
+            // TrackDurationLabel
             // 
-            this.runtimeLabel.AutoSize = true;
-            this.runtimeLabel.Location = new System.Drawing.Point(903, 509);
-            this.runtimeLabel.Name = "runtimeLabel";
-            this.runtimeLabel.Size = new System.Drawing.Size(102, 13);
-            this.runtimeLabel.TabIndex = 10;
-            this.runtimeLabel.Text = "00:00:00 / 00:00:00";
+            this.TrackDurationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.TrackDurationLabel.AutoSize = true;
+            this.TrackDurationLabel.Location = new System.Drawing.Point(908, 490);
+            this.TrackDurationLabel.Name = "TrackDurationLabel";
+            this.TrackDurationLabel.Size = new System.Drawing.Size(49, 13);
+            this.TrackDurationLabel.TabIndex = 10;
+            this.TrackDurationLabel.Text = "00:00:00";
             // 
             // ClearQueue
             // 
-            this.ClearQueue.Location = new System.Drawing.Point(7, 504);
+            this.ClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ClearQueue.Location = new System.Drawing.Point(7, 480);
             this.ClearQueue.Name = "ClearQueue";
-            this.ClearQueue.Size = new System.Drawing.Size(75, 23);
+            this.ClearQueue.Size = new System.Drawing.Size(88, 49);
             this.ClearQueue.TabIndex = 9;
             this.ClearQueue.Text = "Clear Queue";
             this.ClearQueue.UseVisualStyleBackColor = true;
@@ -249,9 +287,9 @@
             // Stop
             // 
             this.Stop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Stop.Location = new System.Drawing.Point(300, 504);
+            this.Stop.Location = new System.Drawing.Point(300, 480);
             this.Stop.Name = "Stop";
-            this.Stop.Size = new System.Drawing.Size(75, 23);
+            this.Stop.Size = new System.Drawing.Size(75, 49);
             this.Stop.TabIndex = 8;
             this.Stop.Text = "Stop";
             this.Stop.UseVisualStyleBackColor = true;
@@ -278,6 +316,7 @@
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -299,10 +338,13 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button ApplyServerIP;
         private System.Windows.Forms.TextBox IPandPortTxt;
-        private System.Windows.Forms.Label runtimeLabel;
+        private System.Windows.Forms.Label TrackDurationLabel;
         private System.Windows.Forms.Button NextButton;
         private System.Windows.Forms.Button PreviousButton;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.LinkLabel AboutLink;
+        private System.Windows.Forms.TrackBar trackProgress;
+        private System.Windows.Forms.Label TrackPositionLabel;
     }
 }
 

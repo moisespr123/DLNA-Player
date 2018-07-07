@@ -133,46 +133,50 @@ namespace DLNAPlayer
         }
         private void Listen()
         {//This is the main service that waits for bew incoming request and then service the requests on another thread in most cases
-            SocServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint IPE = new IPEndPoint(IPAddress.Parse(this.IP), this.Port);
-            SocServer.Bind(IPE);
-            while (this.Running)
+            try
             {
-                SocServer.Listen(0);
-                TempClient = SocServer.Accept();
-                Thread.Sleep(250);
-                byte[] Buf = new byte[3000];
-                int Size = TempClient.Receive(Buf, SocketFlags.None);
-                MemoryStream MS = new MemoryStream();
-                MS.Write(Buf, 0, Size);
-                string Request = UTF8Encoding.UTF8.GetString(MS.ToArray());
-                if (Request.ToUpper().StartsWith("HEAD /") && Request.ToUpper().IndexOf("HTTP/1.") > -1)
-                {//Samsung TV
-                    string HeadFileName = Request.ChopOffBefore("HEAD /").ChopOffAfter("HTTP/1.").Trim().Replace("/", "\\");
-                    SendHeadData(TempClient, HeadFileName);
-                }
-                else if (Request.ToUpper().StartsWith("GET /") && Request.ToUpper().IndexOf("HTTP/1.") > -1)
+                SocServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                IPEndPoint IPE = new IPEndPoint(IPAddress.Parse(this.IP), this.Port);
+                SocServer.Bind(IPE);
+                while (this.Running)
                 {
-                    try
-                    {
-                        TempFileName = Request.ChopOffBefore("GET /").ChopOffAfter("HTTP/1.").Trim();
-                        TempFileName = DecodeUrl(TempFileName);
-                        if (Request.ToLower().IndexOf("range: ") > -1)
-                        {
-                            string Range = Request.ToLower().ChopOffBefore("range: ").ChopOffAfter("-").ChopOffAfter(Environment.NewLine).Replace("bytes=", "");
-                            long.TryParse(Range, out TempRange);
-                        }
-                        else
-                            TempRange = 0;
-                        Thread THStream = new Thread(StreamFile);
-                        if (ClientCount == 0)
-                            THStream.Start();
+                    SocServer.Listen(0);
+                    TempClient = SocServer.Accept();
+                    Thread.Sleep(250);
+                    byte[] Buf = new byte[3000];
+                    int Size = TempClient.Receive(Buf, SocketFlags.None);
+                    MemoryStream MS = new MemoryStream();
+                    MS.Write(Buf, 0, Size);
+                    string Request = UTF8Encoding.UTF8.GetString(MS.ToArray());
+                    if (Request.ToUpper().StartsWith("HEAD /") && Request.ToUpper().IndexOf("HTTP/1.") > -1)
+                    {//Samsung TV
+                        string HeadFileName = Request.ChopOffBefore("HEAD /").ChopOffAfter("HTTP/1.").Trim().Replace("/", "\\");
+                        SendHeadData(TempClient, HeadFileName);
                     }
-                    catch { }
+                    else if (Request.ToUpper().StartsWith("GET /") && Request.ToUpper().IndexOf("HTTP/1.") > -1)
+                    {
+                        try
+                        {
+                            TempFileName = Request.ChopOffBefore("GET /").ChopOffAfter("HTTP/1.").Trim();
+                            TempFileName = DecodeUrl(TempFileName);
+                            if (Request.ToLower().IndexOf("range: ") > -1)
+                            {
+                                string Range = Request.ToLower().ChopOffBefore("range: ").ChopOffAfter("-").ChopOffAfter(Environment.NewLine).Replace("bytes=", "");
+                                long.TryParse(Range, out TempRange);
+                            }
+                            else
+                                TempRange = 0;
+                            Thread THStream = new Thread(StreamFile);
+                            if (ClientCount == 0)
+                                THStream.Start();
+                        }
+                        catch { }
+                    }
+                    else
+                        TempClient.Close();
                 }
-                else
-                    TempClient.Close();
             }
+            catch { }
         }
         private string GetContentType(string FileName)
         {//Based on the file type we create our content type for the reply to the TV/DLNA device
