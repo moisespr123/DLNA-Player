@@ -42,10 +42,6 @@ namespace DLNAPlayer
                 }
                 MediaRenderers.Items.Add(deviceInfo);
             }
-            //this.textBox1.Text = DLNA.SSDP.Servers;//Best to save this string to a file or windows registry as we don't want to keep looking for devices on the network
-            //if (this.textBox1.Text.Length < 10)
-            //    this.textBox1.Text = "Are you sure that your smart TV and devices are turned on !";
-
         }
 
         private void Form1_Load(object sender, EventArgs e)

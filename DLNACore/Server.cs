@@ -174,52 +174,6 @@ namespace DLNAPlayer
                     TempClient.Close();
             }
         }
-
-        private void SendFile()
-        {//Here we just send the file without using ranges and this function runs in it's own thread
-            long ChunkSize = 50000;
-            long BytesSent = 0;
-            string FileName = TempFileName.ToLower();// @"\\Seacloud\Public\Movies\Alex\9.avi";
-            string ContentType = GetContentType(FileName);
-            Socket Client = this.TempClient;
-            this.TempClient = null;//Server is ready to recive more requests now
-            ClientCount++;
-            if (FS.Length > 8000000)
-                ChunkSize = 500000;//Looks big like a movie so increase the chunk size
-            string Reply = "HTTP/1.1 200 OK" + Environment.NewLine + "Server: VLC" + Environment.NewLine + "Content-Type: " + ContentType + Environment.NewLine;
-            Reply += "Connection: close" + Environment.NewLine;
-            Reply += "Content-Length: " + FS.Length + Environment.NewLine + Environment.NewLine;
-            FS.Seek(0, SeekOrigin.Begin);
-            try
-            {
-                Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
-                while (this.Running && Client.Connected && ChunkSize > 0)
-                {//Keep looping untill all the data is sent or the connection is dropped by the client
-                    LoopCount++;
-                    if (BytesSent + ChunkSize > FS.Length)
-                        ChunkSize = FS.Length - BytesSent;
-                    byte[] Buf = new byte[ChunkSize];
-
-                    if (Client.Connected)
-                    {
-                        try {
-                            FS.Read(Buf, 0, Buf.Length);
-                            Client.Send(Buf); }
-                        catch {
-                            ChunkSize = 0;
-                        }//Will force exit of the loop
-                    }
-                    BytesSent += Buf.Length;
-                    if (ChunkSize > 0) Thread.Sleep(100);
-                }
-                ClientCount--;
-                Client.Close();
-            }
-            catch { }
-        }
-
-
-
         private string GetContentType(string FileName)
         {//Based on the file type we create our content type for the reply to the TV/DLNA device
             string ContentType = "audio/mpeg";
@@ -233,40 +187,46 @@ namespace DLNAPlayer
 
         private void StreamFile()
         {//Streams a movie using ranges and runs on it's own thread
+
             ClientCount++;
-            long ChunkSize = 500000;
-            long Range = TempRange;
-            long BytesSent = 0;
-            long ByteToSend = 1;
-            string FileName = TempFileName.ToLower();
-            string ContentType = GetContentType(FileName);
-            Socket Client = this.TempClient;
-            this.TempClient = null;
-            string Reply = ContentString(Range, ContentType, FS.Length);
-            Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
-            byte[] Buf = new byte[ChunkSize];
-            if (FS.CanSeek)
-                FS.Seek(Range, SeekOrigin.Begin);
-            BytesSent = Range;
-            while (this.Running && Client.Connected && ByteToSend > 0)
-            {//Keep looping untill all the data is sent or the connection is dropped by the client
-                LoopCount++;
-                ByteToSend = FS.Length - BytesSent;
-                if (ByteToSend > ChunkSize) ByteToSend = ChunkSize;
-                long BytesLeftToSend = FS.Length - BytesSent;
-                if (BytesSent + ChunkSize > FS.Length)
-                    ChunkSize = FS.Length - BytesSent;
-                Buf = new byte[ByteToSend];
-                FS.Read(Buf, 0, Buf.Length);
-                BytesSent += Buf.Length;
-                if (Client.Connected)
-                {
-                    try { Client.Send(Buf); Thread.Sleep(100); }
-                    catch { ByteToSend = 0; }//Force an exit}
+            try
+            {
+                long ChunkSize = 500000;
+                long Range = TempRange;
+                long BytesSent = 0;
+                long ByteToSend = 1;
+                string FileName = TempFileName.ToLower();
+                string ContentType = GetContentType(FileName);
+                Socket Client = this.TempClient;
+                this.TempClient = null;
+                string Reply = ContentString(Range, ContentType, FS.Length);
+                Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
+                byte[] Buf = new byte[ChunkSize];
+                if (FS.CanSeek)
+                    FS.Seek(Range, SeekOrigin.Begin);
+                BytesSent = Range;
+                while (this.Running && Client.Connected && ByteToSend > 0)
+                {//Keep looping untill all the data is sent or the connection is dropped by the client
+                    LoopCount++;
+                    ByteToSend = FS.Length - BytesSent;
+                    if (ByteToSend > ChunkSize) ByteToSend = ChunkSize;
+                    long BytesLeftToSend = FS.Length - BytesSent;
+                    if (BytesSent + ChunkSize > FS.Length)
+                        ChunkSize = FS.Length - BytesSent;
+                    Buf = new byte[ByteToSend];
+                    FS.Read(Buf, 0, Buf.Length);
+                    BytesSent += Buf.Length;
+                    if (Client.Connected)
+                    {
+                        try { Client.Send(Buf); Thread.Sleep(100); }
+                        catch { ByteToSend = 0; }//Force an exit}
+                    }
                 }
+                Client.Close();
             }
-            Client.Close();
+            catch { }
             ClientCount--;
+
         }
     }
 }
