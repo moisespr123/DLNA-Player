@@ -12,15 +12,14 @@ namespace DLNAPlayer
 {
     public class MediaServer
     {
-        public int LoopCount = 0;//Counts the number of chunks of data that we have sent to the client DLNA device
-        public int ClientCount = 0;//Count of client sockets we are serving at the current time
         public bool Running = false;//Flag set to true when running and false to kill the service
         public string IP = "192.168.0.10";//The ip of this service we will listen on for DLNA requests
         public int Port = 9090;//The post we will listen on for incoming DLNA requests 
         public MemoryStream FS = null;
         private Socket SocServer = null;
         private Thread TH = null;
-        private long TempRange = 0;        //Past to the client thread ready to service the request
+        private long TempStartRange = 0; //Past to the client thread ready to service the request
+        private long TempEndRange = 0; //Past to the client thread ready to service the request
         private Socket TempClient = null;  //Past to the client thread ready to service the request
         private string TempFileName = "";  //Past to the client thread ready to service the request
 
@@ -33,7 +32,6 @@ namespace DLNAPlayer
         public void Start()
         {//Starts our DLNA service
             this.Running = true;
-            LoopCount = 0; ClientCount = 0;
             this.TH = new Thread(Listen);
             TH.Start();
         }
@@ -41,39 +39,26 @@ namespace DLNAPlayer
         public void Stop()
         {//Stops our DLNA service
             this.Running = false;
-            //Thread.Sleep(100);
             if (this.FS != null)
             { try { FS.Close(); } catch {; } }
             if (SocServer != null && SocServer.Connected) SocServer.Shutdown(SocketShutdown.Both);
         }
 
-        private string SafeReadClient(Socket Soc)
-        {//Safe way to read incoming requests for DLNA stream data or HTTP HEAD requests
-            try
-            {
-                byte[] Buf = new byte[Soc.Available];
-                Soc.Receive(Buf);
-                return UTF8Encoding.UTF8.GetString(Buf);
-            }
-            catch {; }
-            return "";
-        }
-
-        private string ContentString(long Range, string ContentType, long FileLength)
+        private string ContentString(long StartRange, long EndRange, string ContentType, long FileLength)
         {//Builds up our HTTP reply string for byte-range requests
             string Reply = "";
             Reply = "HTTP/1.1 206 Partial Content" + Environment.NewLine + "Server: VLC" + Environment.NewLine + "Content-Type: " + ContentType + Environment.NewLine;
             Reply += "Accept-Ranges: bytes" + Environment.NewLine;
             Reply += "Date: " + GMTTime(DateTime.Now) + Environment.NewLine;
-            if (Range == 0)
+            if (StartRange == 0)
             {
                 Reply += "Content-Length: " + FileLength + Environment.NewLine;
                 Reply += "Content-Range: bytes 0-" + (FileLength - 1) + "/" + FileLength + Environment.NewLine;
             }
             else
             {
-                Reply += "Content-Length: " + (FileLength - Range) + Environment.NewLine;
-                Reply += "Content-Range: bytes " + Range + "-" + (FileLength - 1) + "/" + FileLength + Environment.NewLine;
+                Reply += "Content-Length: " + (EndRange - StartRange) + Environment.NewLine;
+                Reply += "Content-Range: bytes " + StartRange + "-" + (EndRange - 1) + "/" + FileLength + Environment.NewLine;
             }
             return Reply + Environment.NewLine;
         }
@@ -110,21 +95,14 @@ namespace DLNAPlayer
             return Value.Replace("%20", " ").Replace("%26", "&").Replace("%27", "'").Replace("/", "\\");
         }
 
-        private void SendHeadData(Socket Soc, string FileName)
+        private void SendHeadData(Socket Soc)
         {//This runs in the same thread as the service since it should be nice and fast
-            FileInfo FInfo = new FileInfo(FileName);
-            if (!FInfo.Exists)
-            {//We cannot find the file so just dump the connection
-                Soc.Close();
-                this.TempClient = null;//Flag also so the next request can be serviced
-                return;
-            }
-            string ContentType = GetContentType(FileName);
+            string ContentType = GetContentType("");
             string Reply = "HTTP/1.1 200 OK" + Environment.NewLine + "Server: VLC" + Environment.NewLine + "Content-Type: " + ContentType + Environment.NewLine;
             Reply += "Last-Modified: " + GMTTime(DateTime.Now.AddYears(-1).AddDays(-7)) + Environment.NewLine;//Just dream up a date
             Reply += "Date: " + GMTTime(DateTime.Now) + Environment.NewLine;
-            if (!IsMusicOrImage(FileName)) Reply += "Accept-Ranges: bytes" + Environment.NewLine;//We only do ranges for movies
-            Reply += "Content-Length: " + FInfo.Length + Environment.NewLine;
+            Reply += "Accept-Ranges: bytes" + Environment.NewLine;//We only do ranges for movies
+            Reply += "Content-Length: " + FS.Length + Environment.NewLine;
             Reply += "Connection: close" + Environment.NewLine + Environment.NewLine;
             Soc.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
             Soc.Close();
@@ -150,7 +128,7 @@ namespace DLNAPlayer
                     if (Request.ToUpper().StartsWith("HEAD /") && Request.ToUpper().IndexOf("HTTP/1.") > -1)
                     {//Samsung TV
                         string HeadFileName = Request.ChopOffBefore("HEAD /").ChopOffAfter("HTTP/1.").Trim().Replace("/", "\\");
-                        SendHeadData(TempClient, HeadFileName);
+                        SendHeadData(TempClient);
                     }
                     else if (Request.ToUpper().StartsWith("GET /") && Request.ToUpper().IndexOf("HTTP/1.") > -1)
                     {
@@ -160,14 +138,21 @@ namespace DLNAPlayer
                             TempFileName = DecodeUrl(TempFileName);
                             if (Request.ToLower().IndexOf("range: ") > -1)
                             {
-                                string Range = Request.ToLower().ChopOffBefore("range: ").ChopOffAfter("-").ChopOffAfter(Environment.NewLine).Replace("bytes=", "");
-                                long.TryParse(Range, out TempRange);
+                                string[] Range = Request.ToLower().ChopOffBefore("range: ").ChopOffAfter(Environment.NewLine).Replace("bytes=", "").Split('-');
+                                if (!String.IsNullOrEmpty(Range[0]))
+                                    long.TryParse(Range[0], out TempStartRange);
+                                else
+                                    TempStartRange = 0;
+                                if (!String.IsNullOrEmpty(Range[1]))
+                                    long.TryParse(Range[1], out TempEndRange);
+                                else
+                                    TempEndRange = 0;
+
                             }
                             else
-                                TempRange = 0;
+                                TempStartRange = 0;
                             Thread THStream = new Thread(StreamFile);
-                            if (ClientCount == 0)
-                                THStream.Start();
+                            THStream.Start();
                         }
                         catch { }
                     }
@@ -190,46 +175,26 @@ namespace DLNAPlayer
 
         private void StreamFile()
         {//Streams a movie using ranges and runs on it's own thread
-
-            ClientCount++;
             try
             {
-                long ChunkSize = 500000;
-                long Range = TempRange;
-                long BytesSent = 0;
                 long ByteToSend = 1;
                 string FileName = TempFileName.ToLower();
                 string ContentType = GetContentType(FileName);
                 Socket Client = this.TempClient;
                 this.TempClient = null;
-                string Reply = ContentString(Range, ContentType, FS.Length);
+                string Reply = ContentString(TempStartRange, TempEndRange, ContentType, FS.Length);
                 Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
-                byte[] Buf = new byte[ChunkSize];
-                if (FS.CanSeek)
-                    FS.Seek(Range, SeekOrigin.Begin);
-                BytesSent = Range;
-                while (this.Running && Client.Connected && ByteToSend > 0)
-                {//Keep looping untill all the data is sent or the connection is dropped by the client
-                    LoopCount++;
-                    ByteToSend = FS.Length - BytesSent;
-                    if (ByteToSend > ChunkSize) ByteToSend = ChunkSize;
-                    long BytesLeftToSend = FS.Length - BytesSent;
-                    if (BytesSent + ChunkSize > FS.Length)
-                        ChunkSize = FS.Length - BytesSent;
-                    Buf = new byte[ByteToSend];
-                    FS.Read(Buf, 0, Buf.Length);
-                    BytesSent += Buf.Length;
-                    if (Client.Connected)
-                    {
-                        try { Client.Send(Buf); Thread.Sleep(100); }
-                        catch { ByteToSend = 0; }//Force an exit}
-                    }
-                }
+                FS.Seek(TempStartRange, SeekOrigin.Begin);
+                if (TempEndRange != 0)
+                    ByteToSend = TempEndRange - TempStartRange;
+                else
+                    ByteToSend = FS.Length - TempStartRange;
+                byte[] Buf = new byte[ByteToSend];
+                FS.Read(Buf, 0, Buf.Length);
+                Client.Send(Buf); 
                 Client.Close();
             }
             catch { }
-            ClientCount--;
-
         }
     }
 }

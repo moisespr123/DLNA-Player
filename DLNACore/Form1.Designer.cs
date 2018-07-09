@@ -51,17 +51,25 @@
             this.ClearQueue = new System.Windows.Forms.Button();
             this.Stop = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cloudToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.googleDriveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ScanRenderers
             // 
             this.ScanRenderers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScanRenderers.Location = new System.Drawing.Point(3, 454);
+            this.ScanRenderers.Location = new System.Drawing.Point(3, 430);
             this.ScanRenderers.Name = "ScanRenderers";
             this.ScanRenderers.Size = new System.Drawing.Size(239, 23);
             this.ScanRenderers.TabIndex = 0;
@@ -72,7 +80,7 @@
             // PlayBtn
             // 
             this.PlayBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PlayBtn.Location = new System.Drawing.Point(138, 480);
+            this.PlayBtn.Location = new System.Drawing.Point(138, 456);
             this.PlayBtn.Name = "PlayBtn";
             this.PlayBtn.Size = new System.Drawing.Size(75, 49);
             this.PlayBtn.TabIndex = 2;
@@ -83,7 +91,7 @@
             // Pause
             // 
             this.Pause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Pause.Location = new System.Drawing.Point(219, 480);
+            this.Pause.Location = new System.Drawing.Point(219, 456);
             this.Pause.Name = "Pause";
             this.Pause.Size = new System.Drawing.Size(75, 49);
             this.Pause.TabIndex = 3;
@@ -99,7 +107,7 @@
             this.MediaRenderers.FormattingEnabled = true;
             this.MediaRenderers.Location = new System.Drawing.Point(3, 28);
             this.MediaRenderers.Name = "MediaRenderers";
-            this.MediaRenderers.Size = new System.Drawing.Size(239, 420);
+            this.MediaRenderers.Size = new System.Drawing.Size(239, 394);
             this.MediaRenderers.TabIndex = 4;
             // 
             // label1
@@ -128,7 +136,7 @@
             this.MediaFiles.FormattingEnabled = true;
             this.MediaFiles.Location = new System.Drawing.Point(6, 28);
             this.MediaFiles.Name = "MediaFiles";
-            this.MediaFiles.Size = new System.Drawing.Size(999, 446);
+            this.MediaFiles.Size = new System.Drawing.Size(999, 420);
             this.MediaFiles.TabIndex = 7;
             this.MediaFiles.DoubleClick += new System.EventHandler(this.MediaFiles_DoubleClick);
             // 
@@ -140,12 +148,12 @@
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel2, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1271, 542);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1271, 518);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // panel1
@@ -159,13 +167,13 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(245, 536);
+            this.panel1.Size = new System.Drawing.Size(245, 512);
             this.panel1.TabIndex = 0;
             // 
             // ApplyServerIP
             // 
             this.ApplyServerIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyServerIP.Location = new System.Drawing.Point(167, 504);
+            this.ApplyServerIP.Location = new System.Drawing.Point(167, 480);
             this.ApplyServerIP.Name = "ApplyServerIP";
             this.ApplyServerIP.Size = new System.Drawing.Size(75, 23);
             this.ApplyServerIP.TabIndex = 9;
@@ -177,7 +185,7 @@
             // 
             this.IPandPortTxt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.IPandPortTxt.Location = new System.Drawing.Point(3, 506);
+            this.IPandPortTxt.Location = new System.Drawing.Point(3, 482);
             this.IPandPortTxt.Name = "IPandPortTxt";
             this.IPandPortTxt.Size = new System.Drawing.Size(158, 20);
             this.IPandPortTxt.TabIndex = 8;
@@ -186,7 +194,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 490);
+            this.label3.Location = new System.Drawing.Point(3, 466);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(148, 13);
             this.label3.TabIndex = 7;
@@ -209,14 +217,14 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(254, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1014, 536);
+            this.panel2.Size = new System.Drawing.Size(1014, 512);
             this.panel2.TabIndex = 1;
             // 
             // TrackPositionLabel
             // 
             this.TrackPositionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.TrackPositionLabel.AutoSize = true;
-            this.TrackPositionLabel.Location = new System.Drawing.Point(627, 490);
+            this.TrackPositionLabel.Location = new System.Drawing.Point(627, 466);
             this.TrackPositionLabel.Name = "TrackPositionLabel";
             this.TrackPositionLabel.Size = new System.Drawing.Size(49, 13);
             this.TrackPositionLabel.TabIndex = 15;
@@ -226,7 +234,7 @@
             // 
             this.trackProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackProgress.Location = new System.Drawing.Point(682, 484);
+            this.trackProgress.Location = new System.Drawing.Point(682, 460);
             this.trackProgress.Name = "trackProgress";
             this.trackProgress.Size = new System.Drawing.Size(220, 45);
             this.trackProgress.TabIndex = 14;
@@ -236,7 +244,7 @@
             // 
             this.AboutLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AboutLink.AutoSize = true;
-            this.AboutLink.Location = new System.Drawing.Point(970, 514);
+            this.AboutLink.Location = new System.Drawing.Point(970, 490);
             this.AboutLink.Name = "AboutLink";
             this.AboutLink.Size = new System.Drawing.Size(35, 13);
             this.AboutLink.TabIndex = 13;
@@ -247,7 +255,7 @@
             // NextButton
             // 
             this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NextButton.Location = new System.Drawing.Point(462, 480);
+            this.NextButton.Location = new System.Drawing.Point(462, 456);
             this.NextButton.Name = "NextButton";
             this.NextButton.Size = new System.Drawing.Size(75, 49);
             this.NextButton.TabIndex = 12;
@@ -258,7 +266,7 @@
             // PreviousButton
             // 
             this.PreviousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PreviousButton.Location = new System.Drawing.Point(381, 480);
+            this.PreviousButton.Location = new System.Drawing.Point(381, 456);
             this.PreviousButton.Name = "PreviousButton";
             this.PreviousButton.Size = new System.Drawing.Size(75, 49);
             this.PreviousButton.TabIndex = 11;
@@ -270,7 +278,7 @@
             // 
             this.TrackDurationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.TrackDurationLabel.AutoSize = true;
-            this.TrackDurationLabel.Location = new System.Drawing.Point(908, 490);
+            this.TrackDurationLabel.Location = new System.Drawing.Point(908, 466);
             this.TrackDurationLabel.Name = "TrackDurationLabel";
             this.TrackDurationLabel.Size = new System.Drawing.Size(49, 13);
             this.TrackDurationLabel.TabIndex = 10;
@@ -279,7 +287,7 @@
             // ClearQueue
             // 
             this.ClearQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ClearQueue.Location = new System.Drawing.Point(7, 480);
+            this.ClearQueue.Location = new System.Drawing.Point(7, 456);
             this.ClearQueue.Name = "ClearQueue";
             this.ClearQueue.Size = new System.Drawing.Size(88, 49);
             this.ClearQueue.TabIndex = 9;
@@ -290,7 +298,7 @@
             // Stop
             // 
             this.Stop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Stop.Location = new System.Drawing.Point(300, 480);
+            this.Stop.Location = new System.Drawing.Point(300, 456);
             this.Stop.Name = "Stop";
             this.Stop.Size = new System.Drawing.Size(75, 49);
             this.Stop.TabIndex = 8;
@@ -302,6 +310,60 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.cloudToolStripMenuItem,
+            this.helpToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1271, 24);
+            this.menuStrip1.TabIndex = 9;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // cloudToolStripMenuItem
+            // 
+            this.cloudToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.googleDriveToolStripMenuItem});
+            this.cloudToolStripMenuItem.Name = "cloudToolStripMenuItem";
+            this.cloudToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
+            this.cloudToolStripMenuItem.Text = "Cloud";
+            // 
+            // googleDriveToolStripMenuItem
+            // 
+            this.googleDriveToolStripMenuItem.Name = "googleDriveToolStripMenuItem";
+            this.googleDriveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.googleDriveToolStripMenuItem.Text = "Google Drive";
+            this.googleDriveToolStripMenuItem.Click += new System.EventHandler(this.googleDriveToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.readmeToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // readmeToolStripMenuItem
+            // 
+            this.readmeToolStripMenuItem.Name = "readmeToolStripMenuItem";
+            this.readmeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.readmeToolStripMenuItem.Text = "Readme";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -309,6 +371,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1271, 542);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "DLNA Player";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -320,7 +384,10 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -331,7 +398,6 @@
         private System.Windows.Forms.Button Pause;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox MediaFiles;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
@@ -348,6 +414,14 @@
         private System.Windows.Forms.Label TrackPositionLabel;
         public System.Windows.Forms.ListBox MediaRenderers;
         private System.Windows.Forms.Timer timer1;
+        public System.Windows.Forms.ListBox MediaFiles;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cloudToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem googleDriveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem readmeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

@@ -20,6 +20,7 @@ namespace DLNAPlayer
         private static int trackNum = -1;
         private static bool paused = false;
         private static List<String> MediaFileLocation = new List<string> { };
+        private static List<int> MediaFileLocationType = new List<int> { };
         private void CmdSSDP_Click(object sender, EventArgs e)
         {
             Thread TH = new Thread(() =>
@@ -61,12 +62,12 @@ namespace DLNAPlayer
         {
             if (MediaFiles.SelectedIndex != -1)
             {
-                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex]);
+                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex]);
                 trackNum = MediaFiles.SelectedIndex;
             }
             else if (MediaFiles.Items.Count > 0)
             {
-                LoadFile(MediaFileLocation[0]);
+                LoadFile(MediaFileLocation[0], MediaFileLocationType[MediaFiles.SelectedIndex]);
                 trackNum = 0;
                 MediaFiles.SelectedIndex = 0;
             }
@@ -77,6 +78,7 @@ namespace DLNAPlayer
         {
             MediaFiles.Items.Clear();
             MediaFileLocation.Clear();
+            MediaFileLocationType.Clear();
             trackNum = -1;
         }
 
@@ -86,8 +88,7 @@ namespace DLNAPlayer
             foreach (string path in filepath)
                 if (!Directory.Exists(path))
                 {
-                    MediaFileLocation.Add(path);
-                    MediaFiles.Items.Add(Path.GetFileName(path));
+                    addToList(Path.GetFileName(path), path, 1);
                 }
         }
 
@@ -115,10 +116,10 @@ namespace DLNAPlayer
 
         private void MediaFiles_DoubleClick(object sender, EventArgs e)
         {
-            LoadFile(MediaFileLocation[MediaFiles.SelectedIndex]);
+            LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex]);
             trackNum = MediaFiles.SelectedIndex;
         }
-        private void LoadFile(string file_to_play)
+        private void LoadFile(string file_to_play, int location_type)
         {
             Thread TH = new Thread(() =>
             {
@@ -131,10 +132,13 @@ namespace DLNAPlayer
                         {
                             if (timer1.Enabled) timer1.Stop();
                             Device.StopPlay();
-                            FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                            MServer.FS = new MemoryStream();
-                            MediaFile.CopyTo(MServer.FS);
-                            MediaFile.Close();
+                            if (location_type == 1) //local file 
+                            {
+                                FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                                MServer.FS = new MemoryStream();
+                                MediaFile.CopyTo(MServer.FS);
+                                MediaFile.Close();
+                            }
                             Thread.Sleep(100);
                             string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file");
                             if (Reply == "OK")
@@ -207,7 +211,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum > 0)
             {
-                LoadFile(MediaFileLocation[trackNum - 1]);
+                LoadFile(MediaFileLocation[trackNum - 1], MediaFileLocationType[MediaFiles.SelectedIndex]);
                 MediaFiles.SelectedIndex = trackNum - 1;
                 trackNum--;
             }
@@ -222,7 +226,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum < MediaFiles.Items.Count - 1)
             {
-                LoadFile(MediaFileLocation[trackNum + 1]);
+                LoadFile(MediaFileLocation[trackNum + 1], MediaFileLocationType[MediaFiles.SelectedIndex]);
                 MediaFiles.SelectedIndex = trackNum + 1;
                 trackNum++;
             }
@@ -295,6 +299,25 @@ namespace DLNAPlayer
                 });
                 TH.Start();
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+        public void addToList(string item, string location, int type)
+        {
+            MediaFiles.Items.Add(item);
+            MediaFileLocation.Add(location);
+            MediaFileLocationType.Add(type);
+
+        }
+
+        private void googleDriveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GDriveForm DriveForm = new GDriveForm();
+            DriveForm.Owner = this;
+            DriveForm.Show();
         }
     }
 }
