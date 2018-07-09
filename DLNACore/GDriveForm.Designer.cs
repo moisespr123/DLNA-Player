@@ -30,15 +30,15 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.FoldersListBox = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.FoldersListBox = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.AddSelected = new System.Windows.Forms.Button();
+            this.AddAll = new System.Windows.Forms.Button();
             this.FilesListBox = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.AddAll = new System.Windows.Forms.Button();
-            this.AddSelected = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -72,38 +72,6 @@
             this.panel1.Size = new System.Drawing.Size(394, 444);
             this.panel1.TabIndex = 0;
             // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.AddSelected);
-            this.panel2.Controls.Add(this.AddAll);
-            this.panel2.Controls.Add(this.FilesListBox);
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(403, 3);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(394, 444);
-            this.panel2.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(44, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Folders:";
-            // 
-            // FoldersListBox
-            // 
-            this.FoldersListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.FoldersListBox.FormattingEnabled = true;
-            this.FoldersListBox.Location = new System.Drawing.Point(9, 22);
-            this.FoldersListBox.Name = "FoldersListBox";
-            this.FoldersListBox.Size = new System.Drawing.Size(382, 381);
-            this.FoldersListBox.TabIndex = 1;
-            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -123,6 +91,60 @@
             this.button2.TabIndex = 3;
             this.button2.Text = "Go to Root";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // FoldersListBox
+            // 
+            this.FoldersListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FoldersListBox.FormattingEnabled = true;
+            this.FoldersListBox.Location = new System.Drawing.Point(9, 22);
+            this.FoldersListBox.Name = "FoldersListBox";
+            this.FoldersListBox.Size = new System.Drawing.Size(382, 381);
+            this.FoldersListBox.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Folders:";
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.AddSelected);
+            this.panel2.Controls.Add(this.AddAll);
+            this.panel2.Controls.Add(this.FilesListBox);
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(403, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(394, 444);
+            this.panel2.TabIndex = 1;
+            // 
+            // AddSelected
+            // 
+            this.AddSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddSelected.Enabled = false;
+            this.AddSelected.Location = new System.Drawing.Point(6, 412);
+            this.AddSelected.Name = "AddSelected";
+            this.AddSelected.Size = new System.Drawing.Size(182, 23);
+            this.AddSelected.TabIndex = 6;
+            this.AddSelected.Text = "Add Selected Files";
+            this.AddSelected.UseVisualStyleBackColor = true;
+            // 
+            // AddAll
+            // 
+            this.AddAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddAll.Location = new System.Drawing.Point(206, 412);
+            this.AddAll.Name = "AddAll";
+            this.AddAll.Size = new System.Drawing.Size(182, 23);
+            this.AddAll.TabIndex = 4;
+            this.AddAll.Text = "Add All Files";
+            this.AddAll.UseVisualStyleBackColor = true;
             // 
             // FilesListBox
             // 
@@ -144,27 +166,6 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Files:";
             // 
-            // AddAll
-            // 
-            this.AddAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddAll.Location = new System.Drawing.Point(206, 412);
-            this.AddAll.Name = "AddAll";
-            this.AddAll.Size = new System.Drawing.Size(182, 23);
-            this.AddAll.TabIndex = 4;
-            this.AddAll.Text = "Add All Files";
-            this.AddAll.UseVisualStyleBackColor = true;
-            // 
-            // AddSelected
-            // 
-            this.AddSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddSelected.Enabled = false;
-            this.AddSelected.Location = new System.Drawing.Point(6, 412);
-            this.AddSelected.Name = "AddSelected";
-            this.AddSelected.Size = new System.Drawing.Size(182, 23);
-            this.AddSelected.TabIndex = 6;
-            this.AddSelected.Text = "Add Selected Files";
-            this.AddSelected.UseVisualStyleBackColor = true;
-            // 
             // GDriveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -173,6 +174,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "GDriveForm";
             this.Text = "Google Drive Browser";
+            this.Load += new System.EventHandler(this.GDriveForm_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
