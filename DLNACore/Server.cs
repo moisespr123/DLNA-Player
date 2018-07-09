@@ -147,10 +147,12 @@ namespace DLNAPlayer
                                     long.TryParse(Range[1], out TempEndRange);
                                 else
                                     TempEndRange = 0;
-
                             }
                             else
+                            {
                                 TempStartRange = 0;
+                                TempEndRange = FS.Length;
+                            }
                             Thread THStream = new Thread(StreamFile);
                             THStream.Start();
                         }
@@ -174,7 +176,7 @@ namespace DLNAPlayer
         }
 
         private void StreamFile()
-        {//Streams a movie using ranges and runs on it's own thread
+        {//Streams using ranges and runs on it's own thread
             try
             {
                 long ByteToSend = 1;
@@ -185,13 +187,10 @@ namespace DLNAPlayer
                 string Reply = ContentString(TempStartRange, TempEndRange, ContentType, FS.Length);
                 Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
                 FS.Seek(TempStartRange, SeekOrigin.Begin);
-                if (TempEndRange != 0)
-                    ByteToSend = TempEndRange - TempStartRange;
-                else
-                    ByteToSend = FS.Length - TempStartRange;
+                ByteToSend = TempEndRange - TempStartRange;
                 byte[] Buf = new byte[ByteToSend];
                 FS.Read(Buf, 0, Buf.Length);
-                Client.Send(Buf); 
+                Client.Send(Buf);
                 Client.Close();
             }
             catch { }
