@@ -137,6 +137,7 @@
             this.AddSelected.TabIndex = 6;
             this.AddSelected.Text = "Add Selected Files";
             this.AddSelected.UseVisualStyleBackColor = true;
+            this.AddSelected.Click += new System.EventHandler(this.AddSelected_Click);
             // 
             // AddAll
             // 
@@ -147,6 +148,7 @@
             this.AddAll.TabIndex = 4;
             this.AddAll.Text = "Add All Files";
             this.AddAll.UseVisualStyleBackColor = true;
+            this.AddAll.Click += new System.EventHandler(this.AddAll_Click);
             // 
             // FilesListBox
             // 
@@ -158,6 +160,7 @@
             this.FilesListBox.Name = "FilesListBox";
             this.FilesListBox.Size = new System.Drawing.Size(382, 381);
             this.FilesListBox.TabIndex = 5;
+            this.FilesListBox.SelectedIndexChanged += new System.EventHandler(this.FilesListBox_SelectedIndexChanged);
             // 
             // label2
             // 

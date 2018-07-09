@@ -20,7 +20,7 @@ namespace DLNAPlayer
           
         private void button1_Click(object sender, EventArgs e)
         {
-            // Form1 test = (Form1)this.Owner;
+            // 
             // test.addToList("test");
         }
 
@@ -48,9 +48,12 @@ namespace DLNAPlayer
                 {
                     foreach (string item in drive.FileList)
                     {
-                        FilesListBox .Items.Add(item);
+                        FilesListBox.Items.Add(item);
                     }
+                    AddAll.Enabled = true;
                 }
+                else
+                    AddAll.Enabled = false;
                 if (location == "root")
                     GoBackButton.Enabled = false;
                 else
@@ -76,6 +79,30 @@ namespace DLNAPlayer
         {
             if (FoldersListBox.SelectedIndex > -1)
                 PopulateListBoxes(drive, drive.FolderListID[FoldersListBox.SelectedIndex]);
+        }
+
+        private void FilesListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (FilesListBox.SelectedIndex > -1)
+                AddSelected.Enabled = true;
+            else
+                AddSelected.Enabled = false;
+        }
+
+        private void AddAll_Click(object sender, EventArgs e)
+        {
+            if (FilesListBox.Items.Count > 0)
+                foreach (string item in FilesListBox.Items)
+                {
+                    Form1 MainForm = (Form1)this.Owner;
+                    MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
+                }
+        }
+
+        private void AddSelected_Click(object sender, EventArgs e)
+        {
+            Form1 MainForm = (Form1)this.Owner;
+            MainForm.addToList(FilesListBox.SelectedItem.ToString(), drive.FileListID[FilesListBox.SelectedIndex], 2);
         }
     }
 }
