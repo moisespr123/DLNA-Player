@@ -315,8 +315,10 @@ namespace DLNAPlayer
 
         private void googleDriveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GDriveForm DriveForm = new GDriveForm();
-            DriveForm.Owner = this;
+            GDriveForm DriveForm = new GDriveForm()
+            {
+                Owner = this
+            };
             DriveForm.Show();
         }
     }

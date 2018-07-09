@@ -24,6 +24,7 @@ namespace DLNAPlayer
         public List<string> FileList = new List<string> { };
         public List<string> FileListID = new List<string> { };
         public string currentFolder = "";
+        public string previousFolder = "";
         public GDrive()
         {
             UserCredential credential;
@@ -67,9 +68,10 @@ namespace DLNAPlayer
                             FileListID.Add(file.Id);
                         }
                     }
+                    PageToken1 = files.NextPageToken;
                 }
                 catch { }
-            } while (PageToken1 != string.Empty);
+            } while (PageToken1 != null);
             string PageToken2 = string.Empty;
             do
             {
@@ -89,9 +91,12 @@ namespace DLNAPlayer
                             FolderListID.Add(file.Id);
                         }
                     }
+                    PageToken2 = files.NextPageToken;
                 }
                 catch { }
-            } while (PageToken2 != string.Empty);
+            } while (PageToken2 != null);
+            previousFolder = currentFolder;
+            currentFolder = folderId;
         }
     }
 }

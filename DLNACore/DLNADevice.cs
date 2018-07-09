@@ -34,8 +34,10 @@ namespace DLNA
         public static Socket MakeSocket(string ip, int port)
         {//Just returns a TCP socket ready to use
             IPEndPoint IPWeb = new IPEndPoint(IPAddress.Parse(ip), port);
-            Socket SocWeb = new Socket(IPWeb.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            SocWeb.ReceiveTimeout = 6000;
+            Socket SocWeb = new Socket(IPWeb.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp)
+            {
+                ReceiveTimeout = 6000,
+            };
             SocWeb.Connect(IPWeb);
             return SocWeb;
         }

@@ -30,8 +30,8 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.GoBackButton = new System.Windows.Forms.Button();
+            this.GoToRootButton = new System.Windows.Forms.Button();
             this.FoldersListBox = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -62,8 +62,8 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.GoBackButton);
+            this.panel1.Controls.Add(this.GoToRootButton);
             this.panel1.Controls.Add(this.FoldersListBox);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -72,26 +72,27 @@
             this.panel1.Size = new System.Drawing.Size(394, 444);
             this.panel1.TabIndex = 0;
             // 
-            // button1
+            // GoBackButton
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(209, 412);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(182, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Go Back";
-            this.button1.UseVisualStyleBackColor = true;
+            this.GoBackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.GoBackButton.Location = new System.Drawing.Point(209, 412);
+            this.GoBackButton.Name = "GoBackButton";
+            this.GoBackButton.Size = new System.Drawing.Size(182, 23);
+            this.GoBackButton.TabIndex = 2;
+            this.GoBackButton.Text = "Go Back";
+            this.GoBackButton.UseVisualStyleBackColor = true;
+            this.GoBackButton.Click += new System.EventHandler(this.GoBack_Click);
             // 
-            // button2
+            // GoToRootButton
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button2.Location = new System.Drawing.Point(9, 412);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(194, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Go to Root";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.GoToRootButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.GoToRootButton.Location = new System.Drawing.Point(9, 412);
+            this.GoToRootButton.Name = "GoToRootButton";
+            this.GoToRootButton.Size = new System.Drawing.Size(194, 23);
+            this.GoToRootButton.TabIndex = 3;
+            this.GoToRootButton.Text = "Go to Root";
+            this.GoToRootButton.UseVisualStyleBackColor = true;
+            this.GoToRootButton.Click += new System.EventHandler(this.GoToRoot_Click);
             // 
             // FoldersListBox
             // 
@@ -103,6 +104,7 @@
             this.FoldersListBox.Name = "FoldersListBox";
             this.FoldersListBox.Size = new System.Drawing.Size(382, 381);
             this.FoldersListBox.TabIndex = 1;
+            this.FoldersListBox.DoubleClick += new System.EventHandler(this.FoldersListBox_DoubleClick);
             // 
             // label1
             // 
@@ -188,8 +190,8 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button GoToRootButton;
+        private System.Windows.Forms.Button GoBackButton;
         private System.Windows.Forms.ListBox FoldersListBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel2;
