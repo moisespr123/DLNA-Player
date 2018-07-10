@@ -19,10 +19,11 @@ namespace DLNAPlayer
         public List<string> FolderListID = new List<string> { };
         public List<string> FileList = new List<string> { };
         public List<string> FileListID = new List<string> { };
+        public List<string> previousFolder = new List<string> { };
         public bool connected = false;
         public string currentFolder = "";
         public string currentFolderName = "";
-        public string previousFolder = "";
+
         public GDrive()
         {
             UserCredential credential;
@@ -52,7 +53,7 @@ namespace DLNAPlayer
             }
         }
 
-        public void GetData(string folderId)
+        public void GetData(string folderId, bool goingBack = false)
         {
             FolderList.Clear();
             FolderListID.Clear();
@@ -106,11 +107,20 @@ namespace DLNAPlayer
                 }
                 catch { }
             } while (PageToken2 != null);
-            previousFolder = currentFolder;
+            if (!goingBack && folderId != "root")
+                previousFolder.Add(currentFolder);
             currentFolder = folderId;
             currentFolderName = GetFolderName(currentFolder);
         }
 
+        public void GoBack()
+        {
+            if (previousFolder.Count > 0)
+            {
+                GetData(previousFolder[previousFolder.Count - 1], true);
+                previousFolder.RemoveAt(previousFolder.Count - 1);
+            }
+        }
         private string GetFolderName(string Id)
         {
             try

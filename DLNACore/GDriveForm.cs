@@ -34,7 +34,10 @@ namespace DLNAPlayer
         }
         private void PopulateListBoxes(GDrive drive, string location = "root")
         {
-            drive.GetData(location);
+            if (location == "back")
+                drive.GoBack();
+            else
+                drive.GetData(location);
             FoldersListBox.Items.Clear();
             FilesListBox.Items.Clear();
             try
@@ -56,7 +59,7 @@ namespace DLNAPlayer
                 }
                 else
                     AddAll.Enabled = false;
-                if (location == "root")
+                if (drive.previousFolder.Count < 1)
                     GoBackButton.Enabled = false;
                 else
                     GoBackButton.Enabled = true;
@@ -75,7 +78,7 @@ namespace DLNAPlayer
 
         private void GoBack_Click(object sender, EventArgs e)
         {
-            PopulateListBoxes(drive, drive.previousFolder);
+            PopulateListBoxes(drive, "back");
         }
 
         private void FoldersListBox_DoubleClick(object sender, EventArgs e)
