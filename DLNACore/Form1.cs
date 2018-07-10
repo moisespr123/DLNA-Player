@@ -236,7 +236,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum < MediaFiles.Items.Count - 1)
             {
-                LoadFile(MediaFileLocation[trackNum + 1], MediaFileLocationType[trackNum + 1], MediaFiles.SelectedItem.ToString());
+                LoadFile(MediaFileLocation[trackNum + 1], MediaFileLocationType[trackNum + 1], MediaFiles.Items[trackNum + 1].ToString());
                 MediaFiles.ClearSelected();
                 MediaFiles.SelectedIndex = trackNum + 1;
                 trackNum++;
@@ -331,9 +331,9 @@ namespace DLNAPlayer
                 {
                     int firstItem = MediaFiles.SelectedIndices[0];
                     int lastItem = MediaFiles.SelectedIndices[MediaFiles.SelectedIndices.Count - 1];
-                    for(int i = lastItem; i >= firstItem; i--)
+                    if (trackNum >= firstItem) trackNum = firstItem - 1;
+                    for (int i = lastItem; i >= firstItem; i--)
                     {
-                        if (trackNum >= i) trackNum--;
                         MediaFiles.Items.RemoveAt(i);
                         MediaFileLocation.RemoveAt(i);
                         MediaFileLocationType.RemoveAt(i);
