@@ -63,12 +63,12 @@ namespace DLNAPlayer
         {
             if (MediaFiles.SelectedIndex != -1)
             {
-                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex]);
+                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex], MediaFiles.SelectedItem.ToString());
                 trackNum = MediaFiles.SelectedIndex;
             }
             else if (MediaFiles.Items.Count > 0)
             {
-                LoadFile(MediaFileLocation[0], MediaFileLocationType[0]);
+                LoadFile(MediaFileLocation[0], MediaFileLocationType[0], MediaFiles.Items[0].ToString());
                 trackNum = 0;
                 MediaFiles.SelectedIndex = 0;
             }
@@ -118,11 +118,11 @@ namespace DLNAPlayer
         private void MediaFiles_DoubleClick(object sender, EventArgs e)
         {
             if (MediaFiles.SelectedIndex > -1){
-                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex]);
+                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex], MediaFiles.SelectedItem.ToString());
                 trackNum = MediaFiles.SelectedIndex;
             }
         }
-        private void LoadFile(string file_to_play, int location_type)
+        private void LoadFile(string file_to_play, int location_type, string filename)
         {
             Thread TH = new Thread(() =>
             {
@@ -136,6 +136,7 @@ namespace DLNAPlayer
                             if (timer1.Enabled) timer1.Stop();
                             Device.StopPlay();
                             MServer.FS = new MemoryStream();
+                            MServer.Filename = filename;
                             if (location_type == 1) //local file 
                             {
                                 FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -219,7 +220,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum > 0)
             {
-                LoadFile(MediaFileLocation[trackNum - 1], MediaFileLocationType[MediaFiles.SelectedIndex]);
+                LoadFile(MediaFileLocation[trackNum - 1], MediaFileLocationType[MediaFiles.SelectedIndex], MediaFiles.SelectedItem.ToString());
                 MediaFiles.SelectedIndex = trackNum - 1;
                 trackNum--;
             }
@@ -234,7 +235,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum < MediaFiles.Items.Count - 1)
             {
-                LoadFile(MediaFileLocation[trackNum + 1], MediaFileLocationType[trackNum + 1]);
+                LoadFile(MediaFileLocation[trackNum + 1], MediaFileLocationType[trackNum + 1], MediaFiles.SelectedItem.ToString());
                 MediaFiles.SelectedIndex = trackNum + 1;
                 trackNum++;
             }
@@ -321,17 +322,19 @@ namespace DLNAPlayer
             DriveForm.Show();
         }
 
-        private void MediaFiles_KeyDown(object sender, KeyEventArgs e)
+        private void MediaFiles_KeyUp(object sender, KeyEventArgs e)
         {
             if (MediaFiles.SelectedIndex > -1)
                 if (e.KeyCode == Keys.Delete)
                 {
-                    foreach (int index in MediaFiles.SelectedIndices)
+                    int firstItem = MediaFiles.SelectedIndices[0];
+                    int lastItem = MediaFiles.SelectedIndices[MediaFiles.SelectedIndices.Count - 1];
+                    for(int i = lastItem; i >= firstItem; i--)
                     {
-                        if (trackNum == index) trackNum--;
-                        MediaFiles.Items.RemoveAt(index);
-                        MediaFileLocation.RemoveAt(index);
-                        MediaFileLocationType.RemoveAt(index);
+                        if (trackNum >= i) trackNum--;
+                        MediaFiles.Items.RemoveAt(i);
+                        MediaFileLocation.RemoveAt(i);
+                        MediaFileLocationType.RemoveAt(i);
                     }
                 }
         }

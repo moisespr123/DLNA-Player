@@ -136,10 +136,11 @@
             this.MediaFiles.FormattingEnabled = true;
             this.MediaFiles.Location = new System.Drawing.Point(6, 28);
             this.MediaFiles.Name = "MediaFiles";
+            this.MediaFiles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.MediaFiles.Size = new System.Drawing.Size(999, 420);
             this.MediaFiles.TabIndex = 7;
             this.MediaFiles.DoubleClick += new System.EventHandler(this.MediaFiles_DoubleClick);
-            this.MediaFiles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MediaFiles_KeyDown);
+            this.MediaFiles.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MediaFiles_KeyUp);
             // 
             // tableLayoutPanel1
             // 

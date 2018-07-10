@@ -21,7 +21,7 @@ namespace DLNAPlayer
         private long TempStartRange = 0; //Past to the client thread ready to service the request
         private long TempEndRange = 0; //Past to the client thread ready to service the request
         private Socket TempClient = null;  //Past to the client thread ready to service the request
-        private string TempFileName = "";  //Past to the client thread ready to service the request
+        public string Filename = "";  //Past to the client thread ready to service the request
 
         public MediaServer(string ip, int port)
         {//Our Contructor
@@ -134,8 +134,6 @@ namespace DLNAPlayer
                     {
                         try
                         {
-                            TempFileName = Request.ChopOffBefore("GET /").ChopOffAfter("HTTP/1.").Trim();
-                            TempFileName = DecodeUrl(TempFileName);
                             if (Request.ToLower().IndexOf("range: ") > -1)
                             {
                                 string[] Range = Request.ToLower().ChopOffBefore("range: ").ChopOffAfter(Environment.NewLine).Replace("bytes=", "").Split('-');
@@ -166,11 +164,12 @@ namespace DLNAPlayer
         }
         private string GetContentType(string FileName)
         {//Based on the file type we create our content type for the reply to the TV/DLNA device
-            string ContentType = "audio/mpeg";
+            string ContentType = "audio/flac";
             if (FileName.ToLower().EndsWith(".jpg")) ContentType = "image/jpg";
             else if (FileName.ToLower().EndsWith(".png")) ContentType = "image/png";
             else if (FileName.ToLower().EndsWith(".gif")) ContentType = "image/gif";
             else if (FileName.ToLower().EndsWith(".avi")) ContentType = "video/avi";
+            else if (FileName.ToLower().EndsWith(".flac")) ContentType = "audio/flac";
             if (FileName.ToLower().EndsWith(".mp4")) ContentType = "video/mp4";
             return ContentType;
         }
@@ -180,8 +179,7 @@ namespace DLNAPlayer
             try
             {
                 long ByteToSend = 1;
-                string FileName = TempFileName.ToLower();
-                string ContentType = GetContentType(FileName);
+                string ContentType = GetContentType(Filename);
                 Socket Client = this.TempClient;
                 this.TempClient = null;
                 string Reply = ContentString(TempStartRange, TempEndRange, ContentType, FS.Length);
