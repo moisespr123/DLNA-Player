@@ -162,6 +162,7 @@
             this.FilesListBox.Size = new System.Drawing.Size(382, 381);
             this.FilesListBox.TabIndex = 5;
             this.FilesListBox.SelectedIndexChanged += new System.EventHandler(this.FilesListBox_SelectedIndexChanged);
+            this.FilesListBox.DoubleClick += new System.EventHandler(this.FilesListBox_DoubleClick);
             // 
             // label2
             // 

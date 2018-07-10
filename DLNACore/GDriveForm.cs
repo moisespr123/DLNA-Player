@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -22,8 +23,14 @@ namespace DLNAPlayer
         private void GDriveForm_Load(object sender, EventArgs e)
         {
             drive = new GDrive();
-            PopulateListBoxes(drive);
-
+            if (drive.connected)
+                PopulateListBoxes(drive);
+            else
+            {
+                MessageBox.Show("client_secret.json file not found. Please follow Step 1 in this guide: https://developers.google.com/drive/v3/web/quickstart/dotnet" + Environment.NewLine + Environment.NewLine + "This file should be located in the folder where this software is located.");
+                Process.Start("https://developers.google.com/drive/v3/web/quickstart/dotnet");
+                Close();
+            }
         }
         private void PopulateListBoxes(GDrive drive, string location = "root")
         {
@@ -100,6 +107,15 @@ namespace DLNAPlayer
             Form1 MainForm = (Form1)this.Owner;
             foreach (string item in FilesListBox.SelectedItems)
                 MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
+        }
+
+        private void FilesListBox_DoubleClick(object sender, EventArgs e)
+        {
+            if (FilesListBox.SelectedIndex > -1)
+            {
+                Form1 MainForm = (Form1)this.Owner;
+                MainForm.addToList(FilesListBox.SelectedItem.ToString(), drive.FileListID[FilesListBox.SelectedIndex], 2);
+            }
         }
     }
 }

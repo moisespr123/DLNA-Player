@@ -19,23 +19,37 @@ namespace DLNAPlayer
         public List<string> FolderListID = new List<string> { };
         public List<string> FileList = new List<string> { };
         public List<string> FileListID = new List<string> { };
+        public bool connected = false;
         public string currentFolder = "";
         public string currentFolderName = "";
         public string previousFolder = "";
         public GDrive()
         {
             UserCredential credential;
-            using (var stream = new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+            try
             {
-                string credPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-                credPath = Path.Combine(credPath, ".credentials/DLNAPlayer.json");
-                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(GoogleClientSecrets.Load(stream).Secrets, Scopes, "user", CancellationToken.None, new FileDataStore(credPath, true)).Result;
+                if (File.Exists("client_secret.json"))
+                {
+                    using (var stream = new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+                    {
+                        string credPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+                        credPath = Path.Combine(credPath, ".credentials/DLNAPlayer.json");
+                        credential = GoogleWebAuthorizationBroker.AuthorizeAsync(GoogleClientSecrets.Load(stream).Secrets, Scopes, "user", CancellationToken.None, new FileDataStore(credPath, true)).Result;
+                    }
+                    service = new DriveService(new BaseClientService.Initializer()
+                    {
+                        HttpClientInitializer = credential,
+                        ApplicationName = SoftwareName,
+                    });
+                    connected = true;
+                }
+                else
+                    connected = false;
             }
-            service = new DriveService(new BaseClientService.Initializer()
+            catch
             {
-                HttpClientInitializer = credential,
-                ApplicationName = SoftwareName,
-            });
+                connected = false;
+            }
         }
 
         public void GetData(string folderId)
