@@ -139,6 +139,7 @@
             this.MediaFiles.Size = new System.Drawing.Size(999, 420);
             this.MediaFiles.TabIndex = 7;
             this.MediaFiles.DoubleClick += new System.EventHandler(this.MediaFiles_DoubleClick);
+            this.MediaFiles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MediaFiles_KeyDown);
             // 
             // tableLayoutPanel1
             // 
@@ -339,7 +340,7 @@
             // googleDriveToolStripMenuItem
             // 
             this.googleDriveToolStripMenuItem.Name = "googleDriveToolStripMenuItem";
-            this.googleDriveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.googleDriveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.googleDriveToolStripMenuItem.Text = "Google Drive";
             this.googleDriveToolStripMenuItem.Click += new System.EventHandler(this.googleDriveToolStripMenuItem_Click);
             // 
@@ -355,13 +356,13 @@
             // readmeToolStripMenuItem
             // 
             this.readmeToolStripMenuItem.Name = "readmeToolStripMenuItem";
-            this.readmeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.readmeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.readmeToolStripMenuItem.Text = "Readme";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.aboutToolStripMenuItem.Text = "About";
             // 
             // Form1

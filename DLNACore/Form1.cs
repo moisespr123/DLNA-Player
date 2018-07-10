@@ -67,7 +67,7 @@ namespace DLNAPlayer
             }
             else if (MediaFiles.Items.Count > 0)
             {
-                LoadFile(MediaFileLocation[0], MediaFileLocationType[MediaFiles.SelectedIndex]);
+                LoadFile(MediaFileLocation[0], MediaFileLocationType[0]);
                 trackNum = 0;
                 MediaFiles.SelectedIndex = 0;
             }
@@ -123,7 +123,7 @@ namespace DLNAPlayer
         {
             Thread TH = new Thread(() =>
             {
-                Invoke((MethodInvoker)delegate
+                Invoke((MethodInvoker)async delegate
                 {
                     if (MediaRenderers.SelectedIndex != -1)
                     {
@@ -132,12 +132,17 @@ namespace DLNAPlayer
                         {
                             if (timer1.Enabled) timer1.Stop();
                             Device.StopPlay();
+                            MServer.FS = new MemoryStream();
                             if (location_type == 1) //local file 
                             {
                                 FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                                MServer.FS = new MemoryStream();
                                 MediaFile.CopyTo(MServer.FS);
                                 MediaFile.Close();
+                            }
+                            else if (location_type == 2) //Google Drive file
+                            {
+                                GDrive drive = GDriveForm.drive;
+                                MServer.FS = await drive.DownloadFile(file_to_play);
                             }
                             Thread.Sleep(100);
                             string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file");
@@ -320,6 +325,19 @@ namespace DLNAPlayer
                 Owner = this
             };
             DriveForm.Show();
+        }
+
+        private void MediaFiles_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (MediaFiles.SelectedIndex > -1)
+                if (e.KeyCode == Keys.Delete)
+                {
+                    foreach (int index in MediaFiles.SelectedIndices)
+                    {
+                        if (trackNum == index) trackNum--;
+                        MediaFiles.Items.RemoveAt(index);
+                    }
+                }
         }
     }
 }

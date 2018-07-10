@@ -74,7 +74,7 @@
             // 
             // GoBackButton
             // 
-            this.GoBackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.GoBackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.GoBackButton.Location = new System.Drawing.Point(209, 412);
             this.GoBackButton.Name = "GoBackButton";
             this.GoBackButton.Size = new System.Drawing.Size(182, 23);
@@ -158,6 +158,7 @@
             this.FilesListBox.FormattingEnabled = true;
             this.FilesListBox.Location = new System.Drawing.Point(6, 22);
             this.FilesListBox.Name = "FilesListBox";
+            this.FilesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.FilesListBox.Size = new System.Drawing.Size(382, 381);
             this.FilesListBox.TabIndex = 5;
             this.FilesListBox.SelectedIndexChanged += new System.EventHandler(this.FilesListBox_SelectedIndexChanged);

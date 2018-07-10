@@ -12,7 +12,7 @@ namespace DLNAPlayer
 {
     public partial class GDriveForm : Form
     {
-        public GDrive drive;
+        public static GDrive drive;
         public GDriveForm()
         {
             InitializeComponent();
@@ -102,7 +102,8 @@ namespace DLNAPlayer
         private void AddSelected_Click(object sender, EventArgs e)
         {
             Form1 MainForm = (Form1)this.Owner;
-            MainForm.addToList(FilesListBox.SelectedItem.ToString(), drive.FileListID[FilesListBox.SelectedIndex], 2);
+            foreach (string item in FilesListBox.SelectedItems)
+                MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
         }
     }
 }

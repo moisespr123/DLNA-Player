@@ -98,5 +98,13 @@ namespace DLNAPlayer
             previousFolder = currentFolder;
             currentFolder = folderId;
         }
+        public async Task<MemoryStream> DownloadFile(string Id)
+        {
+            MemoryStream downloadedFile = new MemoryStream();
+            FilesResource.GetRequest getRequest = service.Files.Get(Id);
+            await getRequest.DownloadAsync(downloadedFile);
+            return downloadedFile;
+        }
+
     }
 }
