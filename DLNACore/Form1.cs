@@ -330,6 +330,8 @@ namespace DLNAPlayer
                     {
                         if (trackNum == index) trackNum--;
                         MediaFiles.Items.RemoveAt(index);
+                        MediaFileLocation.RemoveAt(index);
+                        MediaFileLocationType.RemoveAt(index);
                     }
                 }
         }
