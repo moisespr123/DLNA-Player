@@ -125,8 +125,19 @@ namespace DLNAPlayer
         {
 
             if (e.KeyCode == Keys.Enter)
+            {
                 if (FoldersListBox.SelectedIndex > -1)
+                {
                     PopulateListBoxes(drive, drive.FolderListID[FoldersListBox.SelectedIndex]);
+                }
+            }
+            else if (e.KeyCode == Keys.Back)
+            {
+                if (GoBackButton.Enabled)
+                {
+                    PopulateListBoxes(drive, "back");
+                }
+            }
         }
 
         private void FilesListBox_KeyDown(object sender, KeyEventArgs e)
