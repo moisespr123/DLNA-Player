@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using Google.Apis.Download;
 using System.IO;
 using System.Threading;
 
@@ -24,6 +20,7 @@ namespace DLNAPlayer
         public List<string> FileList = new List<string> { };
         public List<string> FileListID = new List<string> { };
         public string currentFolder = "";
+        public string currentFolderName = "";
         public string previousFolder = "";
         public GDrive()
         {
@@ -97,6 +94,21 @@ namespace DLNAPlayer
             } while (PageToken2 != null);
             previousFolder = currentFolder;
             currentFolder = folderId;
+            currentFolderName = GetFolderName(currentFolder);
+        }
+
+        private string GetFolderName(string Id)
+        {
+            try
+            {
+                FilesResource.GetRequest getRequest = service.Files.Get(Id);
+                Google.Apis.Drive.v3.Data.File folderName = getRequest.Execute();
+                return folderName.Name;
+            }
+            catch
+            {
+                return "Error retrieving folder name";
+            }
         }
         public async Task<MemoryStream> DownloadFile(string Id)
         {

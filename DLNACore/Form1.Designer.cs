@@ -44,7 +44,6 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.TrackPositionLabel = new System.Windows.Forms.Label();
             this.trackProgress = new System.Windows.Forms.TrackBar();
-            this.AboutLink = new System.Windows.Forms.LinkLabel();
             this.NextButton = new System.Windows.Forms.Button();
             this.PreviousButton = new System.Windows.Forms.Button();
             this.TrackDurationLabel = new System.Windows.Forms.Label();
@@ -53,6 +52,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cloudToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.googleDriveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -205,7 +205,6 @@
             // 
             this.panel2.Controls.Add(this.TrackPositionLabel);
             this.panel2.Controls.Add(this.trackProgress);
-            this.panel2.Controls.Add(this.AboutLink);
             this.panel2.Controls.Add(this.NextButton);
             this.panel2.Controls.Add(this.PreviousButton);
             this.panel2.Controls.Add(this.TrackDurationLabel);
@@ -240,18 +239,6 @@
             this.trackProgress.Size = new System.Drawing.Size(220, 45);
             this.trackProgress.TabIndex = 14;
             this.trackProgress.MouseUp += new System.Windows.Forms.MouseEventHandler(this.trackProgress_MouseUp);
-            // 
-            // AboutLink
-            // 
-            this.AboutLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AboutLink.AutoSize = true;
-            this.AboutLink.Location = new System.Drawing.Point(970, 490);
-            this.AboutLink.Name = "AboutLink";
-            this.AboutLink.Size = new System.Drawing.Size(35, 13);
-            this.AboutLink.TabIndex = 13;
-            this.AboutLink.TabStop = true;
-            this.AboutLink.Text = "About";
-            this.AboutLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutLink_LinkClicked);
             // 
             // NextButton
             // 
@@ -325,9 +312,18 @@
             // 
             // fileToolStripMenuItem
             // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFilesToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // openFilesToolStripMenuItem
+            // 
+            this.openFilesToolStripMenuItem.Name = "openFilesToolStripMenuItem";
+            this.openFilesToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.openFilesToolStripMenuItem.Text = "Open Files";
+            this.openFilesToolStripMenuItem.Click += new System.EventHandler(this.openFilesToolStripMenuItem_Click);
             // 
             // cloudToolStripMenuItem
             // 
@@ -358,12 +354,14 @@
             this.readmeToolStripMenuItem.Name = "readmeToolStripMenuItem";
             this.readmeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.readmeToolStripMenuItem.Text = "Readme";
+            this.readmeToolStripMenuItem.Click += new System.EventHandler(this.readmeToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -410,7 +408,6 @@
         private System.Windows.Forms.Label TrackDurationLabel;
         private System.Windows.Forms.Button NextButton;
         private System.Windows.Forms.Button PreviousButton;
-        private System.Windows.Forms.LinkLabel AboutLink;
         private System.Windows.Forms.TrackBar trackProgress;
         private System.Windows.Forms.Label TrackPositionLabel;
         public System.Windows.Forms.ListBox MediaRenderers;
@@ -423,6 +420,7 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem readmeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFilesToolStripMenuItem;
     }
 }
 

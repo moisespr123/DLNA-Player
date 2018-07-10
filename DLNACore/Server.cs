@@ -47,7 +47,7 @@ namespace DLNAPlayer
         private string ContentString(long StartRange, long EndRange, string ContentType, long FileLength)
         {//Builds up our HTTP reply string for byte-range requests
             string Reply = "";
-            Reply = "HTTP/1.1 206 Partial Content" + Environment.NewLine + "Server: VLC" + Environment.NewLine + "Content-Type: " + ContentType + Environment.NewLine;
+            Reply = "HTTP/1.1 206 Partial Content" + Environment.NewLine + "Server: DLNAPlayer" + Environment.NewLine + "Content-Type: " + ContentType + Environment.NewLine;
             Reply += "Accept-Ranges: bytes" + Environment.NewLine;
             Reply += "Date: " + GMTTime(DateTime.Now) + Environment.NewLine;
             if (StartRange == 0)
@@ -58,7 +58,7 @@ namespace DLNAPlayer
             else
             {
                 Reply += "Content-Length: " + (EndRange - StartRange) + Environment.NewLine;
-                Reply += "Content-Range: bytes " + StartRange + "-" + (EndRange - 1) + "/" + FileLength + Environment.NewLine;
+                Reply += "Content-Range: bytes " + StartRange + "-" + EndRange + "/" + FileLength + Environment.NewLine;
             }
             return Reply + Environment.NewLine;
         }

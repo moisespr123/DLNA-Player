@@ -5,6 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Xml;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace DLNAPlayer
 {
@@ -116,8 +117,10 @@ namespace DLNAPlayer
 
         private void MediaFiles_DoubleClick(object sender, EventArgs e)
         {
-            LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex]);
-            trackNum = MediaFiles.SelectedIndex;
+            if (MediaFiles.SelectedIndex > -1){
+                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex]);
+                trackNum = MediaFiles.SelectedIndex;
+            }
         }
         private void LoadFile(string file_to_play, int location_type)
         {
@@ -236,15 +239,6 @@ namespace DLNAPlayer
                 trackNum++;
             }
         }
-        private void AboutLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
-                "Version 0.1" + Environment.NewLine +
-                "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
-                "This software cointains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
-                "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
-                "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device");
-        }
 
         private async void timer1_Tick(object sender, EventArgs e)
         {
@@ -338,6 +332,37 @@ namespace DLNAPlayer
                         MediaFiles.Items.RemoveAt(index);
                     }
                 }
+        }
+
+        private void openFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog
+            {
+                Title = "Browse for media files",
+                FileName = "",
+                Filter = "Media files|*.*",
+                Multiselect = true,
+            };
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+                if (fileDialog.FileNames != null)
+                    foreach (string path in fileDialog.FileNames)
+                        if (!Directory.Exists(path))
+                            addToList(Path.GetFileName(path), path, 1);
+        }
+
+        private void readmeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/moisesmcardona/DLNA-Player/blob/master/README.md");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
+              "Version 0.2" + Environment.NewLine +
+              "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
+              "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
+              "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
+              "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device");
         }
     }
 }

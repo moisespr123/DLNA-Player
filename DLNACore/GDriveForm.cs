@@ -12,16 +12,11 @@ namespace DLNAPlayer
 {
     public partial class GDriveForm : Form
     {
+        private string formName = "Google Drive Browser";
         public static GDrive drive;
         public GDriveForm()
         {
             InitializeComponent();
-        }
-          
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // 
-            // test.addToList("test");
         }
 
         private void GDriveForm_Load(object sender, EventArgs e)
@@ -58,6 +53,7 @@ namespace DLNAPlayer
                     GoBackButton.Enabled = false;
                 else
                     GoBackButton.Enabled = true;
+                this.Text = formName + " - " + drive.currentFolderName;
             }
             catch
             {
