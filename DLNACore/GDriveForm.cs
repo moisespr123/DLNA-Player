@@ -120,5 +120,23 @@ namespace DLNAPlayer
                 MainForm.addToList(FilesListBox.SelectedItem.ToString(), drive.FileListID[FilesListBox.SelectedIndex], 2);
             }
         }
+
+        private void FoldersListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.Enter)
+                if (FoldersListBox.SelectedIndex > -1)
+                    PopulateListBoxes(drive, drive.FolderListID[FoldersListBox.SelectedIndex]);
+        }
+
+        private void FilesListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Form1 MainForm = (Form1)this.Owner;
+                foreach (string item in FilesListBox.SelectedItems)
+                    MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
+            }
+        }
     }
 }

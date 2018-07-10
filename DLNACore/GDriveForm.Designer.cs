@@ -105,6 +105,7 @@
             this.FoldersListBox.Size = new System.Drawing.Size(382, 381);
             this.FoldersListBox.TabIndex = 1;
             this.FoldersListBox.DoubleClick += new System.EventHandler(this.FoldersListBox_DoubleClick);
+            this.FoldersListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FoldersListBox_KeyDown);
             // 
             // label1
             // 
@@ -163,6 +164,7 @@
             this.FilesListBox.TabIndex = 5;
             this.FilesListBox.SelectedIndexChanged += new System.EventHandler(this.FilesListBox_SelectedIndexChanged);
             this.FilesListBox.DoubleClick += new System.EventHandler(this.FilesListBox_DoubleClick);
+            this.FilesListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FilesListBox_KeyDown);
             // 
             // label2
             // 
