@@ -59,7 +59,7 @@ namespace DLNAPlayer
             timer1.Interval = 500;
         }
 
-        private void CmdPlay_Click(object sender, EventArgs e)
+        private void Play()
         {
             if (MediaFiles.SelectedIndex != -1)
             {
@@ -73,6 +73,10 @@ namespace DLNAPlayer
                 MediaFiles.SelectedIndex = 0;
             }
 
+        }
+        private void CmdPlay_Click(object sender, EventArgs e)
+        {
+            Play();   
         }
 
         private void ClearQueue_Click(object sender, EventArgs e)
@@ -302,11 +306,7 @@ namespace DLNAPlayer
                 TH.Start();
             }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
+        
         public void addToList(string item, string location, int type)
         {
             MediaFiles.Items.Add(item);
@@ -338,6 +338,10 @@ namespace DLNAPlayer
                         MediaFileLocation.RemoveAt(i);
                         MediaFileLocationType.RemoveAt(i);
                     }
+                }
+                else if (e.KeyCode == Keys.Enter)
+                {
+                    Play();
                 }
         }
 
