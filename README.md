@@ -26,7 +26,7 @@ Additionally, you can play back music files stored in your Google Drive account:
 5. Browse your drive content. There are 3 methods to add files to the play queue: 1. Double click a file to add it, 2. Select several files using the SHIFT or CONTROL key, then press Add Selected Files, or 3. Press the Add All Files button
 6. Play back the files selecting a renderer device and double clicking the file to play or pressing the Play button in the main form.
 
-Tested using a HiBy R3 player Hi Res Player
+Tested using a HiBy R3 player Hi Res Player. Also works with foobar2000 using the DLNA plugin.
 
 Developed using the C# language, using Visual Studio 2017.
 
