@@ -263,7 +263,7 @@ namespace DLNAPlayer
                             string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
                             try
                             {
-                                if (trackDurationString != "NOT_IMPLEMENTED" && trackPositionString != "NOT_IMPLEMENTED")
+                                if (trackDurationString.Contains(":") && trackPositionString.Contains(":"))
                                 {
                                     TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
                                     TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
