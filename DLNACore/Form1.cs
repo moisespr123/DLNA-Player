@@ -143,6 +143,7 @@ namespace DLNAPlayer
         }
         private void LoadFile(string file_to_play, int location_type, string filename)
         {
+            int retries = 0;
             Thread TH = new Thread(() =>
             {
                 Invoke((MethodInvoker)async delegate
@@ -176,8 +177,16 @@ namespace DLNAPlayer
                             }
                             else
                             {
-                                MessageBox.Show("Error playing file");
-                                playing = false;
+                                if (retries == 0)
+                                {
+                                    LoadFile(file_to_play, location_type, filename);
+                                    retries++;
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Error playing file");
+                                    playing = false;
+                                }
                             }
                         }
                     }
@@ -297,10 +306,10 @@ namespace DLNAPlayer
                                     {
                                         TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
                                         TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
-                                        TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
                                         TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
                                         if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
                                         {
+                                            TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
                                             trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
                                             if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2)
                                             {
@@ -309,8 +318,12 @@ namespace DLNAPlayer
                                                 PlayNextTrack();
                                             }
                                         }
+                                        else
+                                        {
+                                            TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = ""; });
+                                        }
                                     }
-                                    catch { MessageBox.Show(trackDurationString); MessageBox.Show(trackPositionString); }
+                                    catch { }
                         }
                     }
                 });
