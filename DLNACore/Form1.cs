@@ -20,9 +20,11 @@ namespace DLNAPlayer
         private static int port = 9090;
         private static int trackNum = -1;
         private static bool paused = false;
+        private static bool playing = false;
         private static List<String> MediaFileLocation = new List<string> { };
         private static List<int> MediaFileLocationType = new List<int> { };
-        private void CmdSSDP_Click(object sender, EventArgs e)
+
+        private void ScanDLNARenderers()
         {
             Thread TH = new Thread(() =>
             {
@@ -51,6 +53,18 @@ namespace DLNAPlayer
             });
             TH.Start();
         }
+        private void CmdSSDP_Click(object sender, EventArgs e)
+        {
+            if (!playing)
+            {
+                ScanDLNARenderers();
+            }
+            else
+            {
+                Stop_Function();
+                ScanDLNARenderers();
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -76,7 +90,7 @@ namespace DLNAPlayer
         }
         private void CmdPlay_Click(object sender, EventArgs e)
         {
-            Play();   
+            Play();
         }
 
         private void ClearQueue_Click(object sender, EventArgs e)
@@ -121,7 +135,8 @@ namespace DLNAPlayer
 
         private void MediaFiles_DoubleClick(object sender, EventArgs e)
         {
-            if (MediaFiles.SelectedIndex > -1){
+            if (MediaFiles.SelectedIndex > -1)
+            {
                 LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex], MediaFiles.SelectedItem.ToString());
                 trackNum = MediaFiles.SelectedIndex;
             }
@@ -153,13 +168,17 @@ namespace DLNAPlayer
                                 MServer.FS = await drive.DownloadFile(file_to_play);
                             }
                             Thread.Sleep(100);
-                            string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/file");
+                            string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/" + MediaFiles.SelectedItem.ToString());
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
+                                playing = true;
                             }
                             else
+                            {
                                 MessageBox.Show("Error playing file");
+                                playing = false;
+                            }
                         }
                     }
                     else
@@ -200,7 +219,8 @@ namespace DLNAPlayer
             });
             TH.Start();
         }
-        private void Stop_Click(object sender, EventArgs e)
+
+        private void Stop_Function()
         {
             Thread TH = new Thread(() =>
             {
@@ -213,11 +233,16 @@ namespace DLNAPlayer
                         {
                             Device.StopPlay();
                             if (timer1.Enabled) timer1.Stop();
+                            playing = false;
                         }
                     }
                 });
             });
             TH.Start();
+        }
+        private void Stop_Click(object sender, EventArgs e)
+        {
+            Stop_Function();
         }
 
         private void PreviousButton_Click(object sender, EventArgs e)
@@ -245,6 +270,11 @@ namespace DLNAPlayer
                 MediaFiles.ClearSelected();
                 MediaFiles.SelectedIndex = trackNum;
             }
+            else
+            {
+                playing = false;
+                trackNum = -1;
+            }
         }
 
         private async void timer1_Tick(object sender, EventArgs e)
@@ -261,27 +291,26 @@ namespace DLNAPlayer
                             string info = Device.GetPosition();
                             string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
                             string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
-                            try
-                            {
+                            if (!trackDurationString.Contains("HTTP"))
                                 if (trackDurationString.Contains(":") && trackPositionString.Contains(":"))
-                                {
-                                    TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
-                                    TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
-                                    TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
-                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
-                                    if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
+                                    try
                                     {
-                                        trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
-                                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2)
+                                        TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
+                                        TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                                        TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
+                                        TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
+                                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
                                         {
-                                            Thread.Sleep(2000);
-                                            timer1.Stop();
-                                            PlayNextTrack();
+                                            trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
+                                            if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2)
+                                            {
+                                                Thread.Sleep(2000);
+                                                timer1.Stop();
+                                                PlayNextTrack();
+                                            }
                                         }
                                     }
-                                }
-                            }
-                            catch { }
+                                    catch { MessageBox.Show(trackDurationString); MessageBox.Show(trackPositionString); }
                         }
                     }
                 });
@@ -306,7 +335,7 @@ namespace DLNAPlayer
                 TH.Start();
             }
         }
-        
+
         public void addToList(string item, string location, int type)
         {
             MediaFiles.Items.Add(item);
@@ -369,7 +398,7 @@ namespace DLNAPlayer
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
-              "Version 0.2" + Environment.NewLine +
+              "Version 0.3" + Environment.NewLine +
               "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
               "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
               "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +

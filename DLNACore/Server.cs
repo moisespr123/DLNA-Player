@@ -169,8 +169,11 @@ namespace DLNAPlayer
             else if (FileName.ToLower().EndsWith(".png")) ContentType = "image/png";
             else if (FileName.ToLower().EndsWith(".gif")) ContentType = "image/gif";
             else if (FileName.ToLower().EndsWith(".avi")) ContentType = "video/avi";
+            else if (FileName.ToLower().EndsWith(".mp4")) ContentType = "video/mp4";
+            else if (FileName.ToLower().EndsWith(".m4a")) ContentType = "audio/mp4";
             else if (FileName.ToLower().EndsWith(".flac")) ContentType = "audio/flac";
-            if (FileName.ToLower().EndsWith(".mp4")) ContentType = "video/mp4";
+            else if (FileName.ToLower().EndsWith(".ogg") || FileName.ToLower().EndsWith(".opus")) ContentType = "audio/ogg";
+            else if (FileName.ToLower().EndsWith(".mp3")) ContentType = "audio/mpeg";
             return ContentType;
         }
 
@@ -186,6 +189,7 @@ namespace DLNAPlayer
                 Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
                 FS.Seek(TempStartRange, SeekOrigin.Begin);
                 ByteToSend = TempEndRange - TempStartRange;
+                if (ByteToSend < 0) ByteToSend = Math.Abs(ByteToSend);
                 byte[] Buf = new byte[ByteToSend];
                 FS.Read(Buf, 0, Buf.Length);
                 Client.Send(Buf);
