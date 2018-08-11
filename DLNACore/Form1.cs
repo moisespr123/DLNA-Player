@@ -385,6 +385,9 @@ namespace DLNAPlayer
                 {
                     Play();
                 }
+                else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
+                    for (int i = 0; i < MediaFiles.Items.Count; i++)
+                        MediaFiles.SetSelected(i, true);
         }
 
         private void openFilesToolStripMenuItem_Click(object sender, EventArgs e)

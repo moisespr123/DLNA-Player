@@ -142,12 +142,17 @@ namespace DLNAPlayer
 
         private void FilesListBox_KeyDown(object sender, KeyEventArgs e)
         {
+            
             if (e.KeyCode == Keys.Enter)
             {
                 Form1 MainForm = (Form1)this.Owner;
                 foreach (string item in FilesListBox.SelectedItems)
                     MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
             }
+            else if (e.Modifiers == Keys.Control  && e.KeyCode == Keys.A)
+                for (int i = 0; i < FilesListBox.Items.Count; i++)
+                    FilesListBox.SetSelected(i, true);
+            e.SuppressKeyPress = true;
         }
     }
 }
