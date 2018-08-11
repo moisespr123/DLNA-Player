@@ -172,6 +172,7 @@ namespace DLNAPlayer
             else if (FileName.ToLower().EndsWith(".mp4")) ContentType = "video/mp4";
             else if (FileName.ToLower().EndsWith(".m4a")) ContentType = "audio/mp4";
             else if (FileName.ToLower().EndsWith(".flac")) ContentType = "audio/flac";
+            else if (FileName.ToLower().EndsWith(".wav")) ContentType = "audio/wav";
             else if (FileName.ToLower().EndsWith(".ogg") || FileName.ToLower().EndsWith(".opus")) ContentType = "audio/ogg";
             else if (FileName.ToLower().EndsWith(".mp3")) ContentType = "audio/mpeg";
             return ContentType;

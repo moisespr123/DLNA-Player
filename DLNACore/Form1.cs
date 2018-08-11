@@ -168,6 +168,11 @@ namespace DLNAPlayer
                                 GDrive drive = GDriveForm.drive;
                                 MServer.FS = await drive.DownloadFile(file_to_play);
                             }
+                            else if (location_type == 3) //CD Drive Audio Track
+                            {
+                                AudioCD drive = CDDriveChooser.drive;
+                                MServer.FS = drive.getTrack(file_to_play);
+                            }
                             Thread.Sleep(100);
                             string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/" + MediaFiles.SelectedItem.ToString());
                             if (Reply == "OK")
@@ -379,6 +384,7 @@ namespace DLNAPlayer
                         MediaFiles.Items.RemoveAt(i);
                         MediaFileLocation.RemoveAt(i);
                         MediaFileLocationType.RemoveAt(i);
+                        
                     }
                 }
                 else if (e.KeyCode == Keys.Enter)
@@ -419,6 +425,15 @@ namespace DLNAPlayer
               "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
               "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
               "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device");
+        }
+
+        private void openAudioCDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CDDriveChooser driveChooser = new CDDriveChooser()
+            {
+                Owner = this
+            };
+            driveChooser.Show();
         }
     }
 }
