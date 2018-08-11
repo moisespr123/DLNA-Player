@@ -424,7 +424,8 @@ namespace DLNAPlayer
               "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
               "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
               "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
-              "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device");
+              "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device" + Environment.NewLine +
+              "C Sharp Ripper: https://www.codeproject.com/articles/5458/c-sharp-ripper");
         }
 
         private void openAudioCDToolStripMenuItem_Click(object sender, EventArgs e)

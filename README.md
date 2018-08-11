@@ -26,6 +26,13 @@ Additionally, you can play back music files stored in your Google Drive account:
 5. Browse your drive content. There are 3 methods to add files to the play queue: 1. Double click a file to add it, 2. Select several files using the SHIFT or CONTROL key, then press Add Selected Files, or 3. Press the Add All Files button
 6. Play back the files selecting a renderer device and double clicking the file to play or pressing the Play button in the main form.
 
+# Playing an Audio CD.
+1. Go to File -> Open Audio CD.
+2. Choose the drive letter.
+3. Press Open.
+4. Choose Renderer.
+5. Double click the track you want to play or press the "Play" button,
+
 Tested using a HiBy R3 player Hi Res Player. Also works with foobar2000 using the DLNA plugin.
 
 Developed using the C# language, using Visual Studio 2017.
@@ -33,3 +40,4 @@ Developed using the C# language, using Visual Studio 2017.
 Uses open source code from the following CodeProject projects:
 * [DLNAMediaServer](https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs)
 * [DLNACore](https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device)
+* [C Sharp Ripper](https://www.codeproject.com/articles/5458/c-sharp-ripper")

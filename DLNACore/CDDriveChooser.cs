@@ -34,14 +34,17 @@ namespace DLNAPlayer
         {
             if (driveComboBox.SelectedIndex > -1)
                 drive.AudioTracks.Clear();
-                if (drive.ready(driveComboBox.SelectedIndex))
-                    foreach (int item in drive.AudioTracks)
-                    {
-                        Form1 MainForm = (Form1)this.Owner;
-                        MainForm.addToList("Track " + item.ToString() + ".wav", item.ToString(), 3);
-                    }
-                else
-                    MessageBox.Show("The selected drive is not ready. Check if there's an Audio CD inserted");
+            if (drive.ready(driveComboBox.SelectedIndex))
+            {
+                foreach (int item in drive.AudioTracks)
+                {
+                    Form1 MainForm = (Form1)this.Owner;
+                    MainForm.addToList("Track " + item.ToString() + ".wav", item.ToString(), 3);
+                }
+                this.Close();
+            }
+            else
+                MessageBox.Show("The selected drive is not ready. Check if there's an Audio CD inserted");
         }
     }
 }
