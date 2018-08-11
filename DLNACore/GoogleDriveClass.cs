@@ -53,7 +53,7 @@ namespace DLNAPlayer
             }
         }
 
-        public void GetData(string folderId, bool goingBack = false)
+        public void GetData(string folderId, bool goingBack = false, bool refreshing = false)
         {
             FolderList.Clear();
             FolderListID.Clear();
@@ -107,8 +107,8 @@ namespace DLNAPlayer
                 }
                 catch { }
             } while (PageToken2 != null);
-            if (!goingBack && folderId != "root")
-                previousFolder.Add(currentFolder);
+            if (!refreshing && !goingBack && folderId != "root")
+                    previousFolder.Add(currentFolder);
             currentFolder = folderId;
             currentFolderName = GetFolderName(currentFolder);
         }
