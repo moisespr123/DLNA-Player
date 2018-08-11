@@ -23,6 +23,8 @@ namespace DLNAPlayer
         private static bool playing = false;
         private static List<String> MediaFileLocation = new List<string> { };
         private static List<int> MediaFileLocationType = new List<int> { };
+        private static MemoryStream NextTrack = new MemoryStream();
+        private static int trackLoaded = -1;
 
         private void ScanDLNARenderers()
         {
@@ -141,6 +143,41 @@ namespace DLNAPlayer
                 trackNum = MediaFiles.SelectedIndex;
             }
         }
+        private void LoadNextTrack(int item)
+        {
+            string file_to_play = MediaFileLocation[item];
+            int location_type = MediaFileLocationType[item];
+            Thread TH = new Thread(() =>
+            {
+                try
+                {
+                    Invoke((MethodInvoker)async delegate
+                    {
+                        NextTrack = new MemoryStream();
+                        if (location_type == 1) //local file 
+                        {
+                            FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                            MediaFile.CopyTo(NextTrack);
+                            MediaFile.Close();
+                        }
+                        else if (location_type == 2) //Google Drive file
+                        {
+                            GDrive drive = GDriveForm.drive;
+                            NextTrack = await drive.DownloadFile(file_to_play);
+                        }
+                        else if (location_type == 3) //CD Drive Audio Track
+                        {
+                            AudioCD drive = CDDriveChooser.drive;
+                            NextTrack = drive.getTrack(file_to_play);
+                        }
+                        trackLoaded = item;
+                    });
+                }
+                catch { }
+            });
+            TH.Start();
+        }
+
         private void LoadFile(string file_to_play, int location_type, string filename)
         {
             int retries = 0;
@@ -157,21 +194,29 @@ namespace DLNAPlayer
                             Device.StopPlay();
                             MServer.FS = new MemoryStream();
                             MServer.Filename = filename;
-                            if (location_type == 1) //local file 
+                            if (trackNum != trackLoaded)
                             {
-                                FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                                MediaFile.CopyTo(MServer.FS);
-                                MediaFile.Close();
+                                if (location_type == 1) //local file 
+                                {
+                                    FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                                    MediaFile.CopyTo(MServer.FS);
+                                    MediaFile.Close();
+                                }
+                                else if (location_type == 2) //Google Drive file
+                                {
+                                    GDrive drive = GDriveForm.drive;
+                                    MServer.FS = await drive.DownloadFile(file_to_play);
+                                }
+                                else if (location_type == 3) //CD Drive Audio Track
+                                {
+                                    AudioCD drive = CDDriveChooser.drive;
+                                    MServer.FS = drive.getTrack(file_to_play);
+                                }
                             }
-                            else if (location_type == 2) //Google Drive file
+                            else
                             {
-                                GDrive drive = GDriveForm.drive;
-                                MServer.FS = await drive.DownloadFile(file_to_play);
-                            }
-                            else if (location_type == 3) //CD Drive Audio Track
-                            {
-                                AudioCD drive = CDDriveChooser.drive;
-                                MServer.FS = drive.getTrack(file_to_play);
+                                MServer.FS = NextTrack;
+                                trackLoaded = -1;
                             }
                             Thread.Sleep(100);
                             string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/" + MediaFiles.SelectedItem.ToString());
@@ -179,7 +224,9 @@ namespace DLNAPlayer
                             {
                                 if (!timer1.Enabled) timer1.Start();
                                 playing = true;
-                            }
+                                if (MediaFiles.Items.Count  > trackNum)
+                                    LoadNextTrack(trackNum + 1);
+                                }
                             else
                             {
                                 if (retries == 0)
@@ -193,6 +240,7 @@ namespace DLNAPlayer
                                     playing = false;
                                 }
                             }
+
                         }
                     }
                     else
@@ -263,7 +311,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum > 0)
             {
-                LoadFile(MediaFileLocation[trackNum - 1], MediaFileLocationType[MediaFiles.SelectedIndex], MediaFiles.SelectedItem.ToString());
+                LoadFile(MediaFileLocation[trackNum - 1], MediaFileLocationType[trackNum - 1], MediaFiles.Items[trackNum - 1].ToString());
                 MediaFiles.ClearSelected();
                 MediaFiles.SelectedIndex = trackNum - 1;
                 trackNum--;
@@ -359,7 +407,6 @@ namespace DLNAPlayer
             MediaFiles.Items.Add(item);
             MediaFileLocation.Add(location);
             MediaFileLocationType.Add(type);
-
         }
 
         private void googleDriveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -384,7 +431,7 @@ namespace DLNAPlayer
                         MediaFiles.Items.RemoveAt(i);
                         MediaFileLocation.RemoveAt(i);
                         MediaFileLocationType.RemoveAt(i);
-                        
+
                     }
                 }
                 else if (e.KeyCode == Keys.Enter)
