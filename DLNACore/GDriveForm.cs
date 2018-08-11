@@ -128,7 +128,6 @@ namespace DLNAPlayer
 
         private void FoldersListBox_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter)
             {
                 if (FoldersListBox.SelectedIndex > -1)
@@ -149,7 +148,6 @@ namespace DLNAPlayer
 
         private void FilesListBox_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter)
             {
                 Form1 MainForm = (Form1)this.Owner;
