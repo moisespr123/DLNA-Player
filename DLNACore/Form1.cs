@@ -223,8 +223,8 @@ namespace DLNAPlayer
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
-                                playing = true;
-                                if (MediaFiles.Items.Count  > trackNum)
+                                playing = true; 
+                                if (MediaFiles.Items.Count -1 > trackNum)
                                     LoadNextTrack(trackNum + 1);
                                 }
                             else
