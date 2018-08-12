@@ -483,5 +483,13 @@ namespace DLNAPlayer
             };
             driveChooser.Show();
         }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (var process in Process.GetProcessesByName("DLNAPlayer"))
+            {
+                process.Kill();
+            }
+        }
     }
 }
