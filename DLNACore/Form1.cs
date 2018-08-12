@@ -79,12 +79,12 @@ namespace DLNAPlayer
         {
             if (MediaFiles.SelectedIndex != -1)
             {
-                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex], MediaFiles.SelectedItem.ToString());
+                LoadFile(MediaFiles.SelectedIndex);
                 trackNum = MediaFiles.SelectedIndex;
             }
             else if (MediaFiles.Items.Count > 0)
             {
-                LoadFile(MediaFileLocation[0], MediaFileLocationType[0], MediaFiles.Items[0].ToString());
+                LoadFile();
                 trackNum = 0;
                 MediaFiles.SelectedIndex = 0;
             }
@@ -139,7 +139,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.SelectedIndex > -1)
             {
-                LoadFile(MediaFileLocation[MediaFiles.SelectedIndex], MediaFileLocationType[MediaFiles.SelectedIndex], MediaFiles.SelectedItem.ToString());
+                LoadFile(MediaFiles.SelectedIndex);
                 trackNum = MediaFiles.SelectedIndex;
             }
         }
@@ -178,8 +178,11 @@ namespace DLNAPlayer
             TH.Start();
         }
 
-        private void LoadFile(string file_to_play, int location_type, string filename)
+        private void LoadFile(int item = 0)
         {
+            string file_to_play = MediaFileLocation[item];
+            int location_type = MediaFileLocationType[item];
+            string filename = MediaFiles.Items[item].ToString();
             int retries = 0;
             Thread TH = new Thread(() =>
             {
@@ -231,7 +234,7 @@ namespace DLNAPlayer
                             {
                                 if (retries == 0)
                                 {
-                                    LoadFile(file_to_play, location_type, filename);
+                                    LoadFile(trackNum);
                                     retries++;
                                 }
                                 else
@@ -311,7 +314,7 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum > 0)
             {
-                LoadFile(MediaFileLocation[trackNum - 1], MediaFileLocationType[trackNum - 1], MediaFiles.Items[trackNum - 1].ToString());
+                LoadFile(trackNum - 1);
                 MediaFiles.ClearSelected();
                 MediaFiles.SelectedIndex = trackNum - 1;
                 trackNum--;
@@ -328,7 +331,7 @@ namespace DLNAPlayer
             if (MediaFiles.Items.Count > 0 && trackNum < MediaFiles.Items.Count - 1)
             {
                 trackNum++;
-                LoadFile(MediaFileLocation[trackNum], MediaFileLocationType[trackNum], MediaFiles.Items[trackNum].ToString());
+                LoadFile(trackNum);
                 MediaFiles.ClearSelected();
                 MediaFiles.SelectedIndex = trackNum;
             }
