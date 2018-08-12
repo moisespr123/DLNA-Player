@@ -219,7 +219,7 @@ namespace DLNAPlayer
                                 trackLoaded = -1;
                             }
                             Thread.Sleep(100);
-                            string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/" + MediaFiles.SelectedItem.ToString());
+                            string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString()));
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
