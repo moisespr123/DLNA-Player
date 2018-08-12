@@ -425,7 +425,15 @@ namespace DLNAPlayer
                 {
                     int firstItem = MediaFiles.SelectedIndices[0];
                     int lastItem = MediaFiles.SelectedIndices[MediaFiles.SelectedIndices.Count - 1];
-                    if (trackNum >= firstItem) trackNum = firstItem - 1;
+                    if (trackNum >= firstItem)
+                    {
+                        if (trackLoaded == trackNum + 1)
+                        {
+                            trackLoaded = firstItem;
+                        }
+                        trackNum = firstItem - 1;
+                    }
+
                     for (int i = lastItem; i >= firstItem; i--)
                     {
                         MediaFiles.Items.RemoveAt(i);
@@ -433,6 +441,8 @@ namespace DLNAPlayer
                         MediaFileLocationType.RemoveAt(i);
 
                     }
+                    if (MediaFiles.Items.Count == 0)
+                        trackLoaded = -1;
                 }
                 else if (e.KeyCode == Keys.Enter)
                 {
