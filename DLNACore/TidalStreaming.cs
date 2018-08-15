@@ -46,6 +46,8 @@ namespace DLNAPlayer
 
         private async Task<bool> getAlbums()
         {
+            AlbumNames.Clear();
+            AlbumIDs.Clear();
             OpenTidl.Models.Base.JsonList<OpenTidl.Models.Base.JsonListItem<AlbumModel>> albumListOrigData = await session.GetFavoriteAlbums();
             List<AlbumModel> albumList = new List<AlbumModel> { };
             foreach (OpenTidl.Models.Base.JsonListItem<AlbumModel> item in albumListOrigData.Items)
