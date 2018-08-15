@@ -209,8 +209,6 @@ namespace DLNAPlayer
                                     FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
                                     MediaFile.CopyTo(MServer.FS);
                                     MediaFile.Close();
-                                    //Tidl tidl = new Tidl();
-                                    //MServer.FS = await tidl.Test();
                                 }
                                 else if (location_type == 2) //Google Drive file
                                 {
