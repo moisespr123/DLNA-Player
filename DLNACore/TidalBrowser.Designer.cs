@@ -122,6 +122,7 @@
             this.albumsListBox.Size = new System.Drawing.Size(388, 381);
             this.albumsListBox.TabIndex = 1;
             this.albumsListBox.SelectedIndexChanged += new System.EventHandler(this.albumsListBox_SelectedIndexChanged);
+            this.albumsListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.albumsListBox_KeyDown);
             // 
             // label1
             // 

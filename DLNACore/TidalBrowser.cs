@@ -69,5 +69,19 @@ namespace DLNAPlayer
                 MainForm.addToList(tracksListBox.SelectedItem.ToString(), tidl.TrackIDs[tracksListBox.Items.IndexOf(tracksListBox.SelectedItem)].ToString(), 4);
             }
         }
+
+        private async void albumsListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                await tidl.getAlbums();
+                albumsListBox.Items.Clear();
+                foreach (string item in tidl.AlbumNames)
+                {
+                    albumsListBox.Items.Add(item);
+                    albumsListBox.Update();
+                }
+            }
+        }
     }
 }

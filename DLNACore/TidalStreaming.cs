@@ -44,7 +44,7 @@ namespace DLNAPlayer
             return loggedIn;
         }
 
-        private async Task<bool> getAlbums()
+        public async Task<bool> getAlbums()
         {
             AlbumNames.Clear();
             AlbumIDs.Clear();
