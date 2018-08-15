@@ -58,8 +58,11 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTidl, Version=1.12.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTidl.1.12.2\lib\net45\OpenTidl.dll</HintPath>
+    </Reference>
     <Reference Include="Ripper">
-      <HintPath>..\..\..\..\Documents\Visual Studio 2017\Projects\CD Ripper\Ripper\bin\Debug\Ripper.dll</HintPath>
+      <HintPath>bin\Release\Ripper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -87,7 +90,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="yeti.mmedia">
-      <HintPath>..\..\..\..\Documents\Visual Studio 2017\Projects\CD Ripper\yeti.mmedia\bin\Debug\yeti.mmedia.dll</HintPath>
+      <HintPath>bin\Release\yeti.mmedia.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +120,19 @@
     <Compile Include="GDriveForm.Designer.cs">
       <DependentUpon>GDriveForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TidalBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TidalBrowser.Designer.cs">
+      <DependentUpon>TidalBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TidalLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TidalLogin.Designer.cs">
+      <DependentUpon>TidalLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TidalStreaming.cs" />
     <EmbeddedResource Include="CDDriveChooser.resx">
       <DependentUpon>CDDriveChooser.cs</DependentUpon>
     </EmbeddedResource>
@@ -136,6 +152,12 @@
     <EmbeddedResource Include="GDriveForm.resx">
       <DependentUpon>GDriveForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TidalBrowser.resx">
+      <DependentUpon>TidalBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TidalLogin.resx">
+      <DependentUpon>TidalLogin.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -147,6 +169,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

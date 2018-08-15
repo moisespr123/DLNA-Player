@@ -59,6 +59,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tidalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -341,7 +342,8 @@
             // cloudToolStripMenuItem
             // 
             this.cloudToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.googleDriveToolStripMenuItem});
+            this.googleDriveToolStripMenuItem,
+            this.tidalToolStripMenuItem});
             this.cloudToolStripMenuItem.Name = "cloudToolStripMenuItem";
             this.cloudToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
             this.cloudToolStripMenuItem.Text = "Cloud";
@@ -379,6 +381,14 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // tidalToolStripMenuItem
+            // 
+            this.tidalToolStripMenuItem.Name = "tidalToolStripMenuItem";
+            this.tidalToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.T)));
+            this.tidalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tidalToolStripMenuItem.Text = "Tidal";
+            this.tidalToolStripMenuItem.Click += new System.EventHandler(this.tidalToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -389,7 +399,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "DLNA Player - v0.4";
+            this.Text = "DLNA Player - v0.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
@@ -439,6 +449,7 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openAudioCDToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tidalToolStripMenuItem;
     }
 }
 

@@ -170,6 +170,11 @@ namespace DLNAPlayer
                             AudioCD drive = CDDriveChooser.drive;
                             NextTrack = drive.getTrack(file_to_play);
                         }
+                        else if (location_type == 4) //Tidal Track
+                        {
+                            Tidl tidl = TidalBrowser.tidl;
+                            NextTrack = await tidl.GetTrack(Convert.ToInt32(file_to_play));
+                        }
                         trackLoaded = item;
                     });
                 }
@@ -204,6 +209,8 @@ namespace DLNAPlayer
                                     FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
                                     MediaFile.CopyTo(MServer.FS);
                                     MediaFile.Close();
+                                    //Tidl tidl = new Tidl();
+                                    //MServer.FS = await tidl.Test();
                                 }
                                 else if (location_type == 2) //Google Drive file
                                 {
@@ -215,6 +222,11 @@ namespace DLNAPlayer
                                     AudioCD drive = CDDriveChooser.drive;
                                     MServer.FS = drive.getTrack(file_to_play);
                                 }
+                                else if (location_type == 4) //Tidal Track
+                                {
+                                    Tidl tidl = TidalBrowser.tidl;
+                                    MServer.FS = await tidl.GetTrack(Convert.ToInt32(file_to_play));
+                                }
                             }
                             else
                             {
@@ -222,14 +234,14 @@ namespace DLNAPlayer
                                 trackLoaded = -1;
                             }
                             Thread.Sleep(100);
-                            string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString()));
+                            string Reply = Device.TryToPlayFile("http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString().Replace('"', '_')));
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
-                                playing = true; 
-                                if (MediaFiles.Items.Count -1 > trackNum)
+                                playing = true;
+                                if (MediaFiles.Items.Count - 1 > trackNum)
                                     LoadNextTrack(trackNum + 1);
-                                }
+                            }
                             else
                             {
                                 if (retries == 0)
@@ -480,7 +492,7 @@ namespace DLNAPlayer
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
-              "Version 0.4" + Environment.NewLine +
+              "Version 0.5" + Environment.NewLine +
               "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
               "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
               "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
@@ -503,6 +515,19 @@ namespace DLNAPlayer
             {
                 process.Kill();
             }
+        }
+
+        private void tidalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TidalBrowser tidal = new TidalBrowser()
+            {
+                Owner = this
+            };
+            try
+            {
+                tidal.Show();
+            }
+            catch { }
         }
     }
 }

@@ -31,7 +31,17 @@ Additionally, you can play back music files stored in your Google Drive account:
 2. Choose the drive letter.
 3. Press Open.
 4. Choose Renderer.
-5. Double click the track you want to play or press the "Play" button,
+5. Double click the track you want to play or press the "Play" button.
+
+# Playing music from your Tidal library
+This software uses the [OpenTidl](https://github.com/jackfagner/OpenTidl) C# library to provide Tidal streaming support.
+
+1. Go to Cloud -> Tidal
+2. Login with your username and password
+3. Click an album from your library. The tracks will appear on the right panel.
+4. Double click a track to add to the queue. You can also press the Enter key or select an item and press the "Add selected tracks" button. Multiple tracks can be selected.
+5. Play back the files by selecting a rendered and pressing the Play button (or double click a track)
+
 
 Tested using a HiBy R3 player Hi Res Player. Also works with foobar2000 using the DLNA plugin.
 
@@ -41,3 +51,5 @@ Uses open source code from the following CodeProject projects:
 * [DLNAMediaServer](https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs)
 * [DLNACore](https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device)
 * [C Sharp Ripper](https://www.codeproject.com/articles/5458/c-sharp-ripper")
+
+Also uses the [OpenTidl](https://github.com/jackfagner/OpenTidl) C# library to provide Tidal streaming support
