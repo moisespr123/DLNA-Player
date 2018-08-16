@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using OpenTidl;
 using OpenTidl.Models;
@@ -19,7 +18,6 @@ namespace DLNAPlayer
         public List<string> TrackNames = new List<string> { };
         public List<int> TrackIDs = new List<int> { };
         public OpenTidl.Enums.SoundQuality UserSoundQuality;
-        public string currentTrackExtension = ".flac";
 
         public Tidl()
         {
@@ -72,7 +70,7 @@ namespace DLNAPlayer
                 if (item.AllowStreaming)
                 {
                     TrackIDs.Add(item.Id);
-                    TrackNames.Add(item.TrackNumber.ToString() + " - " + item.Title + currentTrackExtension);
+                    TrackNames.Add(item.TrackNumber.ToString() + " - " + item.Title);
                 }
             }
             return true;
@@ -91,7 +89,6 @@ namespace DLNAPlayer
                 try
                 {
                     streamUrl = await session.GetTrackStreamUrl(trackId, UserSoundQuality, "");
-                    currentTrackExtension = ".flac";
                 }
                 catch
                 {
@@ -103,7 +100,6 @@ namespace DLNAPlayer
                     {
                         streamUrl = await session.GetTrackStreamUrl(trackId, OpenTidl.Enums.SoundQuality.LOW, "");
                     }
-                    currentTrackExtension = ".m4a";
                 }
                 return streamUrl.Url;
             }
