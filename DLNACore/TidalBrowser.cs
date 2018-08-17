@@ -83,5 +83,15 @@ namespace DLNAPlayer
                 }
             }
         }
+
+        private void addAllButton_Click(object sender, EventArgs e)
+        {
+            if (tracksListBox.Items.Count > 0)
+                foreach (string item in tracksListBox.Items)
+                {
+                    Form1 MainForm = (Form1)this.Owner;
+                    MainForm.addToList(item + ".flac", tidl.TrackIDs[tracksListBox.Items.IndexOf(item)].ToString(), 4);
+                }
+        }
     }
 }

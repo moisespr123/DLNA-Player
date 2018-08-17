@@ -36,6 +36,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.albumsListBox = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.addAllButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.addAllButton);
             this.panel2.Controls.Add(this.addTracks);
             this.panel2.Controls.Add(this.tracksListBox);
             this.panel2.Controls.Add(this.label2);
@@ -72,7 +74,7 @@
             // 
             this.addTracks.Location = new System.Drawing.Point(6, 412);
             this.addTracks.Name = "addTracks";
-            this.addTracks.Size = new System.Drawing.Size(385, 23);
+            this.addTracks.Size = new System.Drawing.Size(188, 23);
             this.addTracks.TabIndex = 3;
             this.addTracks.Text = "Add Selected Tracks";
             this.addTracks.UseVisualStyleBackColor = true;
@@ -133,6 +135,16 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Albums:";
             // 
+            // addAllButton
+            // 
+            this.addAllButton.Location = new System.Drawing.Point(200, 412);
+            this.addAllButton.Name = "addAllButton";
+            this.addAllButton.Size = new System.Drawing.Size(191, 23);
+            this.addAllButton.TabIndex = 4;
+            this.addAllButton.Text = "Add All Tracks";
+            this.addAllButton.UseVisualStyleBackColor = true;
+            this.addAllButton.Click += new System.EventHandler(this.addAllButton_Click);
+            // 
             // TidalBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -160,5 +172,6 @@
         private System.Windows.Forms.ListBox albumsListBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button addTracks;
+        private System.Windows.Forms.Button addAllButton;
     }
 }
