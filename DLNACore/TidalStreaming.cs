@@ -40,7 +40,7 @@ namespace DLNAPlayer
             isLoggedIn = loggedIn;
             return loggedIn;
         }
-
+  
         public async Task<bool> getAlbums()
         {
             AlbumNames.Clear();
@@ -59,6 +59,7 @@ namespace DLNAPlayer
             }
             return true;
         }
+
         public async Task<bool> getTracks(int albumId)
         {
             OpenTidl.Models.Base.JsonList<TrackModel> trackList = await client.GetAlbumTracks(AlbumIDs[albumId]);
@@ -74,12 +75,14 @@ namespace DLNAPlayer
             }
             return true;
         }
+
         private async Task<bool> getSubDetails()
         {
             UserSubscriptionModel sub = await session.GetUserSubscription();
             UserSoundQuality = sub.HighestSoundQuality;
             return true;
         }
+
         public async Task<String> getStreamURL(int trackId)
         {
             StreamUrlModel streamUrl;
