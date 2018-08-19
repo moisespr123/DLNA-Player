@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenTidl;
@@ -107,13 +106,6 @@ namespace DLNAPlayer
             {
                 return string.Empty;
             }
-        }
-        public async Task<MemoryStream> GetTrack(int id)
-        {
-            OpenTidl.Models.Base.WebStreamModel streamModel = client.GetWebStream(await getStreamURL(id));
-            MemoryStream stream = new MemoryStream();
-            streamModel.Stream.CopyTo(stream);
-            return stream;
         }
     }
 }
