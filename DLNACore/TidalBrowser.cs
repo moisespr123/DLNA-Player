@@ -44,7 +44,7 @@ namespace DLNAPlayer
         {
             Form1 MainForm = (Form1)this.Owner;
             foreach (string item in tracksListBox.SelectedItems)
-                MainForm.addToList(item + ".flac", tidl.TrackIDs[tracksListBox.Items.IndexOf(item)].ToString(), 4);
+                MainForm.addToList(item, tidl.TrackIDs[tracksListBox.Items.IndexOf(item)].ToString(), 4);
         }
 
         private void tracksListBox_KeyDown(object sender, KeyEventArgs e)
@@ -53,7 +53,7 @@ namespace DLNAPlayer
             {
                 Form1 MainForm = (Form1)this.Owner;
                 foreach (string item in tracksListBox.SelectedItems)
-                    MainForm.addToList(item + ".flac", tidl.TrackIDs[tracksListBox.Items.IndexOf(item)].ToString(), 4);
+                    MainForm.addToList(item, tidl.TrackIDs[tracksListBox.Items.IndexOf(item)].ToString(), 4);
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
                 for (int i = 0; i < tracksListBox.Items.Count; i++)
@@ -66,7 +66,7 @@ namespace DLNAPlayer
             if (tracksListBox.SelectedIndex > -1)
             {
                 Form1 MainForm = (Form1)this.Owner;
-                MainForm.addToList(tracksListBox.SelectedItem.ToString() + ".flac", tidl.TrackIDs[tracksListBox.Items.IndexOf(tracksListBox.SelectedItem)].ToString(), 4);
+                MainForm.addToList(tracksListBox.SelectedItem.ToString(), tidl.TrackIDs[tracksListBox.Items.IndexOf(tracksListBox.SelectedItem)].ToString(), 4);
             }
         }
 
@@ -90,7 +90,7 @@ namespace DLNAPlayer
                 foreach (string item in tracksListBox.Items)
                 {
                     Form1 MainForm = (Form1)this.Owner;
-                    MainForm.addToList(item + ".flac", tidl.TrackIDs[tracksListBox.Items.IndexOf(item)].ToString(), 4);
+                    MainForm.addToList(item, tidl.TrackIDs[tracksListBox.Items.IndexOf(item)].ToString(), 4);
                 }
         }
     }

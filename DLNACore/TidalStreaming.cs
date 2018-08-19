@@ -81,7 +81,7 @@ namespace DLNAPlayer
             UserSoundQuality = sub.HighestSoundQuality;
             return true;
         }
-        private async Task<String> getStreamURL(int trackId)
+        public async Task<String> getStreamURL(int trackId)
         {
             StreamUrlModel streamUrl;
             try

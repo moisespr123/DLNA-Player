@@ -170,11 +170,6 @@ namespace DLNAPlayer
                             AudioCD drive = CDDriveChooser.drive;
                             NextTrack = drive.getTrack(file_to_play);
                         }
-                        else if (location_type == 4) //Tidal Track
-                        {
-                            Tidl tidl = TidalBrowser.tidl;
-                            NextTrack = await tidl.GetTrack(Convert.ToInt32(file_to_play));
-                        }
                         trackLoaded = item;
                     });
                 }
@@ -202,6 +197,7 @@ namespace DLNAPlayer
                             Device.StopPlay();
                             MServer.FS = new MemoryStream();
                             MServer.Filename = filename;
+                            string url = null;
                             if (trackNum != trackLoaded)
                             {
                                 if (location_type == 1) //local file 
@@ -223,7 +219,7 @@ namespace DLNAPlayer
                                 else if (location_type == 4) //Tidal Track
                                 {
                                     Tidl tidl = TidalBrowser.tidl;
-                                    MServer.FS = await tidl.GetTrack(Convert.ToInt32(file_to_play));
+                                    url = await tidl.getStreamURL(Convert.ToInt32(file_to_play));
                                 }
                             }
                             else
@@ -232,14 +228,16 @@ namespace DLNAPlayer
                                 trackLoaded = -1;
                             }
                             Thread.Sleep(100);
-                            string url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString().Replace('"', '_'));
+                            if (location_type != 4)
+                                url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString().Replace('"', '_'));
                             string Reply = Device.TryToPlayFile(url);
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
                                 playing = true;
                                 if (MediaFiles.Items.Count - 1 > trackNum)
-                                    LoadNextTrack(trackNum + 1);
+                                    if (MediaFileLocationType[item + 1] != 4)
+                                        LoadNextTrack(trackNum + 1);
                             }
                             else
                             {
