@@ -140,11 +140,7 @@ namespace DLNAPlayer
         public async Task<MemoryStream> DownloadFile(string Id)
         {
             MemoryStream downloadedFile = new MemoryStream();
-            var getRequest = service.Files.Get(Id);
-            getRequest.Fields = "webViewLink, webContentLink";
-            var data = await getRequest.ExecuteAsync();
-            var tempToken = await getToken(credential);
-            var link = "https://www.googleapis.com/drive/v3/files/" + getRequest.FileId + "?alt=media&access_token=" + tempToken;
+            FilesResource.GetRequest getRequest = service.Files.Get(Id);
             await getRequest.DownloadAsync(downloadedFile);
             return downloadedFile;
         }
