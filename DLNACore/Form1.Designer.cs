@@ -56,10 +56,10 @@
             this.openAudioCDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cloudToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.googleDriveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tidalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tidalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -356,6 +356,14 @@
             this.googleDriveToolStripMenuItem.Text = "Google Drive";
             this.googleDriveToolStripMenuItem.Click += new System.EventHandler(this.googleDriveToolStripMenuItem_Click);
             // 
+            // tidalToolStripMenuItem
+            // 
+            this.tidalToolStripMenuItem.Name = "tidalToolStripMenuItem";
+            this.tidalToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.T)));
+            this.tidalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tidalToolStripMenuItem.Text = "Tidal";
+            this.tidalToolStripMenuItem.Click += new System.EventHandler(this.tidalToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -380,14 +388,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // tidalToolStripMenuItem
-            // 
-            this.tidalToolStripMenuItem.Name = "tidalToolStripMenuItem";
-            this.tidalToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.T)));
-            this.tidalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.tidalToolStripMenuItem.Text = "Tidal";
-            this.tidalToolStripMenuItem.Click += new System.EventHandler(this.tidalToolStripMenuItem_Click);
             // 
             // Form1
             // 

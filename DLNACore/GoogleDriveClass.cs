@@ -7,6 +7,7 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using System.IO;
 using System.Threading;
+using System.Net;
 
 namespace DLNAPlayer
 {
@@ -23,10 +24,10 @@ namespace DLNAPlayer
         public bool connected = false;
         public string currentFolder = "";
         public string currentFolderName = "";
+        public UserCredential credential;
 
         public GDrive()
         {
-            UserCredential credential;
             try
             {
                 if (File.Exists("client_secret.json"))
@@ -52,7 +53,9 @@ namespace DLNAPlayer
                 connected = false;
             }
         }
-
+        private async Task<string> getToken(UserCredential credentials){
+            return await credentials.GetAccessTokenForRequestAsync();
+        }
         public void GetData(string folderId, bool goingBack = false, bool refreshing = false)
         {
             FolderList.Clear();
@@ -137,10 +140,23 @@ namespace DLNAPlayer
         public async Task<MemoryStream> DownloadFile(string Id)
         {
             MemoryStream downloadedFile = new MemoryStream();
-            FilesResource.GetRequest getRequest = service.Files.Get(Id);
+            var getRequest = service.Files.Get(Id);
+            getRequest.Fields = "webViewLink, webContentLink";
+            var data = await getRequest.ExecuteAsync();
+            var tempToken = await getToken(credential);
+            var link = "https://www.googleapis.com/drive/v3/files/" + getRequest.FileId + "?alt=media&access_token=" + tempToken;
             await getRequest.DownloadAsync(downloadedFile);
             return downloadedFile;
         }
-
+        public async Task<string> GetUrl(string Id)
+        {
+            var getRequest = service.Files.Get(Id);
+            getRequest.Fields = "webViewLink, webContentLink";
+            var data = await getRequest.ExecuteAsync();
+            var tempToken = await getToken(credential);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/drive/v3/files/" + getRequest.FileId + "?alt=media&access_token=" + tempToken);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            return response.ResponseUri.OriginalString;
+        }
     }
 }

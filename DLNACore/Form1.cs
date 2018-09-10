@@ -206,7 +206,7 @@ namespace DLNAPlayer
                                     MediaFile.CopyTo(MServer.FS);
                                     MediaFile.Close();
                                 }
-                                else if (location_type == 2) //Google Drive file
+                                else if (location_type == 2) //Google Drive file (local download)
                                 {
                                     GDrive drive = GDriveForm.drive;
                                     MServer.FS = await drive.DownloadFile(file_to_play);
@@ -221,6 +221,11 @@ namespace DLNAPlayer
                                     Tidl tidl = TidalBrowser.tidl;
                                     url = await tidl.getStreamURL(Convert.ToInt32(file_to_play));
                                 }
+                                else if (location_type == 5) //Google Drive file (stream)
+                                {
+                                    GDrive drive = GDriveForm.drive;
+                                    url = await drive.GetUrl(file_to_play);
+                                }
                             }
                             else
                             {
@@ -228,7 +233,7 @@ namespace DLNAPlayer
                                 trackLoaded = -1;
                             }
                             Thread.Sleep(100);
-                            if (location_type != 4)
+                            if (location_type != 4 && location_type != 5)
                                 url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString().Replace('"', '_'));
                             string Reply = Device.TryToPlayFile(url);
                             if (Reply == "OK")
@@ -236,7 +241,7 @@ namespace DLNAPlayer
                                 if (!timer1.Enabled) timer1.Start();
                                 playing = true;
                                 if (MediaFiles.Items.Count - 1 > trackNum)
-                                    if (MediaFileLocationType[item + 1] != 4)
+                                    if (MediaFileLocationType[item + 1] != 4 && MediaFileLocationType[item + 1] != 5)
                                         LoadNextTrack(trackNum + 1);
                             }
                             else

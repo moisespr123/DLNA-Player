@@ -8,6 +8,7 @@ namespace DLNAPlayer
     {
         private string formName = "Google Drive Browser";
         public static GDrive drive;
+        private int itemType = 2;
         public GDriveForm()
         {
             InitializeComponent();
@@ -17,7 +18,10 @@ namespace DLNAPlayer
         {
             drive = new GDrive();
             if (drive.connected)
+            {
                 PopulateListBoxes(drive);
+                toolStripComboBox1.SelectedIndex = Properties.Settings.Default.GoogleDriveStreamingOption;
+            }
             else
             {
                 MessageBox.Show("client_secret.json file not found. Please follow Step 1 in this guide: https://developers.google.com/drive/v3/web/quickstart/dotnet" + Environment.NewLine + Environment.NewLine + "This file should be located in the folder where this software is located.");
@@ -99,7 +103,7 @@ namespace DLNAPlayer
                 foreach (string item in FilesListBox.Items)
                 {
                     Form1 MainForm = (Form1)this.Owner;
-                    MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
+                    MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], itemType);
                 }
         }
 
@@ -107,7 +111,7 @@ namespace DLNAPlayer
         {
             Form1 MainForm = (Form1)this.Owner;
             foreach (string item in FilesListBox.SelectedItems)
-                MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
+                MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], itemType);
         }
 
         private void FilesListBox_DoubleClick(object sender, EventArgs e)
@@ -115,7 +119,7 @@ namespace DLNAPlayer
             if (FilesListBox.SelectedIndex > -1)
             {
                 Form1 MainForm = (Form1)this.Owner;
-                MainForm.addToList(FilesListBox.SelectedItem.ToString(), drive.FileListID[FilesListBox.SelectedIndex], 2);
+                MainForm.addToList(FilesListBox.SelectedItem.ToString(), drive.FileListID[FilesListBox.SelectedIndex], itemType);
             }
         }
 
@@ -145,7 +149,7 @@ namespace DLNAPlayer
             {
                 Form1 MainForm = (Form1)this.Owner;
                 foreach (string item in FilesListBox.SelectedItems)
-                    MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], 2);
+                    MainForm.addToList(item, drive.FileListID[FilesListBox.Items.IndexOf(item)], itemType);
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
                 for (int i = 0; i < FilesListBox.Items.Count; i++)
@@ -153,6 +157,16 @@ namespace DLNAPlayer
             else if (e.KeyCode == Keys.F5)
                 PopulateListBoxes(drive, drive.currentFolder, true);
             e.SuppressKeyPress = true;
+        }
+
+        private void toolStripComboBox1_DropDownClosed(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.GoogleDriveStreamingOption = toolStripComboBox1.SelectedIndex;
+            Properties.Settings.Default.Save();
+            if (toolStripComboBox1.SelectedIndex == 0)
+                itemType = 2;
+            else
+                itemType = 5;
         }
     }
 }
