@@ -21,6 +21,10 @@ namespace DLNAPlayer
             {
                 PopulateListBoxes(drive);
                 toolStripComboBox1.SelectedIndex = Properties.Settings.Default.GoogleDriveStreamingOption;
+                if (Properties.Settings.Default.GoogleDriveStreamingOption == 0)
+                    itemType = 2;
+                else
+                    itemType = 5;
             }
             else
             {
