@@ -146,11 +146,7 @@ namespace DLNAPlayer
         }
         public async Task<string> GetUrl(string Id)
         {
-            var getRequest = service.Files.Get(Id);
-            getRequest.Fields = "webViewLink, webContentLink";
-            var data = await getRequest.ExecuteAsync();
-            var tempToken = await getToken(credential);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/drive/v3/files/" + getRequest.FileId + "?alt=media&access_token=" + tempToken);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/drive/v3/files/" + Id + "?alt=media&access_token=" + await getToken(credential));
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             return response.ResponseUri.OriginalString;
         }
