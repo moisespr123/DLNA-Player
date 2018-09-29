@@ -73,6 +73,7 @@ namespace DLNAPlayer
             IPandPortTxt.Text = Extentions.Helper.GetMyIP() + ":9090";
             ApplyServerIPAndPort();
             timer1.Interval = 500;
+            decodeOpusToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeOpus;
         }
 
         private void Play()
@@ -111,6 +112,8 @@ namespace DLNAPlayer
                 {
                     addToList(Path.GetFileName(path), path, 1);
                 }
+            if (trackLoaded == -1)
+                LoadNextTrack(trackNum + 1);
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -511,10 +514,17 @@ namespace DLNAPlayer
                 Multiselect = true,
             };
             if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
                 if (fileDialog.FileNames != null)
+                {
                     foreach (string path in fileDialog.FileNames)
                         if (!Directory.Exists(path))
                             addToList(Path.GetFileName(path), path, 1);
+                    if (trackLoaded == -1)
+                        LoadNextTrack(trackNum + 1);
+                }
+            }
+
         }
 
         private void readmeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -569,7 +579,8 @@ namespace DLNAPlayer
                 decodeOpusToWAVToolStripMenuItem.Checked = true;
             else
                 decodeOpusToWAVToolStripMenuItem.Checked = false;
-
+            Properties.Settings.Default.DecodeOpus = decodeOpusToWAVToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

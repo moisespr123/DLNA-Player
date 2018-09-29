@@ -34,5 +34,17 @@ namespace DLNAPlayer.Properties {
                 this["GoogleDriveStreamingOption"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DecodeOpus {
+            get {
+                return ((bool)(this["DecodeOpus"]));
+            }
+            set {
+                this["DecodeOpus"] = value;
+            }
+        }
     }
 }
