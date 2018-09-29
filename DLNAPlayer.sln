@@ -7,12 +7,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLNAPlayer", "DLNACore\DLNA
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Debug|x64.ActiveCfg = Debug|x64
+		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Debug|x64.Build.0 = Debug|x64
 		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Debug|x86.ActiveCfg = Debug|x86
 		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Debug|x86.Build.0 = Debug|x86
+		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Release|x64.ActiveCfg = Release|x64
+		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Release|x64.Build.0 = Release|x64
 		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Release|x86.ActiveCfg = Release|x86
 		{F8F2446C-C0CE-4A77-8171-C8AB14F4A539}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection

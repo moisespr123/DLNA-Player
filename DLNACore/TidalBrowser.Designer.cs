@@ -30,13 +30,13 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.addAllButton = new System.Windows.Forms.Button();
             this.addTracks = new System.Windows.Forms.Button();
             this.tracksListBox = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.albumsListBox = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.addAllButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -70,8 +70,20 @@
             this.panel2.Size = new System.Drawing.Size(394, 444);
             this.panel2.TabIndex = 1;
             // 
+            // addAllButton
+            // 
+            this.addAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addAllButton.Location = new System.Drawing.Point(200, 412);
+            this.addAllButton.Name = "addAllButton";
+            this.addAllButton.Size = new System.Drawing.Size(191, 23);
+            this.addAllButton.TabIndex = 4;
+            this.addAllButton.Text = "Add All Tracks";
+            this.addAllButton.UseVisualStyleBackColor = true;
+            this.addAllButton.Click += new System.EventHandler(this.addAllButton_Click);
+            // 
             // addTracks
             // 
+            this.addTracks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.addTracks.Location = new System.Drawing.Point(6, 412);
             this.addTracks.Name = "addTracks";
             this.addTracks.Size = new System.Drawing.Size(188, 23);
@@ -134,16 +146,6 @@
             this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Albums:";
-            // 
-            // addAllButton
-            // 
-            this.addAllButton.Location = new System.Drawing.Point(200, 412);
-            this.addAllButton.Name = "addAllButton";
-            this.addAllButton.Size = new System.Drawing.Size(191, 23);
-            this.addAllButton.TabIndex = 4;
-            this.addAllButton.Text = "Add All Tracks";
-            this.addAllButton.UseVisualStyleBackColor = true;
-            this.addAllButton.Click += new System.EventHandler(this.addAllButton_Click);
             // 
             // TidalBrowser
             // 
