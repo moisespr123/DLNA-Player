@@ -1,5 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using System.Net;
+using System.IO;
+using System.Diagnostics;
+
 public static class Extentions
 {
 
@@ -30,6 +33,25 @@ public static class Extentions
         if (Regex.IsMatch(Source, Pattern, RegexOptions.IgnoreCase))
             Source = Regex.Replace(Source, Pattern, Replacement, RegexOptions.IgnoreCase);
         return Source;
+    }
+    public static MemoryStream decodeOpus(string file)
+    {
+        ProcessStartInfo opusProcessInfo = new ProcessStartInfo()
+        {
+            FileName = "opusdec.exe",
+            Arguments = "\"" + file + "\" temp.wav",
+            CreateNoWindow = true,
+            RedirectStandardOutput = false,
+            UseShellExecute = false
+        };
+        Process opusProcess = Process.Start(opusProcessInfo);
+        opusProcess.WaitForExit();
+        FileStream tempFile = new FileStream("temp.wav", FileMode.Open);
+        MemoryStream decodedWav = new MemoryStream();
+        tempFile.CopyTo(decodedWav);
+        tempFile.Close();
+        File.Delete("temp.wav");
+        return decodedWav;
     }
     public static class Helper
     {

@@ -156,14 +156,28 @@ namespace DLNAPlayer
                         NextTrack = new MemoryStream();
                         if (location_type == 1) //local file 
                         {
-                            FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                            MediaFile.CopyTo(NextTrack);
-                            MediaFile.Close();
+                            if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                                NextTrack = Extentions.decodeOpus(file_to_play);
+                            else
+                            {
+                                FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                                MediaFile.CopyTo(NextTrack);
+                                MediaFile.Close();
+                            }
                         }
                         else if (location_type == 2) //Google Drive file
                         {
                             GDrive drive = GDriveForm.drive;
                             NextTrack = await drive.DownloadFile(file_to_play);
+                            if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                            {
+                                FileStream tempOpusFile = new FileStream("temp.opus", FileMode.Create);
+                                NextTrack.CopyTo(tempOpusFile);
+                                tempOpusFile.Close();
+                                NextTrack = new MemoryStream();
+                                NextTrack = Extentions.decodeOpus("temp.opus");
+                                File.Delete("temp.opus");
+                            }
                         }
                         else if (location_type == 3) //CD Drive Audio Track
                         {
@@ -196,20 +210,37 @@ namespace DLNAPlayer
                             if (timer1.Enabled) timer1.Stop();
                             Device.StopPlay();
                             MServer.FS = new MemoryStream();
-                            MServer.Filename = filename;
+                            if (decodeOpusToWAVToolStripMenuItem.Checked)
+                                MServer.Filename = "opus.wav";
+                            else
+                                MServer.Filename = filename;
                             string url = null;
                             if (trackNum != trackLoaded)
                             {
                                 if (location_type == 1) //local file 
                                 {
-                                    FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                                    MediaFile.CopyTo(MServer.FS);
-                                    MediaFile.Close();
+                                    if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                                        MServer.FS = Extentions.decodeOpus(file_to_play);
+                                    else
+                                    {
+                                        FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                                        MediaFile.CopyTo(MServer.FS);
+                                        MediaFile.Close();
+                                    }
                                 }
                                 else if (location_type == 2) //Google Drive file (local download)
                                 {
                                     GDrive drive = GDriveForm.drive;
                                     MServer.FS = await drive.DownloadFile(file_to_play);
+                                    if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                                    {
+                                        FileStream tempOpusFile = new FileStream("temp.opus", FileMode.Create);
+                                        NextTrack.CopyTo(tempOpusFile);
+                                        tempOpusFile.Close();
+                                        MServer.FS = new MemoryStream();
+                                        MServer.FS = Extentions.decodeOpus("temp.opus");
+                                        File.Delete("temp.opus");
+                                    }
                                 }
                                 else if (location_type == 3) //CD Drive Audio Track
                                 {
@@ -530,6 +561,15 @@ namespace DLNAPlayer
                 tidal.Show();
             }
             catch { }
+        }
+
+        private void decodeOpusToWAVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!decodeOpusToWAVToolStripMenuItem.Checked)
+                decodeOpusToWAVToolStripMenuItem.Checked = true;
+            else
+                decodeOpusToWAVToolStripMenuItem.Checked = false;
+
         }
     }
 }

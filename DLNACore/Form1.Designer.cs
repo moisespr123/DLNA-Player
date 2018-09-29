@@ -60,6 +60,8 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeOpusToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -305,6 +307,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.optionsToolStripMenuItem,
             this.cloudToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -389,6 +392,21 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.decodeOpusToWAVToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // decodeOpusToWAVToolStripMenuItem
+            // 
+            this.decodeOpusToWAVToolStripMenuItem.Name = "decodeOpusToWAVToolStripMenuItem";
+            this.decodeOpusToWAVToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.decodeOpusToWAVToolStripMenuItem.Text = "Decode Opus to WAV";
+            this.decodeOpusToWAVToolStripMenuItem.Click += new System.EventHandler(this.decodeOpusToWAVToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -450,6 +468,8 @@
         private System.Windows.Forms.ToolStripMenuItem openFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openAudioCDToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tidalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem decodeOpusToWAVToolStripMenuItem;
     }
 }
 
