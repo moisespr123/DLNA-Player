@@ -226,7 +226,7 @@ namespace DLNAPlayer
                             if (timer1.Enabled) timer1.Stop();
                             Device.StopPlay();
                             MServer.FS = new MemoryStream();
-                            if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                            if ((file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked))
                                 MServer.Filename = "track.wav";
                             else
                                 MServer.Filename = filename;
@@ -237,6 +237,8 @@ namespace DLNAPlayer
                                 {
                                     if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                         MServer.FS = Extentions.decodeOpus(file_to_play);
+                                    else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                                        MServer.FS = Extentions.decodeFlac(file_to_play);
                                     else
                                     {
                                         FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -251,11 +253,20 @@ namespace DLNAPlayer
                                     if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                     {
                                         FileStream tempOpusFile = new FileStream("temp.opus", FileMode.Create);
-                                        NextTrack.CopyTo(tempOpusFile);
+                                        MServer.FS.CopyTo(tempOpusFile);
                                         tempOpusFile.Close();
                                         MServer.FS = new MemoryStream();
                                         MServer.FS = Extentions.decodeOpus("temp.opus");
                                         File.Delete("temp.opus");
+                                    }
+                                    else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                                    {
+                                        FileStream tempFlacFile = new FileStream("temp.flac", FileMode.Create);
+                                        MServer.FS.CopyTo(tempFlacFile);
+                                        tempFlacFile.Close();
+                                        MServer.FS = new MemoryStream();
+                                        MServer.FS = Extentions.decodeFlac("temp.flac");
+                                        File.Delete("temp.flac");
                                     }
                                 }
                                 else if (location_type == 3) //CD Drive Audio Track
