@@ -102,6 +102,7 @@ namespace DLNAPlayer
             MediaFileLocation.Clear();
             MediaFileLocationType.Clear();
             trackNum = -1;
+            trackLoaded = -1;
         }
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
