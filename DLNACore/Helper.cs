@@ -39,7 +39,7 @@ public static class Extentions
         ProcessStartInfo opusProcessInfo = new ProcessStartInfo()
         {
             FileName = "opusdec.exe",
-            Arguments = "\"" + file + "\" temp.wav",
+            Arguments = "--rate 48000 --no-dither --float \"" + file + "\" temp.wav",
             CreateNoWindow = true,
             RedirectStandardOutput = false,
             UseShellExecute = false
