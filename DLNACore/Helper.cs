@@ -34,41 +34,33 @@ public static class Extentions
             Source = Regex.Replace(Source, Pattern, Replacement, RegexOptions.IgnoreCase);
         return Source;
     }
-    public static MemoryStream decodeOpus(string file)
+    public static MemoryStream decodeAudio(string file)
     {
-        ProcessStartInfo opusProcessInfo = new ProcessStartInfo()
+        string dec = string.Empty;
+        string args = string.Empty;
+        if (file.EndsWith(".opus"))
         {
-            FileName = "opusdec.exe",
-            Arguments = "--rate 48000 --no-dither --float \"" + file + "\" temp.wav",
+            dec = "opusdec.exe";
+            args = "--rate 48000 --no-dither --float \"" + file + "\" temp.wav";
+        }
+        else if (file.EndsWith(".flac"))
+        {
+            dec = "flac.exe";
+            args = "-d \"" + file + "\" -o temp.wav";
+        }
+        ProcessStartInfo decProcessInfo = new ProcessStartInfo()
+        {
+            FileName = dec,
+            Arguments = args,
             CreateNoWindow = true,
             RedirectStandardOutput = false,
             UseShellExecute = false
         };
-        Process opusProcess = Process.Start(opusProcessInfo);
-        opusProcess.WaitForExit();
-        FileStream tempFile = new FileStream("temp.wav", FileMode.Open);
+        Process.Start(decProcessInfo).WaitForExit();
         MemoryStream decodedWav = new MemoryStream();
-        tempFile.CopyTo(decodedWav);
-        tempFile.Close();
-        File.Delete("temp.wav");
-        return decodedWav;
-    }
-    public static MemoryStream decodeFlac(string file)
-    {
-        ProcessStartInfo flacProcessInfo = new ProcessStartInfo()
-        {
-            FileName = "flac.exe",
-            Arguments = "-d \"" + file + "\" -o temp.wav",
-            CreateNoWindow = true,
-            RedirectStandardOutput = false,
-            UseShellExecute = false
-        };
-        Process flacProcess = Process.Start(flacProcessInfo);
-        flacProcess.WaitForExit();
-        FileStream tempFile = new FileStream("temp.wav", FileMode.Open);
-        MemoryStream decodedWav = new MemoryStream();
-        tempFile.CopyTo(decodedWav);
-        tempFile.Close();
+        FileStream temp = new FileStream("temp.wav", FileMode.Open);
+        temp.CopyTo(decodedWav);
+        temp.Close();
         File.Delete("temp.wav");
         return decodedWav;
     }

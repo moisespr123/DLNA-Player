@@ -162,9 +162,9 @@ namespace DLNAPlayer
                         if (location_type == 1) //local file 
                         {
                             if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                NextTrack = Extentions.decodeOpus(file_to_play);
+                                NextTrack = Extentions.decodeAudio(file_to_play);
                             else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                                NextTrack = Extentions.decodeFlac(file_to_play);
+                                NextTrack = Extentions.decodeAudio(file_to_play);
                             else
                             {
                                 FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -182,7 +182,7 @@ namespace DLNAPlayer
                                 NextTrack.CopyTo(tempOpusFile);
                                 tempOpusFile.Close();
                                 NextTrack = new MemoryStream();
-                                NextTrack = Extentions.decodeOpus("temp.opus");
+                                NextTrack = Extentions.decodeAudio("temp.opus");
                                 File.Delete("temp.opus");
                             }
                             else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
@@ -191,7 +191,7 @@ namespace DLNAPlayer
                                 NextTrack.CopyTo(tempFlacFile);
                                 tempFlacFile.Close();
                                 NextTrack = new MemoryStream();
-                                NextTrack = Extentions.decodeFlac("temp.flac");
+                                NextTrack = Extentions.decodeAudio("temp.flac");
                                 File.Delete("temp.flac");
                             }
                         }
@@ -236,9 +236,9 @@ namespace DLNAPlayer
                                 if (location_type == 1) //local file 
                                 {
                                     if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                        MServer.FS = Extentions.decodeOpus(file_to_play);
+                                        MServer.FS = Extentions.decodeAudio(file_to_play);
                                     else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                                        MServer.FS = Extentions.decodeFlac(file_to_play);
+                                        MServer.FS = Extentions.decodeAudio(file_to_play);
                                     else
                                     {
                                         FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -256,7 +256,7 @@ namespace DLNAPlayer
                                         MServer.FS.CopyTo(tempOpusFile);
                                         tempOpusFile.Close();
                                         MServer.FS = new MemoryStream();
-                                        MServer.FS = Extentions.decodeOpus("temp.opus");
+                                        MServer.FS = Extentions.decodeAudio("temp.opus");
                                         File.Delete("temp.opus");
                                     }
                                     else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
@@ -265,7 +265,7 @@ namespace DLNAPlayer
                                         MServer.FS.CopyTo(tempFlacFile);
                                         tempFlacFile.Close();
                                         MServer.FS = new MemoryStream();
-                                        MServer.FS = Extentions.decodeFlac("temp.flac");
+                                        MServer.FS = Extentions.decodeAudio("temp.flac");
                                         File.Delete("temp.flac");
                                     }
                                 }
