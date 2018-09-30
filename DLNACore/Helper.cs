@@ -53,6 +53,25 @@ public static class Extentions
         File.Delete("temp.wav");
         return decodedWav;
     }
+    public static MemoryStream decodeFlac(string file)
+    {
+        ProcessStartInfo flacProcessInfo = new ProcessStartInfo()
+        {
+            FileName = "flac.exe",
+            Arguments = "-d \"" + file + "\" -o temp.wav",
+            CreateNoWindow = true,
+            RedirectStandardOutput = false,
+            UseShellExecute = false
+        };
+        Process flacProcess = Process.Start(flacProcessInfo);
+        flacProcess.WaitForExit();
+        FileStream tempFile = new FileStream("temp.wav", FileMode.Open);
+        MemoryStream decodedWav = new MemoryStream();
+        tempFile.CopyTo(decodedWav);
+        tempFile.Close();
+        File.Delete("temp.wav");
+        return decodedWav;
+    }
     public static class Helper
     {
         public static string GetMyIP()

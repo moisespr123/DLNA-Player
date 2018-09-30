@@ -46,5 +46,17 @@ namespace DLNAPlayer.Properties {
                 this["DecodeOpus"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DecodeFLAC {
+            get {
+                return ((bool)(this["DecodeFLAC"]));
+            }
+            set {
+                this["DecodeFLAC"] = value;
+            }
+        }
     }
 }

@@ -74,6 +74,7 @@ namespace DLNAPlayer
             ApplyServerIPAndPort();
             timer1.Interval = 500;
             decodeOpusToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeOpus;
+            decodeFLACToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeFLAC;
         }
 
         private void Play()
@@ -162,6 +163,8 @@ namespace DLNAPlayer
                         {
                             if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                 NextTrack = Extentions.decodeOpus(file_to_play);
+                            else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                                NextTrack = Extentions.decodeFlac(file_to_play);
                             else
                             {
                                 FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -181,6 +184,15 @@ namespace DLNAPlayer
                                 NextTrack = new MemoryStream();
                                 NextTrack = Extentions.decodeOpus("temp.opus");
                                 File.Delete("temp.opus");
+                            }
+                            else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                            {
+                                FileStream tempFlacFile = new FileStream("temp.flac", FileMode.Create);
+                                NextTrack.CopyTo(tempFlacFile);
+                                tempFlacFile.Close();
+                                NextTrack = new MemoryStream();
+                                NextTrack = Extentions.decodeFlac("temp.flac");
+                                File.Delete("temp.flac");
                             }
                         }
                         else if (location_type == 3) //CD Drive Audio Track
@@ -215,7 +227,7 @@ namespace DLNAPlayer
                             Device.StopPlay();
                             MServer.FS = new MemoryStream();
                             if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                MServer.Filename = "opus.wav";
+                                MServer.Filename = "track.wav";
                             else
                                 MServer.Filename = filename;
                             string url = null;
@@ -581,6 +593,16 @@ namespace DLNAPlayer
             else
                 decodeOpusToWAVToolStripMenuItem.Checked = false;
             Properties.Settings.Default.DecodeOpus = decodeOpusToWAVToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void decodeFLACToWAVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!decodeFLACToWAVToolStripMenuItem.Checked)
+                decodeFLACToWAVToolStripMenuItem.Checked = true;
+            else
+                decodeFLACToWAVToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.DecodeFLAC = decodeFLACToWAVToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
     }
