@@ -152,6 +152,7 @@ namespace DLNAPlayer
         {
             string file_to_play = MediaFileLocation[item];
             int location_type = MediaFileLocationType[item];
+            string filename = MediaFiles.Items[item].ToString();
             Thread TH = new Thread(() =>
             {
                 try
@@ -176,18 +177,20 @@ namespace DLNAPlayer
                         {
                             GDrive drive = GDriveForm.drive;
                             NextTrack = await drive.DownloadFile(file_to_play);
-                            if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                            if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                             {
                                 FileStream tempOpusFile = new FileStream("temp.opus", FileMode.Create);
+                                NextTrack.Position = 0;
                                 NextTrack.CopyTo(tempOpusFile);
                                 tempOpusFile.Close();
                                 NextTrack = new MemoryStream();
                                 NextTrack = Extentions.decodeAudio("temp.opus");
                                 File.Delete("temp.opus");
                             }
-                            else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                            else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
                             {
                                 FileStream tempFlacFile = new FileStream("temp.flac", FileMode.Create);
+                                NextTrack.Position = 0;
                                 NextTrack.CopyTo(tempFlacFile);
                                 tempFlacFile.Close();
                                 NextTrack = new MemoryStream();
@@ -250,18 +253,20 @@ namespace DLNAPlayer
                                 {
                                     GDrive drive = GDriveForm.drive;
                                     MServer.FS = await drive.DownloadFile(file_to_play);
-                                    if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                                    if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                     {
                                         FileStream tempOpusFile = new FileStream("temp.opus", FileMode.Create);
+                                        MServer.FS.Position = 0;
                                         MServer.FS.CopyTo(tempOpusFile);
                                         tempOpusFile.Close();
                                         MServer.FS = new MemoryStream();
                                         MServer.FS = Extentions.decodeAudio("temp.opus");
                                         File.Delete("temp.opus");
                                     }
-                                    else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                                    else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
                                     {
                                         FileStream tempFlacFile = new FileStream("temp.flac", FileMode.Create);
+                                        MServer.FS.Position = 0;
                                         MServer.FS.CopyTo(tempFlacFile);
                                         tempFlacFile.Close();
                                         MServer.FS = new MemoryStream();
