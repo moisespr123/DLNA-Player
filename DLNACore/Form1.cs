@@ -229,7 +229,7 @@ namespace DLNAPlayer
                             if (timer1.Enabled) timer1.Stop();
                             Device.StopPlay();
                             MServer.FS = new MemoryStream();
-                            if ((file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked))
+                            if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked))
                                 MServer.Filename = "track.wav";
                             else
                                 MServer.Filename = filename;
