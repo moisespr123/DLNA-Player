@@ -75,6 +75,12 @@ namespace DLNAPlayer
             }
             return true;
         }
+        public async Task<string[]> getNameAndArtist(int trackId)
+        {
+            TrackModel track = await client.GetTrack(trackId);
+            string[] info = { track.Title, track.Artist.Name  };
+            return info;
+        }
 
         private async Task<bool> getSubDetails()
         {

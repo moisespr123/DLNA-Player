@@ -167,7 +167,7 @@ namespace DLNA
         }
 
 
-        public string TryToPlayFile(string UrlToPlay, string filename)
+        public string TryToPlayFile(string UrlToPlay, string[] info)
         {
             if (!this.Connected) this.Connected = this.IsConnected();//Someone might have turned the TV Off !
             if (!this.Connected) return "#ERROR# Not connected";
@@ -177,7 +177,7 @@ namespace DLNA
                 {
                     if (S.ServiceType.ToLower().IndexOf("avtransport:1") > -1)
                     {//This is the service we are using so upload the file and then start playing
-                        string AddPlay = UploadFileToPlay(S.controlURL, UrlToPlay, filename);
+                        string AddPlay = UploadFileToPlay(S.controlURL, UrlToPlay, info);
                         if (this.ReturnCode != 200) return "#ERROR# Cannot upload file";
                         string PlayNow = StartPlay(S.controlURL, 0);
                         if (this.ReturnCode == 200) return "OK"; else return "#ERROR Starting";
@@ -205,11 +205,13 @@ namespace DLNA
             return GG;
         }
 
-        public string Desc(string Url, string filename)
+        public string Desc(string Url, string[] info)
         {//Gets a description of the DLNA server
             string XML = "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">" + Environment.NewLine;
             XML += "<item>";
-            XML += "<dc:title>" + filename + "</dc:title>";
+            XML += "<dc:title>" + info[0] + "</dc:title>";
+            XML += "<dc:creator>" + info[1] + "</dc:creator>";
+            XML += "<upnp:artist>" + info[1] + "</upnp:artist>";
             XML += "<upnp:class>object.item.audioItem.musicTrack</upnp:class>";
             XML += "<res>" + Url + "</res>";
             XML += "</item>";
@@ -401,13 +403,13 @@ namespace DLNA
         //    return HTML;
         //}
 
-        private string UploadFileToPlay(string ControlURL, string UrlToPlay, string filename)
+        private string UploadFileToPlay(string ControlURL, string UrlToPlay, string[] info)
         {///Later we will send a message to the DLNA server to start the file playing
             string XML = XMLHead;
             XML += "<u:SetAVTransportURI xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">" + Environment.NewLine;
             XML += "<InstanceID>0</InstanceID>" + Environment.NewLine;
             XML += "<CurrentURI>" + UrlToPlay.Replace(" ", "%20") + "</CurrentURI>" + Environment.NewLine;
-            XML += "<CurrentURIMetaData>" + Desc(UrlToPlay, filename) + "</CurrentURIMetaData>" + Environment.NewLine;
+            XML += "<CurrentURIMetaData>" + Desc(UrlToPlay, info) + "</CurrentURIMetaData>" + Environment.NewLine;
             XML += "</u:SetAVTransportURI>" + Environment.NewLine;
             XML += XMLFoot + Environment.NewLine;
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);

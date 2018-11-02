@@ -34,16 +34,16 @@ public static class Extentions
             Source = Regex.Replace(Source, Pattern, Replacement, RegexOptions.IgnoreCase);
         return Source;
     }
-    public static MemoryStream decodeAudio(string file)
+    public static MemoryStream decodeAudio(string file, int format)
     {
         string dec = string.Empty;
         string args = string.Empty;
-        if (file.EndsWith(".opus"))
+        if (format == 1)
         {
             dec = "opusdec.exe";
             args = "--rate 48000 --no-dither --float \"" + file + "\" temp.wav";
         }
-        else if (file.EndsWith(".flac"))
+        else if (format == 2)
         {
             dec = "flac.exe";
             args = "-d \"" + file + "\" -o temp.wav";
@@ -63,6 +63,38 @@ public static class Extentions
         temp.Close();
         File.Delete("temp.wav");
         return decodedWav;
+    }
+    public static string[] getMetadata(string file)
+    {
+        string track = "Unknown";
+        string artist = "Unknown";
+        ProcessStartInfo ProcessInfo = new ProcessStartInfo()
+        {
+            FileName = "mediainfo.exe",
+            Arguments = "\"" + file + "\"",
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            UseShellExecute = false
+        };
+        Process process = new Process
+        {
+            StartInfo = ProcessInfo
+        };
+        process.Start();
+        string line = string.Empty;
+        while (!process.HasExited)
+        {
+            if (!process.StandardOutput.EndOfStream)
+            {
+                line = process.StandardOutput.ReadLine();
+                if (line.Contains("Track name") && !line.Contains("Position"))
+                    track = line.Split(':')[1].Trim();
+                else if (line.Contains("Artist"))
+                    artist = line.Split(':')[1].Trim();
+            }
+        }
+        string[] returnString = { track, artist };
+        return returnString;
     }
     public static class Helper
     {

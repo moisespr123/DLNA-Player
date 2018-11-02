@@ -25,6 +25,7 @@ namespace DLNAPlayer
         private static List<int> MediaFileLocationType = new List<int> { };
         private static MemoryStream NextTrack = new MemoryStream();
         private static int trackLoaded = -1;
+        string[] mediainfo = { "Unknown", "Unknown" };
 
         private void ScanDLNARenderers()
         {
@@ -162,10 +163,11 @@ namespace DLNAPlayer
                         NextTrack = new MemoryStream();
                         if (location_type == 1) //local file 
                         {
+                            mediainfo = Extentions.getMetadata(file_to_play);
                             if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                NextTrack = Extentions.decodeAudio(file_to_play);
+                                NextTrack = Extentions.decodeAudio(file_to_play, 1);
                             else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                                NextTrack = Extentions.decodeAudio(file_to_play);
+                                NextTrack = Extentions.decodeAudio(file_to_play, 2);
                             else
                             {
                                 FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -177,31 +179,28 @@ namespace DLNAPlayer
                         {
                             GDrive drive = GDriveForm.drive;
                             NextTrack = await drive.DownloadFile(file_to_play);
+                            FileStream tempFile = new FileStream("tempfile", FileMode.Create);
+                            MServer.FS.Position = 0;
+                            MServer.FS.CopyTo(tempFile);
+                            tempFile.Close();
+                            mediainfo = Extentions.getMetadata("tempfile");
                             if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                             {
-                                FileStream tempOpusFile = new FileStream("temp.opus", FileMode.Create);
-                                NextTrack.Position = 0;
-                                NextTrack.CopyTo(tempOpusFile);
-                                tempOpusFile.Close();
                                 NextTrack = new MemoryStream();
-                                NextTrack = Extentions.decodeAudio("temp.opus");
-                                File.Delete("temp.opus");
+                                NextTrack = Extentions.decodeAudio("tempfile", 1);
                             }
                             else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
                             {
-                                FileStream tempFlacFile = new FileStream("temp.flac", FileMode.Create);
-                                NextTrack.Position = 0;
-                                NextTrack.CopyTo(tempFlacFile);
-                                tempFlacFile.Close();
                                 NextTrack = new MemoryStream();
-                                NextTrack = Extentions.decodeAudio("temp.flac");
-                                File.Delete("temp.flac");
+                                NextTrack = Extentions.decodeAudio("tempfile", 2);
                             }
+                            File.Delete("tempfile");
                         }
                         else if (location_type == 3) //CD Drive Audio Track
                         {
                             AudioCD drive = CDDriveChooser.drive;
                             NextTrack = drive.getTrack(file_to_play);
+                            mediainfo[0] = file_to_play;
                         }
                         trackLoaded = item;
                     });
@@ -238,10 +237,11 @@ namespace DLNAPlayer
                             {
                                 if (location_type == 1) //local file 
                                 {
+                                    mediainfo = Extentions.getMetadata(file_to_play);
                                     if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                        MServer.FS = Extentions.decodeAudio(file_to_play);
+                                        MServer.FS = Extentions.decodeAudio(file_to_play, 1);
                                     else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                                        MServer.FS = Extentions.decodeAudio(file_to_play);
+                                        MServer.FS = Extentions.decodeAudio(file_to_play, 2);
                                     else
                                     {
                                         FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -253,41 +253,41 @@ namespace DLNAPlayer
                                 {
                                     GDrive drive = GDriveForm.drive;
                                     MServer.FS = await drive.DownloadFile(file_to_play);
+                                    FileStream tempFile = new FileStream("tempfile", FileMode.Create);
+                                    MServer.FS.Position = 0;
+                                    MServer.FS.CopyTo(tempFile);
+                                    tempFile.Close();
+                                    mediainfo = Extentions.getMetadata("tempfile");
                                     if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                     {
-                                        FileStream tempOpusFile = new FileStream("temp.opus", FileMode.Create);
-                                        MServer.FS.Position = 0;
-                                        MServer.FS.CopyTo(tempOpusFile);
-                                        tempOpusFile.Close();
                                         MServer.FS = new MemoryStream();
-                                        MServer.FS = Extentions.decodeAudio("temp.opus");
-                                        File.Delete("temp.opus");
+                                        MServer.FS = Extentions.decodeAudio("tempfile", 1);
                                     }
                                     else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
                                     {
-                                        FileStream tempFlacFile = new FileStream("temp.flac", FileMode.Create);
-                                        MServer.FS.Position = 0;
-                                        MServer.FS.CopyTo(tempFlacFile);
-                                        tempFlacFile.Close();
                                         MServer.FS = new MemoryStream();
-                                        MServer.FS = Extentions.decodeAudio("temp.flac");
-                                        File.Delete("temp.flac");
+                                        MServer.FS = Extentions.decodeAudio("tempfile", 2);
                                     }
+                                    File.Delete("tempfile");
                                 }
                                 else if (location_type == 3) //CD Drive Audio Track
                                 {
                                     AudioCD drive = CDDriveChooser.drive;
                                     MServer.FS = drive.getTrack(file_to_play);
+                                    mediainfo[0] = file_to_play;
                                 }
                                 else if (location_type == 4) //Tidal Track
                                 {
                                     Tidl tidl = TidalBrowser.tidl;
                                     url = await tidl.getStreamURL(Convert.ToInt32(file_to_play));
+                                    mediainfo = await tidl.getNameAndArtist(Convert.ToInt32(file_to_play));
                                 }
                                 else if (location_type == 5) //Google Drive file (stream)
                                 {
                                     GDrive drive = GDriveForm.drive;
                                     url = await drive.GetUrl(file_to_play);
+                                    mediainfo[0] = "Unknown";
+                                    mediainfo[1] = "Unknown";
                                 }
                             }
                             else
@@ -298,7 +298,7 @@ namespace DLNAPlayer
                             Thread.Sleep(100);
                             if (location_type != 4 && location_type != 5)
                                 url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString().Replace('"', '_'));
-                            string Reply = Device.TryToPlayFile(url, filename);
+                            string Reply = Device.TryToPlayFile(url, mediainfo);
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
