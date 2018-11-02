@@ -26,6 +26,7 @@ namespace DLNAPlayer
         private static MemoryStream NextTrack = new MemoryStream();
         private static int trackLoaded = -1;
         string[] mediainfo = { "Unknown", "Unknown" };
+        string[] nextMediainfo = { "Unknown", "Unknown" };
 
         private void ScanDLNARenderers()
         {
@@ -163,7 +164,7 @@ namespace DLNAPlayer
                         NextTrack = new MemoryStream();
                         if (location_type == 1) //local file 
                         {
-                            mediainfo = Extentions.getMetadata(file_to_play);
+                            nextMediainfo  = Extentions.getMetadata(file_to_play);
                             if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                 NextTrack = Extentions.decodeAudio(file_to_play, 1);
                             else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
@@ -180,10 +181,10 @@ namespace DLNAPlayer
                             GDrive drive = GDriveForm.drive;
                             NextTrack = await drive.DownloadFile(file_to_play);
                             FileStream tempFile = new FileStream("tempfile", FileMode.Create);
-                            MServer.FS.Position = 0;
-                            MServer.FS.CopyTo(tempFile);
+                            NextTrack.Position = 0;
+                            NextTrack.CopyTo(tempFile);
                             tempFile.Close();
-                            mediainfo = Extentions.getMetadata("tempfile");
+                            nextMediainfo = Extentions.getMetadata("tempfile");
                             if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                             {
                                 NextTrack = new MemoryStream();
@@ -200,7 +201,7 @@ namespace DLNAPlayer
                         {
                             AudioCD drive = CDDriveChooser.drive;
                             NextTrack = drive.getTrack(file_to_play);
-                            mediainfo[0] = file_to_play;
+                            nextMediainfo[0] = file_to_play;
                         }
                         trackLoaded = item;
                     });
@@ -292,6 +293,7 @@ namespace DLNAPlayer
                             }
                             else
                             {
+                                mediainfo = nextMediainfo;
                                 MServer.FS = NextTrack;
                                 trackLoaded = -1;
                             }
