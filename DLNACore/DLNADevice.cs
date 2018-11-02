@@ -138,8 +138,8 @@ namespace DLNA
         public string HTML = "";
         public string FriendlyName = "";
         public Dictionary<string, DLNAService> Services = null;
-        
-        
+
+
         public bool IsConnected()
         {//Will send a request to the DLNA server and then see if we get a valid reply
             Connected = false;
@@ -162,12 +162,12 @@ namespace DLNA
                     }
                 }
             }
-            catch { ;}
+            catch {; }
             return false;
         }
 
 
-        public string TryToPlayFile(string UrlToPlay)
+        public string TryToPlayFile(string UrlToPlay, string filename)
         {
             if (!this.Connected) this.Connected = this.IsConnected();//Someone might have turned the TV Off !
             if (!this.Connected) return "#ERROR# Not connected";
@@ -177,16 +177,16 @@ namespace DLNA
                 {
                     if (S.ServiceType.ToLower().IndexOf("avtransport:1") > -1)
                     {//This is the service we are using so upload the file and then start playing
-                        string AddPlay = UploadFileToPlay(S.controlURL, UrlToPlay);
+                        string AddPlay = UploadFileToPlay(S.controlURL, UrlToPlay, filename);
                         if (this.ReturnCode != 200) return "#ERROR# Cannot upload file";
-                        string PlayNow = StartPlay(S.controlURL,0);
+                        string PlayNow = StartPlay(S.controlURL, 0);
                         if (this.ReturnCode == 200) return "OK"; else return "#ERROR Starting";
                     }
                 }
                 return "#ERROR# Could not find avtransport:1";
             }
-            catch (Exception Ex) { return "#ERROR# " + Ex.Message;}
-            
+            catch (Exception Ex) { return "#ERROR# " + Ex.Message; }
+
         }
 
         private readonly string XMLHead = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" + Environment.NewLine + "<SOAP-ENV:Body>" + Environment.NewLine;
@@ -205,16 +205,16 @@ namespace DLNA
             return GG;
         }
 
-        public string Desc()
+        public string Desc(string Url, string filename)
         {//Gets a description of the DLNA server
-            string XML = File.ReadAllText("test.xml");// "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">" + Environment.NewLine ;
-            //XML+="<item>"  + Environment.NewLine ;
-            //XML+="<dc:title></dc:title>" + Environment.NewLine ;
-            //XML+="<upnp:class>object.item.audioItem.audioBroadcast</upnp:class>"  + Environment.NewLine ;
-            //XML+="<desc id=\"cdudn\" nameSpace=\"urn:schemas-rinconnetworks-com:metadata-1-0/\">SA_RINCON65031_</desc>" + Environment.NewLine ;
-            //XML+="</item>"  + Environment.NewLine ;
-            //XML += "</DIDL-Lite>" + Environment.NewLine;
-            return XML;
+            string XML = "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">" + Environment.NewLine;
+            XML += "<item>";
+            XML += "<dc:title>" + filename + "</dc:title>";
+            XML += "<upnp:class>object.item.audioItem.musicTrack</upnp:class>";
+            XML += "<res>" + Url + "</res>";
+            XML += "</item>";
+            XML += "</DIDL-Lite>";
+            return WebUtility.HtmlEncode(XML);
         }
 
         public string StartPlay(int Instance)
@@ -227,7 +227,7 @@ namespace DLNA
         private string StartPlay(string ControlURL, int Instance)
         {//Start playing the new upload film or music track 
             string XML = XMLHead;
-            XML += "<u:Play xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID>"+ Instance + "</InstanceID><Speed>1</Speed></u:Play>" + Environment.NewLine;
+            XML += "<u:Play xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID>" + Instance + "</InstanceID><Speed>1</Speed></u:Play>" + Environment.NewLine;
             XML += XMLFoot + Environment.NewLine;
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
             string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#Play", this.IP, this.Port) + XML;
@@ -244,7 +244,7 @@ namespace DLNA
                 this.PlayListQueue = new Dictionary<int, string>();
                 this.PlayListPointer = 0;
             }
-            return  StopPlay(this.ControlURL, 0);
+            return StopPlay(this.ControlURL, 0);
         }
 
 
@@ -292,65 +292,65 @@ namespace DLNA
             return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
         }
 
-        
 
-        public int PlayPreviousQueue()
-        {//Play the previous track in our queue, we don't care if the current track has not completed or not, just do it
-            PlayListPointer--;
-            if (PlayListQueue.Count == 0) return 0;
-            if (PlayListPointer == 0)
-                PlayListPointer = PlayListQueue.Count;
-            string Url = PlayListQueue[PlayListPointer];
-            StopPlay(false);
-            TryToPlayFile(Url);
-            return 310;
-        }
+
+        //public int PlayPreviousQueue()
+        //{//Play the previous track in our queue, we don't care if the current track has not completed or not, just do it
+        //    PlayListPointer--;
+        //    if (PlayListQueue.Count == 0) return 0;
+        //    if (PlayListPointer == 0)
+        //        PlayListPointer = PlayListQueue.Count;
+        //    string Url = PlayListQueue[PlayListPointer];
+        //    StopPlay(false);
+        //    TryToPlayFile(Url);
+        //    return 310;
+        //}
 
         private int NoPlayCount = 0;
-        public int PlayNextQueue(bool Force)
-        {//Play the next track in our queue but only if the current track is about to end or unless we are being forced  
-            if (Force)
-            {//Looks like someone has pressed the next track button
-                PlayListPointer++;
-                if (PlayListQueue.Count == 0) return 0;
-                if (PlayListPointer > PlayListQueue.Count)
-                    PlayListPointer = 1;
-                string Url = PlayListQueue[PlayListPointer];
-                StopPlay(false);
-                TryToPlayFile(Url);//Just play it
-                NoPlayCount = 0;
-                return 310;//Just guess for now how long the track is
-            }
-            else
-            {
-                string HTMLPosition = GetPosition();
-                if (HTMLPosition.Length < 50) return 0;
-                string TrackDuration = HTMLPosition.ChopOffBefore("<TrackDuration>").ChopOffAfter("</TrackDuration>").Substring(2);
-                string RelTime = HTMLPosition.ChopOffBefore("<RelTime>").ChopOffAfter("</RelTime>").Substring(2);
-                int RTime = TotalSeconds(RelTime);
-                int TTime = TotalSeconds(TrackDuration);
-                if (RTime < 3 || TTime < 2)
-                {
-                    NoPlayCount++;
-                    if (NoPlayCount > 3)
-                    {
-                        StopPlay(false);
-                        return PlayNextQueue(true);//Force the next track to start because the current track is about to end
-                    }
-                    else
-                        return 0;
+        //public int PlayNextQueue(bool Force)
+        //{//Play the next track in our queue but only if the current track is about to end or unless we are being forced  
+        //    if (Force)
+        //    {//Looks like someone has pressed the next track button
+        //        PlayListPointer++;
+        //        if (PlayListQueue.Count == 0) return 0;
+        //        if (PlayListPointer > PlayListQueue.Count)
+        //            PlayListPointer = 1;
+        //        string Url = PlayListQueue[PlayListPointer];
+        //        StopPlay(false);
+        //        TryToPlayFile(Url);//Just play it
+        //        NoPlayCount = 0;
+        //        return 310;//Just guess for now how long the track is
+        //    }
+        //    else
+        //    {
+        //        string HTMLPosition = GetPosition();
+        //        if (HTMLPosition.Length < 50) return 0;
+        //        string TrackDuration = HTMLPosition.ChopOffBefore("<TrackDuration>").ChopOffAfter("</TrackDuration>").Substring(2);
+        //        string RelTime = HTMLPosition.ChopOffBefore("<RelTime>").ChopOffAfter("</RelTime>").Substring(2);
+        //        int RTime = TotalSeconds(RelTime);
+        //        int TTime = TotalSeconds(TrackDuration);
+        //        if (RTime < 3 || TTime < 2)
+        //        {
+        //            NoPlayCount++;
+        //            if (NoPlayCount > 3)
+        //            {
+        //                StopPlay(false);
+        //                return PlayNextQueue(true);//Force the next track to start because the current track is about to end
+        //            }
+        //            else
+        //                return 0;
 
-                }
-                int SecondsToPlay = TTime - RTime - 5;
-                if (SecondsToPlay < 0) SecondsToPlay = 0;//Just a safeguard
-                if (SecondsToPlay <10)
-                {//Current track is about to end so wait a few seconds and then force the next track in our queue to play
-                    Thread.Sleep((SecondsToPlay * 1000) +100);
-                    return PlayNextQueue(true);
-                }
-                return SecondsToPlay;//Will have to wait to be polled again before playing the next track in our queue
-            }
-        }
+        //        }
+        //        int SecondsToPlay = TTime - RTime - 5;
+        //        if (SecondsToPlay < 0) SecondsToPlay = 0;//Just a safeguard
+        //        if (SecondsToPlay <10)
+        //        {//Current track is about to end so wait a few seconds and then force the next track in our queue to play
+        //            Thread.Sleep((SecondsToPlay * 1000) +100);
+        //            return PlayNextQueue(true);
+        //        }
+        //        return SecondsToPlay;//Will have to wait to be polled again before playing the next track in our queue
+        //    }
+        //}
 
         private int TotalSeconds(string Value)
         {//Convert the time left for the track to play back to seconds
@@ -361,29 +361,29 @@ namespace DLNA
                 int Secs = int.Parse(Value.Split(':')[1]);
                 return Mins * 60 + Secs;
             }
-            catch {;}
+            catch {; }
             return 0;
         }
 
-        public bool AddToQueue(string UrlToPlay, ref bool NewTrackPlaying)
-        {//We add music tracks to a play list queue and then we poll the server so we know when to send the next track in the queue to play
-            if (!this.Connected) this.Connected = this.IsConnected();
-            if (!this.Connected) return false;
-            foreach (string Url in PlayListQueue.Values)
-            {
-                if (Url.ToLower() == UrlToPlay.ToLower())
-                    return false;
-            }
-            PlayListQueue.Add(PlayListQueue.Count + 1, UrlToPlay);
-            if (!NewTrackPlaying)
-            {
-                PlayListPointer = PlayListQueue.Count + 1;
-                StopPlay(false);
-                TryToPlayFile(UrlToPlay);
-                NewTrackPlaying = true;
-            }
-            return false;
-        }
+        //public bool AddToQueue(string UrlToPlay, ref bool NewTrackPlaying)
+        //{//We add music tracks to a play list queue and then we poll the server so we know when to send the next track in the queue to play
+        //    if (!this.Connected) this.Connected = this.IsConnected();
+        //    if (!this.Connected) return false;
+        //    foreach (string Url in PlayListQueue.Values)
+        //    {
+        //        if (Url.ToLower() == UrlToPlay.ToLower())
+        //            return false;
+        //    }
+        //    PlayListQueue.Add(PlayListQueue.Count + 1, UrlToPlay);
+        //    if (!NewTrackPlaying)
+        //    {
+        //        PlayListPointer = PlayListQueue.Count + 1;
+        //        StopPlay(false);
+        //        TryToPlayFile(UrlToPlay);
+        //        NewTrackPlaying = true;
+        //    }
+        //    return false;
+        //}
 
         //private string NextPlayList(string ControlURL, string UrlToPlay, int Instance)
         //{//Yes  this would be nice but it does not queue the track up and that is why we use our own queue and then poll the DLNA server to know when to play the next track
@@ -401,13 +401,13 @@ namespace DLNA
         //    return HTML;
         //}
 
-        private string UploadFileToPlay(string ControlURL, string UrlToPlay)
+        private string UploadFileToPlay(string ControlURL, string UrlToPlay, string filename)
         {///Later we will send a message to the DLNA server to start the file playing
             string XML = XMLHead;
             XML += "<u:SetAVTransportURI xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">" + Environment.NewLine;
             XML += "<InstanceID>0</InstanceID>" + Environment.NewLine;
             XML += "<CurrentURI>" + UrlToPlay.Replace(" ", "%20") + "</CurrentURI>" + Environment.NewLine;
-            XML += "<CurrentURIMetaData>NOT_IMPLEMENTED</CurrentURIMetaData>" + Environment.NewLine;
+            XML += "<CurrentURIMetaData>" + Desc(UrlToPlay, filename) + "</CurrentURIMetaData>" + Environment.NewLine;
             XML += "</u:SetAVTransportURI>" + Environment.NewLine;
             XML += XMLFoot + Environment.NewLine;
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);

@@ -298,7 +298,7 @@ namespace DLNAPlayer
                             Thread.Sleep(100);
                             if (location_type != 4 && location_type != 5)
                                 url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString().Replace('"', '_'));
-                            string Reply = Device.TryToPlayFile(url);
+                            string Reply = Device.TryToPlayFile(url, filename);
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
