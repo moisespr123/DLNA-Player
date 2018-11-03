@@ -87,13 +87,13 @@ public static class Extentions
         {
             if (!process.StandardOutput.EndOfStream)
             {
-                line = process.StandardOutput.ReadLine();
-                if (line.Contains("Track name") && !line.Contains("/"))
-                    track = line.Split(':')[1].Trim();
-                else if (line.Contains("Artist") && !line.Contains("/"))
-                    artist = line.Split(':')[1].Trim();
-                else if (line.Contains("Performer") && !line.Contains("/"))
-                    performer = line.Split(':')[1].Trim();
+                string[] splitted_line = process.StandardOutput.ReadLine().Split(':');
+                if (splitted_line[0].Contains("Track name") && !splitted_line[0].Contains("/"))
+                    track = splitted_line[1].Trim();
+                else if (splitted_line[0].Contains("Artist") && !splitted_line[0].Contains("/"))
+                    artist = splitted_line[1].Trim();
+                else if (splitted_line[0].Contains("Performer") && !splitted_line[0].Contains("/"))
+                    performer = splitted_line[1].Trim();
             }
         }
         if (artist == "Unknown" && performer != "Unknown")
