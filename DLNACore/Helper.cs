@@ -68,6 +68,7 @@ public static class Extentions
     {
         string track = "Unknown";
         string artist = "Unknown";
+        string performer = "Unknown";
         ProcessStartInfo ProcessInfo = new ProcessStartInfo()
         {
             FileName = "mediainfo.exe",
@@ -87,12 +88,16 @@ public static class Extentions
             if (!process.StandardOutput.EndOfStream)
             {
                 line = process.StandardOutput.ReadLine();
-                if (line.Contains("Track name") && !line.Contains("Position"))
+                if (line.Contains("Track name") && !line.Contains("/"))
                     track = line.Split(':')[1].Trim();
-                else if (line.Contains("Artist"))
+                else if (line.Contains("Artist") && !line.Contains("/"))
                     artist = line.Split(':')[1].Trim();
+                else if (line.Contains("Performer") && !line.Contains("/"))
+                    performer = line.Split(':')[1].Trim();
             }
         }
+        if (artist == "Unknown" && performer != "Unknown")
+            artist = performer;
         string[] returnString = { track, artist };
         return returnString;
     }
