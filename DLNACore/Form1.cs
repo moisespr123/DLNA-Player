@@ -56,10 +56,10 @@ namespace DLNAPlayer
                         renderers.Add(deviceInfo);
                         if (!MediaRenderers.Items.Contains(deviceInfo))
                             MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
-                        foreach (string renderer in MediaRenderers.Items)
-                            if (!MediaRenderers.Items.Contains(renderer))
-                                MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Remove(renderer); });
                     }
+                    foreach (string renderer in renderers)
+                        if (!MediaRenderers.Items.Contains(renderer))
+                            MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Remove(renderer); });
                     renderers.Clear();
                     //ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scan Media Renderers"; });
                 }
