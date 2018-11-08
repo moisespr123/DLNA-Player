@@ -32,28 +32,37 @@ namespace DLNAPlayer
         {
             Thread TH = new Thread(() =>
             {
+                MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Clear(); });
                 ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scanning..."; });
                 DLNA.SSDP.Start();//Start a service as this will take a long time
-                Thread.Sleep(5000);//Wait for each TV/Device to reply to the broadcast
-                DLNA.SSDP.Stop();//Stop the service if it has not stopped already
-                MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Clear(); });
-                for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
+                Thread.Sleep(1000);//Wait for each TV/Device to reply to the broadcast
+                while (true)
                 {
-                    String deviceInfo = "";
-                    XmlDocument RendererXML = new XmlDocument();
-                    try
+                    List<string> renderers = new List<string> { };
+                    for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
                     {
-                        RendererXML.Load(DLNA.SSDP.Renderers[i]);
-                        XmlElement rootXML = RendererXML.DocumentElement;
-                        deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                        String deviceInfo = "";
+                        XmlDocument RendererXML = new XmlDocument();
+                        try
+                        {
+                            RendererXML.Load(DLNA.SSDP.Renderers[i]);
+                            XmlElement rootXML = RendererXML.DocumentElement;
+                            deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                        }
+                        catch
+                        {
+                            deviceInfo = DLNA.SSDP.Renderers[i];
+                        }
+                        renderers.Add(deviceInfo);
+                        if (!MediaRenderers.Items.Contains(deviceInfo))
+                            MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
+                        foreach (string renderer in MediaRenderers.Items)
+                            if (!MediaRenderers.Items.Contains(renderer))
+                                MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Remove(renderer); });
                     }
-                    catch
-                    {
-                        deviceInfo = DLNA.SSDP.Renderers[i];
-                    }
-                    MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
+                    renderers.Clear();
+                    //ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scan Media Renderers"; });
                 }
-                ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scan Media Renderers"; });
             });
             TH.Start();
         }
@@ -77,6 +86,7 @@ namespace DLNAPlayer
             timer1.Interval = 500;
             decodeOpusToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeOpus;
             decodeFLACToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeFLAC;
+            ScanDLNARenderers();
         }
 
         private void Play()
@@ -164,7 +174,7 @@ namespace DLNAPlayer
                         NextTrack = new MemoryStream();
                         if (location_type == 1) //local file 
                         {
-                            nextMediainfo  = Extentions.getMetadata(file_to_play);
+                            nextMediainfo = Extentions.getMetadata(file_to_play);
                             if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                 NextTrack = Extentions.decodeAudio(file_to_play, 1);
                             else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)

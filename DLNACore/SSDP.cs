@@ -22,8 +22,8 @@ namespace DLNA
             Running = true;
             Thread THSend = new Thread(SendRequest);
             THSend.Start();
-            Thread TH = new Thread(Stop);
-            TH.Start();
+            //Thread TH = new Thread(Stop);
+            //TH.Start();
         }
         public static void Stop()
         {//OK time is up so lets return our DLNA server list
@@ -42,48 +42,58 @@ namespace DLNA
 
         private static void SendRequest()
         {
-            try { SendRequestNow(); }
-            catch { }
+            SendRequestNow();
         }
 
         private static void SendRequestNow()
         {//Uses UDP Multicast on 239.255.255.250 with port 1900 to send out invitations that are slow to be answered
-            IPEndPoint LocalEndPoint = new IPEndPoint(IPAddress.Any, 6000);
-            IPEndPoint MulticastEndPoint = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);//SSDP port
-            Socket UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            UdpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            UdpSocket.Bind(LocalEndPoint);
-            UdpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(MulticastEndPoint.Address, IPAddress.Any));
-            UdpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 2);
-            UdpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, true);
-            string SearchString = "M-SEARCH * HTTP/1.1\r\nHOST:239.255.255.250:1900\r\nMAN:\"ssdp:discover\"\r\nST:ssdp:all\r\nMX:3\r\n\r\n";
-            UdpSocket.SendTo(Encoding.UTF8.GetBytes(SearchString), SocketFlags.None, MulticastEndPoint);
-            byte[] ReceiveBuffer = new byte[4000];
-            int ReceivedBytes = 0;
-            int Count = 0;
-            while (Running && Count < 100)
-            {//Keep loopping until we timeout or stop is called but do wait for at least ten seconds 
-                Count++;
-                if (UdpSocket.Available > 0)
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                try
                 {
-                    ReceivedBytes = UdpSocket.Receive(ReceiveBuffer, SocketFlags.None);
-                    if (ReceivedBytes > 0)
-                    {
-                        string Data = Encoding.UTF8.GetString(ReceiveBuffer, 0, ReceivedBytes);
-                        if (Data.ToUpper().IndexOf("LOCATION: ") > -1)
-                        {//ChopOffAfter is an extended string method added in Helper.cs
-                            Data = Data.ChopOffBefore("LOCATION: ").ChopOffAfter(Environment.NewLine);
-                            if (!Renderers.Contains(Data.ToLower()))
-                                Renderers.Add(Data.ToLower());
+                    IPEndPoint LocalEndPoint = new IPEndPoint(IPAddress.Parse(ip.ToString()), 6000);
+                    IPEndPoint MulticastEndPoint = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);//SSDP port
+                    Socket UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                    UdpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    UdpSocket.Bind(LocalEndPoint);
+                    UdpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(MulticastEndPoint.Address, LocalEndPoint.Address));
+                    UdpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 10);
+                    UdpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, true);
+                    string SearchString = "M-SEARCH * HTTP/1.1\r\nHOST:239.255.255.250:1900\r\nMAN:\"ssdp:discover\"\r\nST:ssdp:all\r\nMX:3\r\n\r\n";
+                    UdpSocket.SendTo(Encoding.UTF8.GetBytes(SearchString), SocketFlags.None, MulticastEndPoint);
+                    byte[] ReceiveBuffer = new byte[4000];
+                    int ReceivedBytes = 0;
+                    int Count = 0;
+                    while (Running && Count < 100)
+                    {//Keep loopping until we timeout or stop is called but do wait for at least ten seconds 
+                        Count++;
+                        if (UdpSocket.Available > 0)
+                        {
+                            ReceivedBytes = UdpSocket.Receive(ReceiveBuffer, SocketFlags.None);
+                            if (ReceivedBytes > 0)
+                            {
+                                string Data = Encoding.UTF8.GetString(ReceiveBuffer, 0, ReceivedBytes);
+                                if (Data.ToUpper().IndexOf("LOCATION: ") > -1)
+                                {//ChopOffAfter is an extended string method added in Helper.cs
+                                    Data = Data.ChopOffBefore("LOCATION: ").ChopOffAfter(Environment.NewLine);
+                                    if (!Renderers.Contains(Data.ToLower()))
+                                        Renderers.Add(Data.ToLower());
+                                }
+                            }
                         }
+                        else
+                            Thread.Sleep(100);
                     }
+                    UdpSocket.Close();
+                    THSend = null;
+                    UdpSocket = null;
                 }
-                else
+                catch
+                {
                     Thread.Sleep(100);
+                }
             }
-            UdpSocket.Close();
-            THSend = null;
-            UdpSocket = null;
         }
     }
 }
