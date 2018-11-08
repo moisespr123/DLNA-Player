@@ -13,7 +13,7 @@ namespace DLNA
     {
         private static Socket UdpSocket = null;
         private static Thread THSend = null;
-        private static bool Running = false;
+        public static bool Running = false;
         public static List<String> Renderers;
         public static void Start()
         {//Stop should be called in about 12 seconds which will kill the thread
@@ -22,16 +22,12 @@ namespace DLNA
             Running = true;
             Thread THSend = new Thread(SendRequest);
             THSend.Start();
-            //Thread TH = new Thread(Stop);
-            //TH.Start();
         }
         public static void Stop()
         {//OK time is up so lets return our DLNA server list
-            Thread.Sleep(5000);
             Running = false;
             try
             {
-                Thread.Sleep(1000);
                 if (UdpSocket != null)
                     UdpSocket.Close();
                 if (THSend != null)

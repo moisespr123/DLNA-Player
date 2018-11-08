@@ -33,7 +33,7 @@ namespace DLNAPlayer
             Thread TH = new Thread(() =>
             {
                 MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Clear(); });
-                ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scanning..."; });
+                ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scanning... Press to stop"; });
                 DLNA.SSDP.Start();//Start a service as this will take a long time
                 Thread.Sleep(1000);//Wait for each TV/Device to reply to the broadcast
                 while (true)
@@ -61,22 +61,24 @@ namespace DLNAPlayer
                         if (!MediaRenderers.Items.Contains(renderer))
                             MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Remove(renderer); });
                     renderers.Clear();
-                    //ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scan Media Renderers"; });
+
                 }
             });
             TH.Start();
         }
         private void CmdSSDP_Click(object sender, EventArgs e)
         {
-            if (!playing)
-            {
-                ScanDLNARenderers();
-            }
-            else
+            if (playing)
             {
                 Stop_Function();
-                ScanDLNARenderers();
             }
+            if (DLNA.SSDP.Running)
+            {
+                DLNA.SSDP.Stop();
+                ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scan Media Renderers"; });
+            }
+            else
+                ScanDLNARenderers();
         }
 
         private void Form1_Load(object sender, EventArgs e)

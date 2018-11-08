@@ -74,7 +74,6 @@
             // 
             this.ScanRenderers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScanRenderers.Enabled = false;
             this.ScanRenderers.Location = new System.Drawing.Point(3, 430);
             this.ScanRenderers.Name = "ScanRenderers";
             this.ScanRenderers.Size = new System.Drawing.Size(239, 23);
