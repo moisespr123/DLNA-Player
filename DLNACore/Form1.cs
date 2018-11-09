@@ -38,7 +38,6 @@ namespace DLNAPlayer
                 {
                     Thread.Sleep(1000);
                     DLNA.SSDP.Start();
-                    List<string> renderers = new List<string> { };
                     for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
                     {
                         String deviceInfo = "";
@@ -53,16 +52,9 @@ namespace DLNAPlayer
                         {
                             deviceInfo = DLNA.SSDP.Renderers[i];
                         }
-                        renderers.Add(deviceInfo);
-                        MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Clear(); });
                         if (!MediaRenderers.Items.Contains(deviceInfo))
                             MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
                     }
-                    foreach (string renderer in renderers)
-                        if (!MediaRenderers.Items.Contains(renderer))
-                            MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Remove(renderer); });
-                    renderers.Clear();
-                    
                 }
             });
             TH.Start();
