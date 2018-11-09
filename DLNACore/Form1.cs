@@ -209,7 +209,8 @@ namespace DLNAPlayer
                         {
                             AudioCD drive = CDDriveChooser.drive;
                             NextTrack = drive.getTrack(file_to_play);
-                            nextMediainfo[0] = file_to_play;
+                            nextMediainfo[0] = filename;
+                            mediainfo[1] = String.Empty;
                         }
                         trackLoaded = item;
                     });
@@ -283,7 +284,8 @@ namespace DLNAPlayer
                                 {
                                     AudioCD drive = CDDriveChooser.drive;
                                     MServer.FS = drive.getTrack(file_to_play);
-                                    mediainfo[0] = file_to_play;
+                                    mediainfo[0] = filename;
+                                    mediainfo[1] = String.Empty;
                                 }
                                 else if (location_type == 4) //Tidal Track
                                 {
