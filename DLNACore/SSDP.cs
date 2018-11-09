@@ -1,5 +1,4 @@
 ﻿//Dr Gadgit from the Code project http://www.codeproject.com/Articles/893791/DLNA-made-easy-and-Play-To-for-any-device
-using DLNAPlayer;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -12,12 +11,11 @@ namespace DLNA
     public static class SSDP
     {
         public static bool Run = true;
-        public static List<String> Renderers;
+        public static List<String> Renderers = new List<string> { };
         public static void Start()
         {
             if (Run)
             {
-                Renderers = new List<string> { };
                 SendRequest();
             }
         }
