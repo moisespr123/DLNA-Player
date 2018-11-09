@@ -123,7 +123,6 @@ namespace DLNA
 
     public class DLNADevice
     {
-        private int PlayListPointer = 0;
         private Dictionary<int, string> PlayListQueue = new Dictionary<int, string>();
         public string ControlURL = "";
         public bool Connected = false;
@@ -244,7 +243,6 @@ namespace DLNA
             if (ClearQueue)
             {
                 this.PlayListQueue = new Dictionary<int, string>();
-                this.PlayListPointer = 0;
             }
             return StopPlay(this.ControlURL, 0);
         }
@@ -308,7 +306,7 @@ namespace DLNA
         //    return 310;
         //}
 
-        private int NoPlayCount = 0;
+        //private int NoPlayCount = 0;
         //public int PlayNextQueue(bool Force)
         //{//Play the next track in our queue but only if the current track is about to end or unless we are being forced  
         //    if (Force)

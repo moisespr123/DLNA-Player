@@ -32,12 +32,12 @@ namespace DLNAPlayer
         {
             Thread TH = new Thread(() =>
             {
-                MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Clear(); });
+              
                 ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scanning... Press to stop"; });
-                DLNA.SSDP.Start();//Start a service as this will take a long time
-                Thread.Sleep(1000);//Wait for each TV/Device to reply to the broadcast
                 while (true)
                 {
+                    Thread.Sleep(1000);
+                    DLNA.SSDP.Start();
                     List<string> renderers = new List<string> { };
                     for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
                     {
@@ -54,6 +54,7 @@ namespace DLNAPlayer
                             deviceInfo = DLNA.SSDP.Renderers[i];
                         }
                         renderers.Add(deviceInfo);
+                        MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Clear(); });
                         if (!MediaRenderers.Items.Contains(deviceInfo))
                             MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
                     }
@@ -61,7 +62,7 @@ namespace DLNAPlayer
                         if (!MediaRenderers.Items.Contains(renderer))
                             MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Remove(renderer); });
                     renderers.Clear();
-
+                    
                 }
             });
             TH.Start();
@@ -72,13 +73,16 @@ namespace DLNAPlayer
             {
                 Stop_Function();
             }
-            if (DLNA.SSDP.Running)
+            if (DLNA.SSDP.Run)
             {
                 DLNA.SSDP.Stop();
                 ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scan Media Renderers"; });
             }
             else
+            {
+                DLNA.SSDP.Run = true;
                 ScanDLNARenderers();
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
