@@ -16,7 +16,7 @@ namespace DLNA
         public static bool Running = false;
         public static List<String> Renderers;
         public static void Start()
-        {//Stop should be called in about 12 seconds which will kill the thread
+        {
             Renderers = new List<string> { };
             if (Running) return;
             Running = true;
@@ -24,7 +24,7 @@ namespace DLNA
             THSend.Start();
         }
         public static void Stop()
-        {//OK time is up so lets return our DLNA server list
+        {
             Running = false;
             try
             {
@@ -37,11 +37,6 @@ namespace DLNA
         }
 
         private static void SendRequest()
-        {
-            SendRequestNow();
-        }
-
-        private static void SendRequestNow()
         {//Uses UDP Multicast on 239.255.255.250 with port 1900 to send out invitations that are slow to be answered
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
@@ -60,10 +55,8 @@ namespace DLNA
                     UdpSocket.SendTo(Encoding.UTF8.GetBytes(SearchString), SocketFlags.None, MulticastEndPoint);
                     byte[] ReceiveBuffer = new byte[4000];
                     int ReceivedBytes = 0;
-                    int Count = 0;
-                    while (Running && Count < 100)
-                    {//Keep loopping until we timeout or stop is called but do wait for at least ten seconds 
-                        Count++;
+                    for (int i = 0; i < 100; i++)
+                    {
                         if (UdpSocket.Available > 0)
                         {
                             ReceivedBytes = UdpSocket.Receive(ReceiveBuffer, SocketFlags.None);
