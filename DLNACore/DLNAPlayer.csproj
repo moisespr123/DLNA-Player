@@ -57,14 +57,14 @@
     <Reference Include="Google.Apis.Core, Version=1.36.1.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.Core.1.36.1\lib\net45\Google.Apis.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Apis.Drive.v3, Version=1.36.1.1393, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Drive.v3.1.36.1.1393\lib\net45\Google.Apis.Drive.v3.dll</HintPath>
+    <Reference Include="Google.Apis.Drive.v3, Version=1.36.1.1400, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Drive.v3.1.36.1.1400\lib\net45\Google.Apis.Drive.v3.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis.PlatformServices, Version=1.36.1.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.1.36.1\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OpenTidl, Version=1.12.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTidl.1.12.2\lib\net45\OpenTidl.dll</HintPath>
