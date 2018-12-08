@@ -32,7 +32,7 @@ namespace DLNAPlayer
         {
             Thread TH = new Thread(() =>
             {
-              
+
                 ScanRenderers.Invoke((MethodInvoker)delegate { ScanRenderers.Text = "Scanning... Press to stop"; });
                 while (true)
                 {
@@ -123,6 +123,13 @@ namespace DLNAPlayer
                 if (!Directory.Exists(path))
                 {
                     addToList(Path.GetFileName(path), path, 1);
+                }
+                else
+                {
+                    DirectoryInfo DI = new DirectoryInfo(path);
+                    foreach (FileInfo FI in DI.GetFiles()){
+                        addToList(Path.GetFileName(FI.FullName), FI.FullName, 1);
+                    }
                 }
             if (trackLoaded == -1)
                 LoadNextTrack(trackNum + 1);
