@@ -5,7 +5,7 @@ DLNA Player is a software that acts as a server and as a controller. Simply, sel
 The software will play the next track when the current track finishes playing. Because it is a controller software, you can also pause and resume, stop, or play the next or previous tracks. Also, you can use the Track Seek Bar to seek the audio track.
 
 Additionally, you can play back music files stored in your Google Drive account:  
-![](https://moisescardona.me/files/DLNA-Player-v0.2-GoogleDrive.PNG)
+![](https://moisescardona.me/files/2018-07-10/1.webp)
 
 # Configuring the local DLNA server
 1. Check that the IP Address shown is the same as your PC is currently using. This is needed as the software will use a local server to send the media files to your renderer.
