@@ -406,7 +406,7 @@ namespace DLNA
             string XML = XMLHead;
             XML += "<u:SetAVTransportURI xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">" + Environment.NewLine;
             XML += "<InstanceID>0</InstanceID>" + Environment.NewLine;
-            XML += "<CurrentURI>" + UrlToPlay.Replace(" ", "%20") + "</CurrentURI>" + Environment.NewLine;
+            XML += "<CurrentURI>" + WebUtility.HtmlEncode(UrlToPlay) + "</CurrentURI>" + Environment.NewLine;
             XML += "<CurrentURIMetaData>" + Desc(UrlToPlay, info) + "</CurrentURIMetaData>" + Environment.NewLine;
             XML += "</u:SetAVTransportURI>" + Environment.NewLine;
             XML += XMLFoot + Environment.NewLine;
