@@ -16,6 +16,7 @@ namespace DLNAPlayer
             InitializeComponent();
         }
         private MediaServer MServer = null;
+        private int PauseCounter = 0;
         private static string ip = "";
         private static int port = 9090;
         private static int trackNum = -1;
@@ -55,16 +56,13 @@ namespace DLNAPlayer
                         if (!MediaRenderers.Items.Contains(deviceInfo))
                             MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
                     }
+                    if (!DLNA.SSDP.Run) break;
                 }
             });
             TH.Start();
         }
         private void CmdSSDP_Click(object sender, EventArgs e)
         {
-            if (playing)
-            {
-                Stop_Function();
-            }
             if (DLNA.SSDP.Run)
             {
                 DLNA.SSDP.Stop();
@@ -351,6 +349,11 @@ namespace DLNAPlayer
 
         private void Pause_Click(object sender, EventArgs e)
         {
+            PauseTrack();
+        }
+
+        private void PauseTrack()
+        {
             Thread TH = new Thread(() =>
             {
                 Invoke((MethodInvoker)delegate
@@ -365,14 +368,14 @@ namespace DLNAPlayer
                                 Device.StartPlay(0);
                                 paused = false;
                                 Pause.Text = "Pause";
-                                if (!timer1.Enabled) timer1.Start();
+                                //if (!timer1.Enabled) timer1.Start();
                             }
                             else
                             {
                                 Device.Pause();
                                 paused = true;
                                 Pause.Text = "Resume";
-                                if (timer1.Enabled) timer1.Stop();
+                               // if (timer1.Enabled) timer1.Stop();
                             }
                         }
                     }
@@ -380,7 +383,6 @@ namespace DLNAPlayer
             });
             TH.Start();
         }
-
         private void Stop_Function()
         {
             Thread TH = new Thread(() =>
@@ -458,10 +460,36 @@ namespace DLNAPlayer
                                     {
                                         TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
                                         TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                                        if (!paused)
+                                        {
+                                            if (PauseCounter == 3)
+                                            {
+                                                PauseCounter = 0;
+                                                PauseTrack();
+                                            }
+                                            if (TrackPositionLabel.Text != "00:00:00" && TrackPositionLabel.Text == trackPositionString && PauseCounter < 3)
+                                            {
+                                                PauseCounter++;
+                                            }
+                                            else
+                                            {
+                                                PauseCounter = 0;
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            if (Convert.ToInt32(TimeSpan.Parse(TrackPositionLabel.Text).TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) < 0)
+                                            {
+                                                paused = false;
+                                                Pause.Invoke((MethodInvoker)delegate { Pause.Text = "Pause"; });
+                                            }
+                                        }
                                         TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
                                         if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
                                         {
                                             TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
+                                           
                                             trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
                                             if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2)
                                             {
