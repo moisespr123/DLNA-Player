@@ -21,7 +21,6 @@ namespace DLNAPlayer
         private static int port = 9090;
         private static int trackNum = -1;
         private static bool paused = false;
-        private static bool playing = false;
         private static List<String> MediaFileLocation = new List<string> { };
         private static List<int> MediaFileLocationType = new List<int> { };
         private static MemoryStream NextTrack = new MemoryStream();
@@ -319,7 +318,6 @@ namespace DLNAPlayer
                             if (Reply == "OK")
                             {
                                 if (!timer1.Enabled) timer1.Start();
-                                playing = true;
                                 if (MediaFiles.Items.Count - 1 > trackNum)
                                     if (MediaFileLocationType[item + 1] != 4 && MediaFileLocationType[item + 1] != 5)
                                         LoadNextTrack(trackNum + 1);
@@ -334,7 +332,6 @@ namespace DLNAPlayer
                                 else
                                 {
                                     MessageBox.Show("Error playing file");
-                                    playing = false;
                                 }
                             }
 
@@ -396,7 +393,6 @@ namespace DLNAPlayer
                         {
                             Device.StopPlay();
                             if (timer1.Enabled) timer1.Stop();
-                            playing = false;
                         }
                     }
                 });
@@ -435,7 +431,6 @@ namespace DLNAPlayer
             }
             else
             {
-                playing = false;
                 trackNum = -1;
             }
         }
