@@ -83,7 +83,7 @@ public static class Extentions
         };
         process.Start();
         string line = string.Empty;
-        while (!process.HasExited)
+        while (true)
         {
             if (!process.StandardOutput.EndOfStream)
             {
@@ -95,6 +95,8 @@ public static class Extentions
                 else if (splitted_line[0].Contains("Performer") && !splitted_line[0].Contains("/"))
                     performer = splitted_line[1].Trim();
             }
+            else
+                break;
         }
         if (artist == "Unknown" && performer != "Unknown")
             artist = performer;

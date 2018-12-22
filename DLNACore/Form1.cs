@@ -310,7 +310,7 @@ namespace DLNAPlayer
                             }
                             else
                             {
-                                mediainfo = nextMediainfo;
+                                nextMediainfo.CopyTo(mediainfo, 0);
                                 MServer.FS = NextTrack;
                                 trackLoaded = -1;
                             }
