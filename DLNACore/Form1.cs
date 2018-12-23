@@ -492,7 +492,7 @@ namespace DLNAPlayer
                                                 TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
 
                                                 trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
-                                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2 && MediaFiles.Items.Count - 1 == trackNum)
+                                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2 && MediaFiles.Items.Count - 1 > trackNum)
                                                 {
                                                     Thread.Sleep(2000);
                                                     timer1.Stop();
