@@ -25,6 +25,7 @@ namespace DLNAPlayer
         private static List<int> MediaFileLocationType = new List<int> { };
         private static MemoryStream NextTrack = new MemoryStream();
         private static int trackLoaded = -1;
+        private static bool trackLoading = false;
         string[] mediainfo = { "Unknown", "Unknown" };
         string[] nextMediainfo = { "Unknown", "Unknown" };
 
@@ -124,14 +125,17 @@ namespace DLNAPlayer
                 else
                 {
                     DirectoryInfo DI = new DirectoryInfo(path);
-                    foreach (FileInfo FI in DI.GetFiles()){
+                    foreach (FileInfo FI in DI.GetFiles())
+                    {
                         addToList(Path.GetFileName(FI.FullName), FI.FullName, 1);
                     }
                 }
-            if (trackLoaded == -1)
-                LoadNextTrack(trackNum + 1);
+            if (trackLoaded == -1 && !trackLoading)
+            {
+                Thread thread = new Thread(() => LoadNextTrack(trackNum + 1));
+                thread.Start();
+            }
         }
-
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -162,186 +166,180 @@ namespace DLNAPlayer
                 trackNum = MediaFiles.SelectedIndex;
             }
         }
-        private void LoadNextTrack(int item)
+        private async void LoadNextTrack(int item)
         {
             string file_to_play = MediaFileLocation[item];
             int location_type = MediaFileLocationType[item];
             string filename = MediaFiles.Items[item].ToString();
-            Thread TH = new Thread(() =>
+            trackLoading = true;
             {
                 try
                 {
-                    Invoke((MethodInvoker)async delegate
+                    NextTrack = new MemoryStream();
+                    if (location_type == 1) //local file 
                     {
-                        NextTrack = new MemoryStream();
-                        if (location_type == 1) //local file 
+                        nextMediainfo = await Extentions.getMetadata(file_to_play);
+                        if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                            NextTrack = await Extentions.decodeAudio(file_to_play, 1);
+                        else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                            NextTrack = await Extentions.decodeAudio(file_to_play, 2);
+                        else
                         {
-                            nextMediainfo = Extentions.getMetadata(file_to_play);
-                            if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                NextTrack = Extentions.decodeAudio(file_to_play, 1);
-                            else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                                NextTrack = Extentions.decodeAudio(file_to_play, 2);
-                            else
-                            {
-                                FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                                MediaFile.CopyTo(NextTrack);
-                                MediaFile.Close();
-                            }
+                            FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                            await MediaFile.CopyToAsync(NextTrack);
+                            MediaFile.Close();
                         }
-                        else if (location_type == 2) //Google Drive file
+                    }
+                    else if (location_type == 2) //Google Drive file
+                    {
+                        GDrive drive = GDriveForm.drive;
+                        NextTrack = await drive.DownloadFile(file_to_play);
+                        FileStream tempFile = new FileStream("tempfile", FileMode.Create);
+                        NextTrack.Position = 0;
+                        await NextTrack.CopyToAsync(tempFile);
+                        tempFile.Close();
+                        nextMediainfo = await Extentions.getMetadata("tempfile");
+                        if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                         {
-                            GDrive drive = GDriveForm.drive;
-                            NextTrack = await drive.DownloadFile(file_to_play);
-                            FileStream tempFile = new FileStream("tempfile", FileMode.Create);
-                            NextTrack.Position = 0;
-                            NextTrack.CopyTo(tempFile);
-                            tempFile.Close();
-                            nextMediainfo = Extentions.getMetadata("tempfile");
-                            if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                            {
-                                NextTrack = new MemoryStream();
-                                NextTrack = Extentions.decodeAudio("tempfile", 1);
-                            }
-                            else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                            {
-                                NextTrack = new MemoryStream();
-                                NextTrack = Extentions.decodeAudio("tempfile", 2);
-                            }
-                            File.Delete("tempfile");
+                            NextTrack = new MemoryStream();
+                            NextTrack = await Extentions.decodeAudio("tempfile", 1);
                         }
-                        else if (location_type == 3) //CD Drive Audio Track
+                        else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
                         {
-                            AudioCD drive = CDDriveChooser.drive;
-                            NextTrack = drive.getTrack(file_to_play);
-                            nextMediainfo[0] = filename;
-                            mediainfo[1] = String.Empty;
+                            NextTrack = new MemoryStream();
+                            NextTrack = await Extentions.decodeAudio("tempfile", 2);
                         }
-                        trackLoaded = item;
-                    });
+                        File.Delete("tempfile");
+                    }
+                    else if (location_type == 3) //CD Drive Audio Track
+                    {
+                        AudioCD drive = CDDriveChooser.drive;
+                        NextTrack = drive.getTrack(file_to_play);
+                        nextMediainfo[0] = filename;
+                        mediainfo[1] = String.Empty;
+                    }
+                    trackLoaded = item;
+                    trackLoading = false;
                 }
-                catch { }
-            });
-            TH.Start();
+                catch { trackLoading = false; }
+            }
         }
-
-        private void LoadFile(int item = 0)
+        private async void LoadFile(int item = 0)
         {
             string file_to_play = MediaFileLocation[item];
             int location_type = MediaFileLocationType[item];
             string filename = MediaFiles.Items[item].ToString();
             int retries = 0;
-            Thread TH = new Thread(() =>
             {
-                Invoke((MethodInvoker)async delegate
+                if (MediaRenderers.SelectedIndex != -1)
                 {
-                    if (MediaRenderers.SelectedIndex != -1)
+                    DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                    if (Device.IsConnected())
                     {
-                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                        if (Device.IsConnected())
+                        if (timer1.Enabled) timer1.Stop();
+                        Device.StopPlay();
+                        MServer.FS = new MemoryStream();
+                        if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked))
+                            MServer.Filename = "track.wav";
+                        else
+                            MServer.Filename = filename;
+                        string url = null;
+                        if (item != trackLoaded)
                         {
-                            if (timer1.Enabled) timer1.Stop();
-                            Device.StopPlay();
-                            MServer.FS = new MemoryStream();
-                            if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked))
-                                MServer.Filename = "track.wav";
-                            else
-                                MServer.Filename = filename;
-                            string url = null;
-                            if (trackNum != trackLoaded)
+                            if (location_type == 1) //local file 
                             {
-                                if (location_type == 1) //local file 
-                                {
-                                    mediainfo = Extentions.getMetadata(file_to_play);
-                                    if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                        MServer.FS = Extentions.decodeAudio(file_to_play, 1);
-                                    else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                                        MServer.FS = Extentions.decodeAudio(file_to_play, 2);
-                                    else
-                                    {
-                                        FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
-                                        MediaFile.CopyTo(MServer.FS);
-                                        MediaFile.Close();
-                                    }
-                                }
-                                else if (location_type == 2) //Google Drive file (local download)
-                                {
-                                    GDrive drive = GDriveForm.drive;
-                                    MServer.FS = await drive.DownloadFile(file_to_play);
-                                    FileStream tempFile = new FileStream("tempfile", FileMode.Create);
-                                    MServer.FS.Position = 0;
-                                    MServer.FS.CopyTo(tempFile);
-                                    tempFile.Close();
-                                    mediainfo = Extentions.getMetadata("tempfile");
-                                    if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                                    {
-                                        MServer.FS = new MemoryStream();
-                                        MServer.FS = Extentions.decodeAudio("tempfile", 1);
-                                    }
-                                    else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                                    {
-                                        MServer.FS = new MemoryStream();
-                                        MServer.FS = Extentions.decodeAudio("tempfile", 2);
-                                    }
-                                    File.Delete("tempfile");
-                                }
-                                else if (location_type == 3) //CD Drive Audio Track
-                                {
-                                    AudioCD drive = CDDriveChooser.drive;
-                                    MServer.FS = drive.getTrack(file_to_play);
-                                    mediainfo[0] = filename;
-                                    mediainfo[1] = String.Empty;
-                                }
-                                else if (location_type == 4) //Tidal Track
-                                {
-                                    Tidl tidl = TidalBrowser.tidl;
-                                    url = await tidl.getStreamURL(Convert.ToInt32(file_to_play));
-                                    mediainfo = await tidl.getNameAndArtist(Convert.ToInt32(file_to_play));
-                                }
-                                else if (location_type == 5) //Google Drive file (stream)
-                                {
-                                    GDrive drive = GDriveForm.drive;
-                                    url = await drive.GetUrl(file_to_play);
-                                    mediainfo[0] = "Unknown";
-                                    mediainfo[1] = "Unknown";
-                                }
-                            }
-                            else
-                            {
-                                nextMediainfo.CopyTo(mediainfo, 0);
-                                MServer.FS = NextTrack;
-                                trackLoaded = -1;
-                            }
-                            Thread.Sleep(100);
-                            if (location_type != 4 && location_type != 5)
-                                url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.SelectedItem.ToString().Replace('"', '_'));
-                            string Reply = Device.TryToPlayFile(url, mediainfo);
-                            if (Reply == "OK")
-                            {
-                                if (!timer1.Enabled) timer1.Start();
-                                if (MediaFiles.Items.Count - 1 > trackNum)
-                                    if (MediaFileLocationType[item + 1] != 4 && MediaFileLocationType[item + 1] != 5)
-                                        LoadNextTrack(trackNum + 1);
-                            }
-                            else
-                            {
-                                if (retries == 0)
-                                {
-                                    LoadFile(trackNum);
-                                    retries++;
-                                }
+                                mediainfo = await Extentions.getMetadata(file_to_play);
+                                if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                                    MServer.FS = await Extentions.decodeAudio(file_to_play, 1);
+                                else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                                    MServer.FS = await Extentions.decodeAudio(file_to_play, 2);
                                 else
                                 {
-                                    MessageBox.Show("Error playing file");
+                                    FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                                    await MediaFile.CopyToAsync(MServer.FS);
+                                    MediaFile.Close();
                                 }
                             }
-
+                            else if (location_type == 2) //Google Drive file (local download)
+                            {
+                                GDrive drive = GDriveForm.drive;
+                                MServer.FS = await drive.DownloadFile(file_to_play);
+                                FileStream tempFile = new FileStream("tempfile", FileMode.Create);
+                                MServer.FS.Position = 0;
+                                await MServer.FS.CopyToAsync(tempFile);
+                                tempFile.Close();
+                                mediainfo = await Extentions.getMetadata("tempfile");
+                                if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                                {
+                                    MServer.FS = new MemoryStream();
+                                    MServer.FS = await Extentions.decodeAudio("tempfile", 1);
+                                }
+                                else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                                {
+                                    MServer.FS = new MemoryStream();
+                                    MServer.FS = await Extentions.decodeAudio("tempfile", 2);
+                                }
+                                File.Delete("tempfile");
+                            }
+                            else if (location_type == 3) //CD Drive Audio Track
+                            {
+                                AudioCD drive = CDDriveChooser.drive;
+                                MServer.FS = drive.getTrack(file_to_play);
+                                mediainfo[0] = filename;
+                                mediainfo[1] = String.Empty;
+                            }
+                            else if (location_type == 4) //Tidal Track
+                            {
+                                Tidl tidl = TidalBrowser.tidl;
+                                url = await tidl.getStreamURL(Convert.ToInt32(file_to_play));
+                                mediainfo = await tidl.getNameAndArtist(Convert.ToInt32(file_to_play));
+                            }
+                            else if (location_type == 5) //Google Drive file (stream)
+                            {
+                                GDrive drive = GDriveForm.drive;
+                                url = await drive.GetUrl(file_to_play);
+                                mediainfo[0] = "Unknown";
+                                mediainfo[1] = "Unknown";
+                            }
                         }
+                        else
+                        {
+                            nextMediainfo.CopyTo(mediainfo, 0);
+                            MServer.FS = NextTrack;
+                            trackLoaded = -1;
+                        }
+                        Thread.Sleep(100);
+                        if (location_type != 4 && location_type != 5)
+                            url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MediaFiles.Items[item].ToString());
+                        string Reply = Device.TryToPlayFile(url, mediainfo);
+                        if (Reply == "OK")
+                        {
+                            if (!timer1.Enabled) timer1.Start();
+                            if (MediaFiles.Items.Count - 1 > item)
+                                if (MediaFileLocationType[item + 1] != 4 && MediaFileLocationType[item + 1] != 5)
+                                {
+                                    Thread thread = new Thread(() => LoadNextTrack(trackNum + 1));
+                                    thread.Start();
+                                }
+                        }
+                        else
+                        {
+                            if (retries == 0)
+                            {
+                                LoadFile(trackNum);
+                                retries++;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Error playing file");
+                            }
+                        }
+
                     }
-                    else
-                        MessageBox.Show("No renderer selected");
-                });
-            });
-            TH.Start();
+                }
+                else
+                    MessageBox.Show("No renderer selected");
+            }
         }
 
         private void Pause_Click(object sender, EventArgs e)
@@ -351,53 +349,43 @@ namespace DLNAPlayer
 
         private void PauseTrack()
         {
-            Thread TH = new Thread(() =>
             {
-                Invoke((MethodInvoker)delegate
+                if (MediaRenderers.SelectedIndex != -1)
                 {
-                    if (MediaRenderers.SelectedIndex != -1)
+                    DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                    if (Device.IsConnected())
                     {
-                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                        if (Device.IsConnected())
+                        if (paused)
                         {
-                            if (paused)
-                            {
-                                Device.StartPlay(0);
-                                paused = false;
-                                Pause.Text = "Pause";
-                                //if (!timer1.Enabled) timer1.Start();
-                            }
-                            else
-                            {
-                                Device.Pause();
-                                paused = true;
-                                Pause.Text = "Resume";
-                               // if (timer1.Enabled) timer1.Stop();
-                            }
+                            Device.StartPlay(0);
+                            paused = false;
+                            Pause.Text = "Pause";
+                            //if (!timer1.Enabled) timer1.Start();
+                        }
+                        else
+                        {
+                            Device.Pause();
+                            paused = true;
+                            Pause.Text = "Resume";
+                            // if (timer1.Enabled) timer1.Stop();
                         }
                     }
-                });
-            });
-            TH.Start();
+                }
+            }
         }
         private void Stop_Function()
         {
-            Thread TH = new Thread(() =>
             {
-                Invoke((MethodInvoker)delegate
+                if (MediaRenderers.SelectedIndex != -1)
                 {
-                    if (MediaRenderers.SelectedIndex != -1)
+                    DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                    if (Device.IsConnected())
                     {
-                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                        if (Device.IsConnected())
-                        {
-                            Device.StopPlay();
-                            if (timer1.Enabled) timer1.Stop();
-                        }
+                        Device.StopPlay();
+                        if (timer1.Enabled) timer1.Stop();
                     }
-                });
-            });
-            TH.Start();
+                }
+            }
         }
         private void Stop_Click(object sender, EventArgs e)
         {
@@ -484,7 +472,7 @@ namespace DLNAPlayer
                                         if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
                                         {
                                             TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
-                                           
+
                                             trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
                                             if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2)
                                             {
@@ -505,22 +493,20 @@ namespace DLNAPlayer
             });
         }
 
-        private void trackProgress_MouseUp(object sender, MouseEventArgs e)
+        private async void trackProgress_MouseUp(object sender, MouseEventArgs e)
         {
             if (MediaRenderers.SelectedIndex != -1)
             {
-                Thread TH = new Thread(() =>
+                await Task.Run(() =>
                 {
-                    Invoke((MethodInvoker)delegate
                     {
 
                         TimeSpan positionToGo = TimeSpan.FromSeconds(trackProgress.Value);
                         DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
                         if (Device.IsConnected())
                             Device.Seek(String.Format("{0:c}", positionToGo));
-                    });
+                    }
                 });
-                TH.Start();
             }
         }
 
@@ -592,7 +578,10 @@ namespace DLNAPlayer
                         if (!Directory.Exists(path))
                             addToList(Path.GetFileName(path), path, 1);
                     if (trackLoaded == -1)
-                        LoadNextTrack(trackNum + 1);
+                    {
+                        Thread thread = new Thread(() => LoadNextTrack(trackNum + 1));
+                        thread.Start();
+                    }
                 }
             }
 

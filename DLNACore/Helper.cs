@@ -2,6 +2,7 @@
 using System.Net;
 using System.IO;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 public static class Extentions
 {
@@ -34,7 +35,7 @@ public static class Extentions
             Source = Regex.Replace(Source, Pattern, Replacement, RegexOptions.IgnoreCase);
         return Source;
     }
-    public static MemoryStream decodeAudio(string file, int format)
+    public static Task<MemoryStream> decodeAudio(string file, int format)
     {
         string dec = string.Empty;
         string args = string.Empty;
@@ -62,9 +63,9 @@ public static class Extentions
         temp.CopyTo(decodedWav);
         temp.Close();
         File.Delete("temp.wav");
-        return decodedWav;
+        return Task.FromResult<MemoryStream>(decodedWav);
     }
-    public static string[] getMetadata(string file)
+    public static Task<string[]> getMetadata(string file)
     {
         string track = "Unknown";
         string artist = "Unknown";
@@ -101,7 +102,7 @@ public static class Extentions
         if (artist == "Unknown" && performer != "Unknown")
             artist = performer;
         string[] returnString = { track, artist };
-        return returnString;
+        return Task.FromResult<string[]>(returnString);
     }
     public static class Helper
     {
