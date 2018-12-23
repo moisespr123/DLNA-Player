@@ -16,7 +16,6 @@ namespace DLNAPlayer
             InitializeComponent();
         }
         private MediaServer MServer = null;
-        private int PauseCounter = 0;
         private static string ip = "";
         private static int port = 9090;
         private static int trackNum = -1;
