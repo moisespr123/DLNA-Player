@@ -483,6 +483,10 @@ namespace DLNAPlayer
                                         }
                                         catch { }
                             }
+                            else
+                            {
+                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Loading"; });
+                            }
                         }
                     }
                 });
