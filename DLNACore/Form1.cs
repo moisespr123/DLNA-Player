@@ -347,7 +347,7 @@ namespace DLNAPlayer
             PauseTrack();
         }
 
-        private void PauseTrack()
+        private void PauseTrack(bool updateTextOnly = false)
         {
             {
                 if (MediaRenderers.SelectedIndex != -1)
@@ -359,19 +359,25 @@ namespace DLNAPlayer
                         {
                             Device.StartPlay(0);
                             paused = false;
-                            Pause.Text = "Pause";
-                            //if (!timer1.Enabled) timer1.Start();
+                            UpdatePauseText();
                         }
                         else
                         {
                             Device.Pause();
                             paused = true;
-                            Pause.Text = "Resume";
-                            // if (timer1.Enabled) timer1.Stop();
+                            UpdatePauseText();
                         }
                     }
                 }
             }
+        }
+
+        private void UpdatePauseText()
+        {
+            if (paused)
+                Pause.Text = "Resume";
+            else
+                Pause.Text = "Pause";
         }
         private void Stop_Function()
         {
@@ -435,58 +441,48 @@ namespace DLNAPlayer
                         if (Device.IsConnected())
                         {
                             string info = Device.GetPosition();
+                            string status = Device.GetTransportInfo();
                             string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
                             string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
-                            if (!trackDurationString.Contains("HTTP"))
-                                if (trackDurationString.Contains(":") && trackPositionString.Contains(":"))
-                                    try
-                                    {
-                                        TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
-                                        TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
-                                        if (!paused)
+                            string currentStatus = status.ChopOffBefore("<CurrentTransportState>").Trim().ChopOffAfter("</CurrentTransportState>");
+                            if (currentStatus != "TRANSITIONING")
+                            {
+                                if (!trackDurationString.Contains("HTTP"))
+                                    if (trackDurationString.Contains(":") && trackPositionString.Contains(":"))
+                                        try
                                         {
-                                            if (PauseCounter == 3)
+                                            TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
+                                            TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                                            if (currentStatus == "PAUSED_PLAYBACK" && !paused)
                                             {
-                                                PauseCounter = 0;
-                                                PauseTrack();
+                                                paused = true;
+                                                UpdatePauseText();
                                             }
-                                            if (TrackPositionLabel.Text != "00:00:00" && TrackPositionLabel.Text == trackPositionString && PauseCounter < 3)
+                                            else if (currentStatus == "PLAYING")
                                             {
-                                                PauseCounter++;
+                                                paused = false;
+                                                UpdatePauseText();
+                                            }
+                                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
+                                            if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
+                                            {
+                                                TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
+
+                                                trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
+                                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2)
+                                                {
+                                                    Thread.Sleep(2000);
+                                                    timer1.Stop();
+                                                    PlayNextTrack();
+                                                }
                                             }
                                             else
                                             {
-                                                PauseCounter = 0;
+                                                TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = ""; });
                                             }
                                         }
-                                        else
-                                        {
-
-                                            if (Convert.ToInt32(TimeSpan.Parse(TrackPositionLabel.Text).TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) < 0)
-                                            {
-                                                paused = false;
-                                                Pause.Invoke((MethodInvoker)delegate { Pause.Text = "Pause"; });
-                                            }
-                                        }
-                                        TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
-                                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
-                                        {
-                                            TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
-
-                                            trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
-                                            if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2)
-                                            {
-                                                Thread.Sleep(2000);
-                                                timer1.Stop();
-                                                PlayNextTrack();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = ""; });
-                                        }
-                                    }
-                                    catch { }
+                                        catch { }
+                            }
                         }
                     }
                 });

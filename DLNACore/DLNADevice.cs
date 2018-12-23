@@ -200,8 +200,21 @@ namespace DLNA
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
             string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo", this.IP, this.Port) + XML;
             SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
-            string GG = HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
-            return GG;
+            return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+        }
+
+        public string GetTransportInfo()
+        {//Returns the current position for the track that is playing on the DLNA server
+            return GetTransportInfo(this.ControlURL);
+        }
+
+        private string GetTransportInfo(string ControlURL)
+        {//Returns the current position for the track that is playing on the DLNA server
+            string XML = XMLHead + "<m:GetTransportInfo xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID></m:GetTransportInfo>" + XMLFoot + Environment.NewLine;
+            Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
+            string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#GetTransportInfo", this.IP, this.Port) + XML;
+            SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
+            return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
         }
 
         public string Desc(string Url, string[] info)
