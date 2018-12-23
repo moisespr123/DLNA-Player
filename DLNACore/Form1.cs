@@ -179,9 +179,17 @@ namespace DLNAPlayer
                     {
                         nextMediainfo = await Extentions.getMetadata(file_to_play);
                         if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                        {
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = await Extentions.decodeAudio(file_to_play, 1);
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                        }
                         else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                        {
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = await Extentions.decodeAudio(file_to_play, 2);
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                        }  
                         else
                         {
                             FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -200,13 +208,17 @@ namespace DLNAPlayer
                         nextMediainfo = await Extentions.getMetadata("tempfile");
                         if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                         {
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = new MemoryStream();
                             NextTrack = await Extentions.decodeAudio("tempfile", 1);
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
                         else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
                         {
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = new MemoryStream();
                             NextTrack = await Extentions.decodeAudio("tempfile", 2);
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
                         File.Delete("tempfile");
                     }
@@ -249,9 +261,17 @@ namespace DLNAPlayer
                             {
                                 mediainfo = await Extentions.getMetadata(file_to_play);
                                 if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                                {
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                     MServer.FS = await Extentions.decodeAudio(file_to_play, 1);
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                                }
                                 else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+                                {
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                     MServer.FS = await Extentions.decodeAudio(file_to_play, 2);
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                                }
                                 else
                                 {
                                     FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -270,13 +290,17 @@ namespace DLNAPlayer
                                 mediainfo = await Extentions.getMetadata("tempfile");
                                 if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                                 {
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                     MServer.FS = new MemoryStream();
                                     MServer.FS = await Extentions.decodeAudio("tempfile", 1);
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                                 }
                                 else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
                                 {
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                     MServer.FS = new MemoryStream();
                                     MServer.FS = await Extentions.decodeAudio("tempfile", 2);
+                                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                                 }
                                 File.Delete("tempfile");
                             }
