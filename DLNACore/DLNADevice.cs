@@ -166,7 +166,7 @@ namespace DLNA
         }
 
 
-        public string TryToPlayFile(string UrlToPlay, string[] info)
+        public string TryToPlayFile(string UrlToPlay, string[] info = null)
         {
             if (!this.Connected) this.Connected = this.IsConnected();//Someone might have turned the TV Off !
             if (!this.Connected) return "#ERROR# Not connected";
@@ -177,9 +177,9 @@ namespace DLNA
                     if (S.ServiceType.ToLower().IndexOf("avtransport:1") > -1)
                     {//This is the service we are using so upload the file and then start playing
                         string AddPlay = UploadFileToPlay(S.controlURL, UrlToPlay, info);
-                        if (this.ReturnCode != 200) return "#ERROR# Cannot upload file";
+                        if (this.ReturnCode != 200) return AddPlay;
                         string PlayNow = StartPlay(S.controlURL, 0);
-                        if (this.ReturnCode == 200) return "OK"; else return "#ERROR Starting";
+                        if (this.ReturnCode == 200) return "OK"; else return AddPlay;
                     }
                 }
                 return "#ERROR# Could not find avtransport:1";
@@ -188,8 +188,8 @@ namespace DLNA
 
         }
 
-        private readonly string XMLHead = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" + Environment.NewLine + "<SOAP-ENV:Body>" + Environment.NewLine;
-        private readonly string XMLFoot = "</SOAP-ENV:Body>" + Environment.NewLine + "</SOAP-ENV:Envelope>" + Environment.NewLine;
+        private readonly string XMLHead = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" + Environment.NewLine + "<s:Body>" + Environment.NewLine;
+        private readonly string XMLFoot = "</s:Body>" + Environment.NewLine + "</s:Envelope>" + Environment.NewLine;
         public string GetPosition()
         {//Returns the current position for the track that is playing on the DLNA server
             return GetPosition(this.ControlURL);
@@ -414,13 +414,16 @@ namespace DLNA
         //    return HTML;
         //}
 
-        private string UploadFileToPlay(string ControlURL, string UrlToPlay, string[] info)
+        private string UploadFileToPlay(string ControlURL, string UrlToPlay, string[] info = null)
         {///Later we will send a message to the DLNA server to start the file playing
             string XML = XMLHead;
             XML += "<u:SetAVTransportURI xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">" + Environment.NewLine;
-            XML += "<InstanceID>0</InstanceID>" + Environment.NewLine;
-            XML += "<CurrentURI>" + WebUtility.HtmlEncode(UrlToPlay) + "</CurrentURI>" + Environment.NewLine;
-            XML += "<CurrentURIMetaData>" + Desc(UrlToPlay, info) + "</CurrentURIMetaData>" + Environment.NewLine;
+            XML += "<InstanceID>1</InstanceID>" + Environment.NewLine;
+            XML += "<CurrentURI>" + encodeUrl(UrlToPlay) + "</CurrentURI>" + Environment.NewLine;
+            if (info != null)
+                XML += "<CurrentURIMetaData>" + Desc(UrlToPlay, info) + "</CurrentURIMetaData>" + Environment.NewLine;
+            else
+                XML += "<CurrentURIMetaData></CurrentURIMetaData>" + Environment.NewLine;
             XML += "</u:SetAVTransportURI>" + Environment.NewLine;
             XML += XMLFoot + Environment.NewLine;
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
@@ -428,7 +431,10 @@ namespace DLNA
             SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
             return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
         }
-
+        private string encodeUrl(string Url)
+        {
+            return WebUtility.HtmlEncode(Url);
+        }
         public DLNADevice(string url)
         {
             this.IP = url.ChopOffBefore("http://").ChopOffAfter(":");
