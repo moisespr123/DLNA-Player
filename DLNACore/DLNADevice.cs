@@ -38,8 +38,15 @@ namespace DLNA
             {
                 ReceiveTimeout = 6000,
             };
-            SocWeb.Connect(IPWeb);
-            return SocWeb;
+            try
+            {
+                SocWeb.Connect(IPWeb);
+                return SocWeb;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static string ReadSocket(Socket Soc, bool CloseOnExit, ref int ReturnCode)
@@ -199,8 +206,13 @@ namespace DLNA
             string XML = XMLHead + "<m:GetPositionInfo xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID></m:GetPositionInfo>" + XMLFoot + Environment.NewLine;
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
             string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo", this.IP, this.Port) + XML;
-            SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
-            return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+            if (SocWeb != null)
+            {
+                SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
+                return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+            }
+            else
+                return "";
         }
 
         public string GetTransportInfo()
@@ -213,8 +225,13 @@ namespace DLNA
             string XML = XMLHead + "<m:GetTransportInfo xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID></m:GetTransportInfo>" + XMLFoot + Environment.NewLine;
             Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
             string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#GetTransportInfo", this.IP, this.Port) + XML;
-            SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
-            return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+            if (SocWeb != null)
+            {
+                SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
+                return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+            }
+            else
+                return "";
         }
 
         public string Desc(string Url, string[] info)
@@ -418,7 +435,7 @@ namespace DLNA
         {///Later we will send a message to the DLNA server to start the file playing
             string XML = XMLHead;
             XML += "<u:SetAVTransportURI xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">" + Environment.NewLine;
-            XML += "<InstanceID>1</InstanceID>" + Environment.NewLine;
+            XML += "<InstanceID>0</InstanceID>" + Environment.NewLine;
             XML += "<CurrentURI>" + encodeUrl(UrlToPlay) + "</CurrentURI>" + Environment.NewLine;
             if (info != null)
                 XML += "<CurrentURIMetaData>" + Desc(UrlToPlay, info) + "</CurrentURIMetaData>" + Environment.NewLine;
