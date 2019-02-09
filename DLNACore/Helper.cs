@@ -59,9 +59,22 @@ public static class Extentions
         };
         Process.Start(decProcessInfo).WaitForExit();
         MemoryStream decodedWav = new MemoryStream();
-        FileStream temp = new FileStream("temp.wav", FileMode.Open);
-        temp.CopyTo(decodedWav);
-        temp.Close();
+        bool decoded = false;
+        while (!decoded)
+        {
+            try
+            {
+                FileStream temp = new FileStream("temp.wav", FileMode.Open);
+                temp.CopyTo(decodedWav);
+                temp.Close();
+                decoded = true;
+            }
+            catch
+            {
+                decoded = false;
+            }
+        }
+        
         File.Delete("temp.wav");
         return Task.FromResult<MemoryStream>(decodedWav);
     }
