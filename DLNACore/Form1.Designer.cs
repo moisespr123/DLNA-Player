@@ -308,8 +308,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.optionsToolStripMenuItem,
             this.cloudToolStripMenuItem,
+            this.optionsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -355,14 +355,14 @@
             // decodeOpusToWAVToolStripMenuItem
             // 
             this.decodeOpusToWAVToolStripMenuItem.Name = "decodeOpusToWAVToolStripMenuItem";
-            this.decodeOpusToWAVToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.decodeOpusToWAVToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.decodeOpusToWAVToolStripMenuItem.Text = "Decode Opus to WAV";
             this.decodeOpusToWAVToolStripMenuItem.Click += new System.EventHandler(this.decodeOpusToWAVToolStripMenuItem_Click);
             // 
             // decodeFLACToWAVToolStripMenuItem
             // 
             this.decodeFLACToWAVToolStripMenuItem.Name = "decodeFLACToWAVToolStripMenuItem";
-            this.decodeFLACToWAVToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.decodeFLACToWAVToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.decodeFLACToWAVToolStripMenuItem.Text = "Decode FLAC to WAV";
             this.decodeFLACToWAVToolStripMenuItem.Click += new System.EventHandler(this.decodeFLACToWAVToolStripMenuItem_Click);
             // 

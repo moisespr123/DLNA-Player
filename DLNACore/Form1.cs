@@ -89,14 +89,14 @@ namespace DLNAPlayer
         {
             if (MediaFiles.SelectedIndex != -1)
             {
-                LoadFile(MediaFiles.SelectedIndex);
                 trackNum = MediaFiles.SelectedIndex;
+                LoadFile(trackNum);
             }
             else if (MediaFiles.Items.Count > 0)
             {
-                LoadFile();
                 trackNum = 0;
                 MediaFiles.SelectedIndex = 0;
+                LoadFile(trackNum);
             }
 
         }
@@ -353,6 +353,10 @@ namespace DLNAPlayer
                         }
                     }
 
+                }
+                else
+                {
+                    MessageBox.Show("Could not connect to device.");
                 }
             }
             else

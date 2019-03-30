@@ -56,8 +56,8 @@ namespace DLNA
                                     if (Data.ToUpper().IndexOf("LOCATION: ") > -1)
                                     {//ChopOffAfter is an extended string method added in Helper.cs
                                         Data = Data.ChopOffBefore("LOCATION: ").ChopOffAfter(Environment.NewLine);
-                                        if (!Renderers.Contains(Data.ToLower()))
-                                            Renderers.Add(Data.ToLower());
+                                        if (!Renderers.Contains(Data))
+                                            Renderers.Add(Data);
                                     }
                                 }
                             }

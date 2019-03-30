@@ -54,7 +54,7 @@ namespace DLNA
             ReturnCode = 0;
             int ContentLength = 0;
             int HeadLength = 0;
-            Thread.Sleep(20);
+            Thread.Sleep(30);
             MemoryStream MS = new MemoryStream();
             byte[] buffer = new byte[8000];
             int Count = 0;
