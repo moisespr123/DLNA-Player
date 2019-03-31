@@ -49,6 +49,11 @@ public static class Extentions
             dec = "flac.exe";
             args = "-d \"" + file + "\" -o temp.wav";
         }
+        else if (format == 3)
+        {
+            dec = "ffmpeg.exe";
+            args = "-i \"" + file + "\" temp.wav";
+        }
         ProcessStartInfo decProcessInfo = new ProcessStartInfo()
         {
             FileName = dec,

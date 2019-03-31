@@ -191,6 +191,12 @@ namespace DLNAPlayer
                             NextTrack = await Extentions.decodeAudio(file_to_play, 2);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
+                        else if (file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                        {
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
+                            NextTrack = await Extentions.decodeAudio(file_to_play, 3);
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                        }
                         else
                         {
                             FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
@@ -221,6 +227,13 @@ namespace DLNAPlayer
                             NextTrack = await Extentions.decodeAudio("tempfile", 2);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
+                        else if (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                        {
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
+                            NextTrack = new MemoryStream();
+                            NextTrack = await Extentions.decodeAudio("tempfile", 3);
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                        }
                         File.Delete("tempfile");
                     }
                     else if (location_type == 3) //CD Drive Audio Track
@@ -249,7 +262,7 @@ namespace DLNAPlayer
                     if (timer1.Enabled) timer1.Stop();
                     Device.StopPlay();
                     MServer.FS = new MemoryStream();
-                    if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked))
+                    if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked))
                         MServer.Filename = Path.GetFileNameWithoutExtension(filename) + ".wav";
                     else
                         MServer.Filename = filename;
@@ -269,6 +282,12 @@ namespace DLNAPlayer
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = await Extentions.decodeAudio(file_to_play, 2);
+                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                            }
+                            else if (file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                            {
+                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
+                                MServer.FS = await Extentions.decodeAudio(file_to_play, 3);
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
                             else
@@ -299,6 +318,13 @@ namespace DLNAPlayer
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = new MemoryStream();
                                 MServer.FS = await Extentions.decodeAudio("tempfile", 2);
+                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+                            }
+                            else if (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                            {
+                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
+                                MServer.FS = new MemoryStream();
+                                MServer.FS = await Extentions.decodeAudio("tempfile", 3);
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
                             File.Delete("tempfile");
