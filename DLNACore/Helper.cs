@@ -42,7 +42,7 @@ public static class Extentions
         if (DLNAPlayer.Properties.Settings.Default.UseFFMPEG)
         {
             dec = "ffmpeg.exe";
-            args = "-i \"" + file + "\" temp.wav";
+            args = "-i \"" + file + "\" temp.wav -y";
         }
         else
             switch (format)
@@ -57,7 +57,7 @@ public static class Extentions
                     break;
                 case 3:
                     dec = "ffmpeg.exe";
-                    args = "-i \"" + file + "\" temp.wav";
+                    args = "-i \"" + file + "\" temp.wav -y";
                     break;
             }
         ProcessStartInfo decProcessInfo = new ProcessStartInfo()
