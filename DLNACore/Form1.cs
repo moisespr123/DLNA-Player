@@ -83,6 +83,7 @@ namespace DLNAPlayer
             decodeOpusToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeOpus;
             decodeFLACToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeFLAC;
             decodeMP3ToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeMP3;
+            useFfmpegForDecodingToolStripMenuItem.Checked = Properties.Settings.Default.UseFFMPEG;
             ScanDLNARenderers();
         }
 
@@ -729,6 +730,16 @@ namespace DLNAPlayer
             else
                 decodeMP3ToWAVToolStripMenuItem.Checked = false;
             Properties.Settings.Default.DecodeMP3 = decodeMP3ToWAVToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void UseFfmpegForDecodingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!useFfmpegForDecodingToolStripMenuItem.Checked)
+                useFfmpegForDecodingToolStripMenuItem.Checked = true;
+            else
+                useFfmpegForDecodingToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.UseFFMPEG = useFfmpegForDecodingToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
     }

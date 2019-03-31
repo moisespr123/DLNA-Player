@@ -70,5 +70,17 @@ namespace DLNAPlayer.Properties {
                 this["DecodeMP3"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseFFMPEG {
+            get {
+                return ((bool)(this["UseFFMPEG"]));
+            }
+            set {
+                this["UseFFMPEG"] = value;
+            }
+        }
     }
 }

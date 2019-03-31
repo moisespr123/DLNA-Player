@@ -39,21 +39,27 @@ public static class Extentions
     {
         string dec = string.Empty;
         string args = string.Empty;
-        if (format == 1)
-        {
-            dec = "opusdec.exe";
-            args = "--rate 48000 --no-dither --float \"" + file + "\" temp.wav";
-        }
-        else if (format == 2)
-        {
-            dec = "flac.exe";
-            args = "-d \"" + file + "\" -o temp.wav";
-        }
-        else if (format == 3)
+        if (DLNAPlayer.Properties.Settings.Default.UseFFMPEG)
         {
             dec = "ffmpeg.exe";
             args = "-i \"" + file + "\" temp.wav";
         }
+        else
+            switch (format)
+            {
+                case 1:
+                    dec = "opusdec.exe";
+                    args = "--rate 48000 --no-dither --float \"" + file + "\" temp.wav";
+                    break;
+                case 2:
+                    dec = "flac.exe";
+                    args = "-d \"" + file + "\" -o temp.wav";
+                    break;
+                case 3:
+                    dec = "ffmpeg.exe";
+                    args = "-i \"" + file + "\" temp.wav";
+                    break;
+            }
         ProcessStartInfo decProcessInfo = new ProcessStartInfo()
         {
             FileName = dec,
@@ -79,7 +85,7 @@ public static class Extentions
                 decoded = false;
             }
         }
-        
+
         File.Delete("temp.wav");
         return Task.FromResult<MemoryStream>(decodedWav);
     }
