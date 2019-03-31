@@ -424,6 +424,7 @@
             this.decodeMP3ToWAVToolStripMenuItem.Name = "decodeMP3ToWAVToolStripMenuItem";
             this.decodeMP3ToWAVToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.decodeMP3ToWAVToolStripMenuItem.Text = "Decode MP3 to WAV";
+            this.decodeMP3ToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeMP3ToWAVToolStripMenuItem_Click);
             // 
             // Form1
             // 

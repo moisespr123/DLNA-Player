@@ -82,6 +82,7 @@ namespace DLNAPlayer
             timer1.Interval = 500;
             decodeOpusToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeOpus;
             decodeFLACToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeFLAC;
+            decodeMP3ToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeMP3;
             ScanDLNARenderers();
         }
 
@@ -718,6 +719,16 @@ namespace DLNAPlayer
             else
                 decodeFLACToWAVToolStripMenuItem.Checked = false;
             Properties.Settings.Default.DecodeFLAC = decodeFLACToWAVToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void DecodeMP3ToWAVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!decodeMP3ToWAVToolStripMenuItem.Checked)
+                decodeMP3ToWAVToolStripMenuItem.Checked = true;
+            else
+                decodeMP3ToWAVToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.DecodeMP3 = decodeMP3ToWAVToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
     }
