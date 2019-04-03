@@ -83,6 +83,7 @@ namespace DLNAPlayer
             decodeOpusToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeOpus;
             decodeFLACToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeFLAC;
             decodeMP3ToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeMP3;
+            decodeM4AToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeM4A;
             useFfmpegForDecodingToolStripMenuItem.Checked = Properties.Settings.Default.UseFFMPEG;
             ScanDLNARenderers();
         }
@@ -193,7 +194,7 @@ namespace DLNAPlayer
                             NextTrack = await Extentions.decodeAudio(file_to_play, 2);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
-                        else if (file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                        else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = await Extentions.decodeAudio(file_to_play, 3);
@@ -229,7 +230,7 @@ namespace DLNAPlayer
                             NextTrack = await Extentions.decodeAudio("tempfile", 2);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
-                        else if (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                        else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = new MemoryStream();
@@ -264,7 +265,8 @@ namespace DLNAPlayer
                     if (timer1.Enabled) timer1.Stop();
                     Device.StopPlay();
                     MServer.FS = new MemoryStream();
-                    if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked))
+                    if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) || 
+                        (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
                         MServer.Filename = Path.GetFileNameWithoutExtension(filename) + ".wav";
                     else
                         MServer.Filename = filename;
@@ -286,7 +288,7 @@ namespace DLNAPlayer
                                 MServer.FS = await Extentions.decodeAudio(file_to_play, 2);
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
-                            else if (file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                            else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = await Extentions.decodeAudio(file_to_play, 3);
@@ -322,7 +324,7 @@ namespace DLNAPlayer
                                 MServer.FS = await Extentions.decodeAudio("tempfile", 2);
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
-                            else if (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked)
+                            else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = new MemoryStream();
@@ -740,6 +742,16 @@ namespace DLNAPlayer
             else
                 useFfmpegForDecodingToolStripMenuItem.Checked = false;
             Properties.Settings.Default.UseFFMPEG = useFfmpegForDecodingToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void DecodeM4AToWAVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!decodeM4AToWAVToolStripMenuItem.Checked)
+                decodeM4AToWAVToolStripMenuItem.Checked = true;
+            else
+                decodeM4AToWAVToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.DecodeM4A = decodeM4AToWAVToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
     }

@@ -65,6 +65,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeM4AToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -376,6 +377,7 @@
             this.decodeOpusToWAVToolStripMenuItem,
             this.decodeFLACToWAVToolStripMenuItem,
             this.decodeMP3ToWAVToolStripMenuItem,
+            this.decodeM4AToWAVToolStripMenuItem,
             this.useFfmpegForDecodingToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -433,6 +435,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // decodeM4AToWAVToolStripMenuItem
+            // 
+            this.decodeM4AToWAVToolStripMenuItem.Name = "decodeM4AToWAVToolStripMenuItem";
+            this.decodeM4AToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.decodeM4AToWAVToolStripMenuItem.Text = "Decode M4A to WAV";
+            this.decodeM4AToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeM4AToWAVToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -500,6 +509,7 @@
         private System.Windows.Forms.ToolStripMenuItem decodeFLACToWAVToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem decodeMP3ToWAVToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem useFfmpegForDecodingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem decodeM4AToWAVToolStripMenuItem;
     }
 }
 

@@ -82,5 +82,17 @@ namespace DLNAPlayer.Properties {
                 this["UseFFMPEG"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DecodeM4A {
+            get {
+                return ((bool)(this["DecodeM4A"]));
+            }
+            set {
+                this["DecodeM4A"] = value;
+            }
+        }
     }
 }
