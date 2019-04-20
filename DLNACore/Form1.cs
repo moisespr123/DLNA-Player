@@ -754,5 +754,35 @@ namespace DLNAPlayer
             Properties.Settings.Default.DecodeM4A = decodeM4AToWAVToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MediaRenderers.SelectedIndex >= -1)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog { Title = "Browse to save renderer information", Filter="*.txt|*.txt"};
+                DialogResult result = saveFileDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    StreamWriter writer = new StreamWriter(saveFileDialog.FileName, false);
+                    writer.Write(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                    writer.Close();
+                    MessageBox.Show("Renderer information saved");
+
+                }
+            }
+
+        }
+
+        private void AddToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog { Title = "Browse for a renderer information file", Filter = "*.txt|*.txt" };
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                StreamReader reader = new StreamReader(openFileDialog.FileName);
+                DLNA.SSDP.Renderers.Add(reader.ReadToEnd());
+                reader.Close();
+            }
+        }
     }
 }

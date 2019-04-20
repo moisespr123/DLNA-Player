@@ -61,16 +61,20 @@
             this.decodeOpusToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decodeFLACToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decodeMP3ToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeM4AToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useFfmpegForDecodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.decodeM4AToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renderersMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.renderersMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // ScanRenderers
@@ -112,6 +116,7 @@
             this.MediaRenderers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.MediaRenderers.ContextMenuStrip = this.renderersMenuStrip;
             this.MediaRenderers.FormattingEnabled = true;
             this.MediaRenderers.Location = new System.Drawing.Point(3, 28);
             this.MediaRenderers.Name = "MediaRenderers";
@@ -404,6 +409,13 @@
             this.decodeMP3ToWAVToolStripMenuItem.Text = "Decode MP3 to WAV";
             this.decodeMP3ToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeMP3ToWAVToolStripMenuItem_Click);
             // 
+            // decodeM4AToWAVToolStripMenuItem
+            // 
+            this.decodeM4AToWAVToolStripMenuItem.Name = "decodeM4AToWAVToolStripMenuItem";
+            this.decodeM4AToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.decodeM4AToWAVToolStripMenuItem.Text = "Decode M4A to WAV";
+            this.decodeM4AToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeM4AToWAVToolStripMenuItem_Click);
+            // 
             // useFfmpegForDecodingToolStripMenuItem
             // 
             this.useFfmpegForDecodingToolStripMenuItem.Name = "useFfmpegForDecodingToolStripMenuItem";
@@ -436,12 +448,27 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // decodeM4AToWAVToolStripMenuItem
+            // renderersMenuStrip
             // 
-            this.decodeM4AToWAVToolStripMenuItem.Name = "decodeM4AToWAVToolStripMenuItem";
-            this.decodeM4AToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.decodeM4AToWAVToolStripMenuItem.Text = "Decode M4A to WAV";
-            this.decodeM4AToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeM4AToWAVToolStripMenuItem_Click);
+            this.renderersMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToolStripMenuItem,
+            this.addToolStripMenuItem});
+            this.renderersMenuStrip.Name = "renderersMenuStrip";
+            this.renderersMenuStrip.Size = new System.Drawing.Size(181, 70);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addToolStripMenuItem.Text = "Add";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.AddToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -466,6 +493,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.renderersMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -510,6 +538,9 @@
         private System.Windows.Forms.ToolStripMenuItem decodeMP3ToWAVToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem useFfmpegForDecodingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem decodeM4AToWAVToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip renderersMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
     }
 }
 
