@@ -20,8 +20,7 @@ namespace DLNAPlayer
         private static int port = 9090;
         private static int trackNum = -1;
         private static bool paused = false;
-        private static int retries = 0;
-        private static List<String> MediaFileLocation = new List<string> { };
+        private static List<string> MediaFileLocation = new List<string> { };
         private static List<int> MediaFileLocationType = new List<int> { };
         private static MemoryStream NextTrack = new MemoryStream();
         private static int trackLoaded = -1;
@@ -41,7 +40,7 @@ namespace DLNAPlayer
                     DLNA.SSDP.Start();
                     for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
                     {
-                        String deviceInfo = "";
+                        string deviceInfo = "";
                         XmlDocument RendererXML = new XmlDocument();
                         try
                         {
@@ -151,10 +150,12 @@ namespace DLNAPlayer
         }
         private void ApplyServerIPAndPort()
         {
+            if (MServer != null)
+                MServer.Stop();
             string[] parseIPandPort = IPandPortTxt.Text.Split(':');
             ip = parseIPandPort[0];
             port = 9090;
-            if (!String.IsNullOrEmpty(parseIPandPort[1]))
+            if (!string.IsNullOrEmpty(parseIPandPort[1]))
                 port = Convert.ToInt32(parseIPandPort[1]);
             if (MServer != null) if (MServer.Running) MServer.Stop();
             MServer = new MediaServer(ip, port);
@@ -244,7 +245,7 @@ namespace DLNAPlayer
                         AudioCD drive = CDDriveChooser.drive;
                         NextTrack = drive.getTrack(file_to_play);
                         nextMediainfo[0] = filename;
-                        mediainfo[1] = String.Empty;
+                        mediainfo[1] = string.Empty;
                     }
                     trackLoaded = item;
                     trackLoading = false;
@@ -265,7 +266,7 @@ namespace DLNAPlayer
                     if (timer1.Enabled) timer1.Stop();
                     Device.StopPlay();
                     MServer.FS = new MemoryStream();
-                    if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) || 
+                    if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) ||
                         (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
                         MServer.Filename = Path.GetFileNameWithoutExtension(filename) + ".wav";
                     else
@@ -338,7 +339,7 @@ namespace DLNAPlayer
                             AudioCD drive = CDDriveChooser.drive;
                             MServer.FS = drive.getTrack(file_to_play);
                             mediainfo[0] = filename;
-                            mediainfo[1] = String.Empty;
+                            mediainfo[1] = string.Empty;
                         }
                         else if (location_type == 4) //Tidal Track
                         {
@@ -363,25 +364,7 @@ namespace DLNAPlayer
                     Thread.Sleep(100);
                     if (location_type != 4 && location_type != 5)
                         url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MServer.Filename);
-                    string reply = SendFile(Device, item, url, mediainfo);
-                    if (reply != "OK")
-                    {
-                        Thread.Sleep(500);
-                        string reply2 = SendFile(Device, item, url, mediainfo);
-                        if (reply2 != "OK")
-                        {
-                            if (retries < 3)
-                            {
-                                LoadFile(trackNum);
-                                retries++;
-                            }
-                            else
-                            {
-                                MessageBox.Show("Error playing file" + Environment.NewLine + reply2);
-                                retries = 0;
-                            }
-                        }
-                    }
+                    SendFile(Device, item, url, mediainfo);
 
                 }
                 else
@@ -396,18 +379,15 @@ namespace DLNAPlayer
         private string SendFile(DLNA.DLNADevice Device, int item, string url, string[] mediainfo = null)
         {
             string returnedvalue = Device.TryToPlayFile(url, mediainfo);
-            if (returnedvalue == "OK")
-            {
-                if (!timer1.Enabled) timer1.Start();
-                if (MediaFiles.Items.Count - 1 > item)
-                    if (MediaFileLocationType[item + 1] != 4 && MediaFileLocationType[item + 1] != 5)
-                    {
-                        Thread thread = new Thread(() => LoadNextTrack(trackNum + 1));
-                        thread.Start();
-                        return "OK";
-                    }
-            }
-            return returnedvalue;
+            if (!timer1.Enabled) timer1.Start();
+            if (MediaFiles.Items.Count - 1 > item)
+                if (MediaFileLocationType[item + 1] != 4 && MediaFileLocationType[item + 1] != 5)
+                {
+                    Thread thread = new Thread(() => LoadNextTrack(trackNum + 1));
+                    thread.Start();
+                    return "OK";
+                }
+            return "OK";
         }
         private void Pause_Click(object sender, EventArgs e)
         {
@@ -572,7 +552,7 @@ namespace DLNAPlayer
                             TimeSpan positionToGo = positionToGo = TimeSpan.FromSeconds(trackProgress.Value);
                             DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
                             if (Device.IsConnected())
-                                Device.Seek(String.Format("{0:c}", positionToGo));
+                                Device.Seek(string.Format("{0:c}", positionToGo));
                         });
                     }
                 });
@@ -759,7 +739,7 @@ namespace DLNAPlayer
         {
             if (MediaRenderers.SelectedIndex >= -1)
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog { Title = "Browse to save renderer information", Filter="*.txt|*.txt"};
+                SaveFileDialog saveFileDialog = new SaveFileDialog { Title = "Browse to save renderer information", Filter = "*.txt|*.txt" };
                 DialogResult result = saveFileDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {

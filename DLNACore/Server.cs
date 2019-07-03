@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.IO;
+using System.Windows.Forms;
 //Dr Gadgit from the code project http://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs
 //This little gem will server up your media collection to DLNA devices like your TV and has been tested and woks with
 //VLC-Media player, Samsung, Sony ,LG smart TV's and will ever service requests for album-artwork .png/jpg images
@@ -31,8 +32,8 @@ namespace DLNAPlayer
 
         public void Start()
         {//Starts our DLNA service
-            this.Running = true;
-            this.TH = new Thread(Listen);
+            Running = true;
+            TH = new Thread(Listen);
             TH.Start();
         }
 
@@ -42,6 +43,7 @@ namespace DLNAPlayer
             if (this.FS != null)
             { try { FS.Close(); } catch {; } }
             if (SocServer != null && SocServer.Connected) SocServer.Shutdown(SocketShutdown.Both);
+            TH.Abort();
         }
 
         private string ContentString(long StartRange, long EndRange, string ContentType, long FileLength)
@@ -119,9 +121,21 @@ namespace DLNAPlayer
                 {
                     SocServer.Listen(0);
                     TempClient = SocServer.Accept();
-                    Thread.Sleep(250);
                     byte[] Buf = new byte[3000];
-                    int Size = TempClient.Receive(Buf, SocketFlags.None);
+                    bool succeeded = false;
+                    int Size = 0;
+                    while (!succeeded)
+                    {
+                        try
+                        {
+                            Size = TempClient.Receive(Buf, SocketFlags.None);
+                            succeeded = true;
+                        }
+                        catch
+                        {
+                            succeeded = false;
+                        }
+                    }
                     MemoryStream MS = new MemoryStream();
                     MS.Write(Buf, 0, Size);
                     string Request = UTF8Encoding.UTF8.GetString(MS.ToArray());
@@ -160,7 +174,10 @@ namespace DLNAPlayer
                         TempClient.Close();
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MessageBox.Show("The DLNA Server could not start. This usually means the port is in use. Try changing ports and press the \"Apply\" button." + Environment.NewLine + Environment.NewLine + "The error is: " + ex.ToString());
+            }
         }
         private string GetContentType(string FileName)
         {//Based on the file type we create our content type for the reply to the TV/DLNA device

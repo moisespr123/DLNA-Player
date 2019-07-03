@@ -183,10 +183,8 @@ namespace DLNA
                 {
                     if (S.ServiceType.ToLower().IndexOf("avtransport:1") > -1)
                     {//This is the service we are using so upload the file and then start playing
-                        string AddPlay = UploadFileToPlay(S.controlURL, UrlToPlay, info);
-                        if (this.ReturnCode != 200) return AddPlay;
-                        string PlayNow = StartPlay(S.controlURL, 0);
-                        if (this.ReturnCode == 200) return "OK"; else return AddPlay;
+                        UploadFileToPlay(S.controlURL, UrlToPlay, info);
+                        return StartPlay(S.controlURL, 0);
                     }
                 }
                 return "#ERROR# Could not find avtransport:1";
