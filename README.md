@@ -42,10 +42,13 @@ This software uses the [OpenTidl](https://github.com/jackfagner/OpenTidl) C# lib
 4. Double click a track to add to the queue. You can also press the Enter key or select an item and press the "Add selected tracks" button. Multiple tracks can be selected.
 5. Play back the files by selecting a rendered and pressing the Play button (or double click a track)
 
+Tested with the following software/devices:
+* Hiby R3
+* foobar2000 with the DLNA plugin
+* BubbleUPnP
+* USB Audio Player Pro (UAPP)
 
-Tested using a HiBy R3 player Hi Res Player. Also works with foobar2000 using the DLNA plugin.
-
-Developed using the C# language, using Visual Studio 2017.
+Developed using the C# language, using Visual Studio 2017 and 2019.
 
 Uses open source code from the following CodeProject projects:
 * [DLNAMediaServer](https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs)

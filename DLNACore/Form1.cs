@@ -233,7 +233,7 @@ namespace DLNAPlayer
                             NextTrack = await Extentions.decodeAudio("tempfile", 2);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
-                        else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) || 
+                        else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
                                  (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
@@ -271,7 +271,7 @@ namespace DLNAPlayer
                     MServer.FS = new MemoryStream();
                     if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) ||
                         (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
-                        (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked)) 
+                        (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
                         MServer.Filename = Path.GetFileNameWithoutExtension(filename) + ".wav";
                     else
                         MServer.Filename = filename;
@@ -293,7 +293,7 @@ namespace DLNAPlayer
                                 MServer.FS = await Extentions.decodeAudio(file_to_play, 2);
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
-                            else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || 
+                            else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) ||
                                      (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
                                      (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
                             {
@@ -435,16 +435,14 @@ namespace DLNAPlayer
         }
         private void Stop_Function()
         {
+            DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+            if (Device.IsConnected())
             {
-                if (MediaRenderers.SelectedIndex != -1)
-                {
-                    DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                    if (Device.IsConnected())
-                    {
-                        Device.StopPlay();
-                        if (timer1.Enabled) timer1.Stop();
-                    }
-                }
+                Device.StopPlay();
+                if (timer1.Enabled) timer1.Stop();
+                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "00:00:00"; });
+                TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = "00:00:00"; });
+                trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = 1; trackProgress.Value = 0; });
             }
         }
         private void Stop_Click(object sender, EventArgs e)
@@ -470,7 +468,7 @@ namespace DLNAPlayer
 
         private void PlayNextTrack()
         {
-            if (MediaFiles.Items.Count > 0 && trackNum < MediaFiles.Items.Count - 1)
+            if (MediaFiles.Items.Count > 0 && trackNum < (MediaFiles.Items.Count - 1))
             {
                 trackNum++;
                 LoadFile(trackNum);
@@ -480,6 +478,7 @@ namespace DLNAPlayer
             else
             {
                 trackNum = -1;
+                Stop_Function();
             }
         }
 
@@ -506,7 +505,7 @@ namespace DLNAPlayer
                                         try
                                         {
                                             TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
-                                            TimeSpan trackPositionTimeStan = TimeSpan.Parse(trackPositionString);
+                                            TimeSpan trackPositionTimeSpan = TimeSpan.Parse(trackPositionString);
                                             if (currentStatus == "PAUSED_PLAYBACK" && !paused)
                                             {
                                                 paused = true;
@@ -522,8 +521,8 @@ namespace DLNAPlayer
                                             {
                                                 TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
 
-                                                trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeStan.TotalSeconds); });
-                                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeStan.TotalSeconds) <= 2 && MediaFiles.Items.Count - 1 > trackNum)
+                                                trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeSpan.TotalSeconds); });
+                                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeSpan.TotalSeconds) <= 2)
                                                 {
                                                     Thread.Sleep(2000);
                                                     timer1.Stop();
