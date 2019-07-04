@@ -83,6 +83,7 @@ namespace DLNAPlayer
             decodeFLACToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeFLAC;
             decodeMP3ToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeMP3;
             decodeM4AToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeM4A;
+            decodeWMAToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeWMA;
             useFfmpegForDecodingToolStripMenuItem.Checked = Properties.Settings.Default.UseFFMPEG;
             ScanDLNARenderers();
         }
@@ -195,7 +196,8 @@ namespace DLNAPlayer
                             NextTrack = await Extentions.decodeAudio(file_to_play, 2);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
-                        else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
+                        else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
+                                 (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = await Extentions.decodeAudio(file_to_play, 3);
@@ -231,7 +233,8 @@ namespace DLNAPlayer
                             NextTrack = await Extentions.decodeAudio("tempfile", 2);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
-                        else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
+                        else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) || 
+                                 (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = new MemoryStream();
@@ -267,7 +270,8 @@ namespace DLNAPlayer
                     Device.StopPlay();
                     MServer.FS = new MemoryStream();
                     if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) ||
-                        (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
+                        (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
+                        (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked)) 
                         MServer.Filename = Path.GetFileNameWithoutExtension(filename) + ".wav";
                     else
                         MServer.Filename = filename;
@@ -289,7 +293,9 @@ namespace DLNAPlayer
                                 MServer.FS = await Extentions.decodeAudio(file_to_play, 2);
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
-                            else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
+                            else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || 
+                                     (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
+                                     (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = await Extentions.decodeAudio(file_to_play, 3);
@@ -325,7 +331,8 @@ namespace DLNAPlayer
                                 MServer.FS = await Extentions.decodeAudio("tempfile", 2);
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
-                            else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked))
+                            else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
+                                     (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = new MemoryStream();
@@ -647,7 +654,7 @@ namespace DLNAPlayer
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
-              "Version 0.5" + Environment.NewLine +
+              "Version 0.6" + Environment.NewLine +
               "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
               "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
               "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
@@ -763,6 +770,16 @@ namespace DLNAPlayer
                 DLNA.SSDP.Renderers.Add(reader.ReadToEnd());
                 reader.Close();
             }
+        }
+
+        private void DecodeWMAToWAVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!decodeWMAToWAVToolStripMenuItem.Checked)
+                decodeWMAToWAVToolStripMenuItem.Checked = true;
+            else
+                decodeWMAToWAVToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.DecodeWMA = decodeWMAToWAVToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

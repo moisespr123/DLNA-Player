@@ -94,5 +94,17 @@ namespace DLNAPlayer.Properties {
                 this["DecodeM4A"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DecodeWMA {
+            get {
+                return ((bool)(this["DecodeWMA"]));
+            }
+            set {
+                this["DecodeWMA"] = value;
+            }
+        }
     }
 }

@@ -33,6 +33,9 @@
             this.PlayBtn = new System.Windows.Forms.Button();
             this.Pause = new System.Windows.Forms.Button();
             this.MediaRenderers = new System.Windows.Forms.ListBox();
+            this.renderersMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.MediaFiles = new System.Windows.Forms.ListBox();
@@ -66,15 +69,13 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.renderersMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeWMAToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renderersMenuStrip.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).BeginInit();
             this.menuStrip1.SuspendLayout();
-            this.renderersMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // ScanRenderers
@@ -122,6 +123,28 @@
             this.MediaRenderers.Name = "MediaRenderers";
             this.MediaRenderers.Size = new System.Drawing.Size(239, 394);
             this.MediaRenderers.TabIndex = 4;
+            // 
+            // renderersMenuStrip
+            // 
+            this.renderersMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToolStripMenuItem,
+            this.addToolStripMenuItem});
+            this.renderersMenuStrip.Name = "renderersMenuStrip";
+            this.renderersMenuStrip.Size = new System.Drawing.Size(99, 48);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.addToolStripMenuItem.Text = "Add";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.AddToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -379,10 +402,11 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.decodeOpusToWAVToolStripMenuItem,
             this.decodeFLACToWAVToolStripMenuItem,
-            this.decodeMP3ToWAVToolStripMenuItem,
             this.decodeM4AToWAVToolStripMenuItem,
+            this.decodeMP3ToWAVToolStripMenuItem,
+            this.decodeOpusToWAVToolStripMenuItem,
+            this.decodeWMAToWAVToolStripMenuItem,
             this.useFfmpegForDecodingToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -448,27 +472,12 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // renderersMenuStrip
+            // decodeWMAToWAVToolStripMenuItem
             // 
-            this.renderersMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripMenuItem,
-            this.addToolStripMenuItem});
-            this.renderersMenuStrip.Name = "renderersMenuStrip";
-            this.renderersMenuStrip.Size = new System.Drawing.Size(181, 70);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
-            // 
-            // addToolStripMenuItem
-            // 
-            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.addToolStripMenuItem.Text = "Add";
-            this.addToolStripMenuItem.Click += new System.EventHandler(this.AddToolStripMenuItem_Click);
+            this.decodeWMAToWAVToolStripMenuItem.Name = "decodeWMAToWAVToolStripMenuItem";
+            this.decodeWMAToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.decodeWMAToWAVToolStripMenuItem.Text = "Decode WMA to WAV";
+            this.decodeWMAToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeWMAToWAVToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -480,11 +489,12 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "DLNA Player - v0.5";
+            this.Text = "DLNA Player - v0.6";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
+            this.renderersMenuStrip.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -493,7 +503,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackProgress)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.renderersMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -541,6 +550,7 @@
         private System.Windows.Forms.ContextMenuStrip renderersMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem decodeWMAToWAVToolStripMenuItem;
     }
 }
 
