@@ -214,7 +214,9 @@ namespace DLNAPlayer
                     else if (location_type == 2) //Google Drive file
                     {
                         GDrive drive = GDriveForm.drive;
-                        drive.DownloadFile(file_to_play, "tempfile");
+                        TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloading"; });
+                        await drive.DownloadFile(file_to_play, "tempfile");
+                        TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloaded"; });
                         nextMediainfo = await Extentions.getMetadata("tempfile");
                         int decodeMode = 0;
                         if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) {
@@ -306,7 +308,9 @@ namespace DLNAPlayer
                         else if (location_type == 2) //Google Drive file (local download)
                         {
                             GDrive drive = GDriveForm.drive;
-                            drive.DownloadFile(file_to_play, "tempfile");
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloading"; });
+                            await drive.DownloadFile(file_to_play, "tempfile");
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloaded"; });
                             int decodeMode = 0;
                             mediainfo = await Extentions.getMetadata("tempfile");
                             if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)

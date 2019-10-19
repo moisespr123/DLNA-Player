@@ -144,11 +144,13 @@ namespace DLNAPlayer
             await getRequest.DownloadAsync(downloadedFile);
             return downloadedFile;
         }
-        public async void DownloadFile(string Id, string file)
+        public async Task<bool> DownloadFile(string Id, string file)
         {
             FileStream downloadedFile = new FileStream(file, FileMode.Create);
             FilesResource.GetRequest getRequest = service.Files.Get(Id);
             await getRequest.DownloadAsync(downloadedFile);
+            downloadedFile.Close();
+            return true;
         }
         public async Task<string> GetUrl(string Id)
         {
