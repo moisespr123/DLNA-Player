@@ -12,6 +12,7 @@ namespace DLNA
     {
         public static bool Run = true;
         public static List<String> Renderers = new List<string> { };
+        public static List<String> Reject = new List<string> { };
         public static void Start()
         {
             if (Run)
@@ -56,8 +57,15 @@ namespace DLNA
                                     if (Data.ToUpper().IndexOf("LOCATION: ") > -1)
                                     {//ChopOffAfter is an extended string method added in Helper.cs
                                         Data = Data.ChopOffBefore("LOCATION: ").ChopOffAfter(Environment.NewLine);
-                                        if (!Renderers.Contains(Data))
-                                            Renderers.Add(Data);
+                                        if (!Renderers.Contains(Data) && !Reject.Contains(Data))
+                                        {
+                                            System.Xml.XmlDocument xmlDocument = new System.Xml.XmlDocument();
+                                            xmlDocument.Load(Data);
+                                            if (xmlDocument.InnerText.ToLower().Contains("avtransport"))
+                                                Renderers.Add(Data);
+                                        }
+                                        else
+                                            Reject.Add(Data);
                                     }
                                 }
                             }
