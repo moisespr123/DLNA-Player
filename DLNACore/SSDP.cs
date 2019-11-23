@@ -63,9 +63,10 @@ namespace DLNA
                                             xmlDocument.Load(Data);
                                             if (xmlDocument.InnerText.ToLower().Contains("avtransport"))
                                                 Renderers.Add(Data);
+                                            else
+                                                if(!Reject.Contains(Data))
+                                                    Reject.Add(Data);
                                         }
-                                        else
-                                            Reject.Add(Data);
                                     }
                                 }
                             }
