@@ -40,6 +40,7 @@ namespace DLNAPlayer
                     DLNA.SSDP.Start();
                     for (int i = 0; i < DLNA.SSDP.Renderers.Count; i++)
                     {
+                        bool isRenderer = false;
                         string deviceInfo = "";
                         XmlDocument RendererXML = new XmlDocument();
                         try
@@ -47,12 +48,14 @@ namespace DLNAPlayer
                             RendererXML.Load(DLNA.SSDP.Renderers[i]);
                             XmlElement rootXML = RendererXML.DocumentElement;
                             deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                            if (rootXML.InnerText.ToLower().Contains("avtransport"))
+                                isRenderer = true;
                         }
                         catch
                         {
                             deviceInfo = DLNA.SSDP.Renderers[i];
                         }
-                        if (!MediaRenderers.Items.Contains(deviceInfo))
+                        if (!MediaRenderers.Items.Contains(deviceInfo) && isRenderer)
                             MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
                     }
                     if (!DLNA.SSDP.Run) break;
