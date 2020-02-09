@@ -39,25 +39,34 @@ public static class Extentions
     {
         string dec = string.Empty;
         string args = string.Empty;
+        string tempFilename = "temp.wav";
         if (DLNAPlayer.Properties.Settings.Default.UseFFMPEG)
         {
             dec = "ffmpeg.exe";
-            args = "-i \"" + file + "\" temp.wav -y";
+            if (DLNAPlayer.Properties.Settings.Default.DecodeToFLAC)
+            {
+                tempFilename = "temp.flac";
+                args = "-i \"" + file + "\" " + tempFilename + " -y";
+            }
+            else
+            {
+                args = "-i \"" + file + "\" " + tempFilename + " -y";
+            }
         }
         else
             switch (format)
             {
                 case 1:
                     dec = "opusdec.exe";
-                    args = "--rate 48000 --no-dither --float \"" + file + "\" temp.wav";
+                    args = "--rate 48000 --no-dither --float \"" + file + "\" " + tempFilename;
                     break;
                 case 2:
                     dec = "flac.exe";
-                    args = "-d \"" + file + "\" -o temp.wav";
+                    args = "-d \"" + file + "\" -o " + tempFilename;
                     break;
                 case 3:
                     dec = "ffmpeg.exe";
-                    args = "-i \"" + file + "\" temp.wav -y";
+                    args = "-i \"" + file + "\" " + tempFilename + " -y";
                     break;
             }
         ProcessStartInfo decProcessInfo = new ProcessStartInfo()
@@ -75,7 +84,7 @@ public static class Extentions
         {
             try
             {
-                FileStream temp = new FileStream("temp.wav", FileMode.Open);
+                FileStream temp = new FileStream(tempFilename, FileMode.Open);
                 temp.CopyTo(decodedWav);
                 temp.Close();
                 decoded = true;
@@ -86,7 +95,7 @@ public static class Extentions
             }
         }
 
-        File.Delete("temp.wav");
+        File.Delete(tempFilename);
         return Task.FromResult<MemoryStream>(decodedWav);
     }
     public static Task<string[]> getMetadata(string file)

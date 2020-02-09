@@ -85,6 +85,7 @@ namespace DLNAPlayer
             decodeM4AToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeM4A;
             decodeWMAToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeWMA;
             useFfmpegForDecodingToolStripMenuItem.Checked = Properties.Settings.Default.UseFFMPEG;
+            decodeToFLACInsteadOfWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeToFLAC;
             ScanDLNARenderers();
         }
 
@@ -219,7 +220,8 @@ namespace DLNAPlayer
                         TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloaded"; });
                         nextMediainfo = await Extentions.getMetadata("tempfile");
                         int decodeMode = 0;
-                        if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) {
+                        if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+                        {
                             decodeMode = 1;
                         }
                         else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
@@ -268,7 +270,13 @@ namespace DLNAPlayer
                     if ((filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked) ||
                         (filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
                         (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
+                    {
                         MServer.Filename = Path.GetFileNameWithoutExtension(filename) + ".wav";
+                        if (decodeToFLACInsteadOfWAVToolStripMenuItem.Checked)
+                        {
+                            MServer.Filename = Path.GetFileNameWithoutExtension(filename) + ".flac";
+                        }
+                    }
                     else
                         MServer.Filename = filename;
                     string url = null;
@@ -647,7 +655,7 @@ namespace DLNAPlayer
         {
             MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
               "Version 0.6" + Environment.NewLine +
-              "GitHub: https://github.com/moisesmcardona/DLNA-Player" + Environment.NewLine + Environment.NewLine +
+              "GitHub: https://github.com/moisespr123/DLNA-Player" + Environment.NewLine + Environment.NewLine +
               "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
               "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +
               "DLNACore: https://www.codeproject.com/articles/893791/dlna-made-easy-with-play-to-from-any-device" + Environment.NewLine +
@@ -771,6 +779,16 @@ namespace DLNAPlayer
             else
                 decodeWMAToWAVToolStripMenuItem.Checked = false;
             Properties.Settings.Default.DecodeWMA = decodeWMAToWAVToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void decodeToFLACInsteadOfWAVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!decodeToFLACInsteadOfWAVToolStripMenuItem.Checked)
+                decodeToFLACInsteadOfWAVToolStripMenuItem.Checked = true;
+            else
+                decodeToFLACInsteadOfWAVToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.DecodeToFLAC = decodeToFLACInsteadOfWAVToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
     }

@@ -61,15 +61,16 @@
             this.googleDriveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tidalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.decodeOpusToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decodeFLACToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.decodeMP3ToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decodeM4AToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeMP3ToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeOpusToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeWMAToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useFfmpegForDecodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeToFLACInsteadOfWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.decodeWMAToWAVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renderersMenuStrip.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -407,45 +408,60 @@
             this.decodeMP3ToWAVToolStripMenuItem,
             this.decodeOpusToWAVToolStripMenuItem,
             this.decodeWMAToWAVToolStripMenuItem,
-            this.useFfmpegForDecodingToolStripMenuItem});
+            this.useFfmpegForDecodingToolStripMenuItem,
+            this.decodeToFLACInsteadOfWAVToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
-            // decodeOpusToWAVToolStripMenuItem
-            // 
-            this.decodeOpusToWAVToolStripMenuItem.Name = "decodeOpusToWAVToolStripMenuItem";
-            this.decodeOpusToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.decodeOpusToWAVToolStripMenuItem.Text = "Decode Opus to WAV";
-            this.decodeOpusToWAVToolStripMenuItem.Click += new System.EventHandler(this.decodeOpusToWAVToolStripMenuItem_Click);
-            // 
             // decodeFLACToWAVToolStripMenuItem
             // 
             this.decodeFLACToWAVToolStripMenuItem.Name = "decodeFLACToWAVToolStripMenuItem";
-            this.decodeFLACToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.decodeFLACToWAVToolStripMenuItem.Text = "Decode FLAC to WAV";
+            this.decodeFLACToWAVToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.decodeFLACToWAVToolStripMenuItem.Text = "Decode FLAC";
             this.decodeFLACToWAVToolStripMenuItem.Click += new System.EventHandler(this.decodeFLACToWAVToolStripMenuItem_Click);
-            // 
-            // decodeMP3ToWAVToolStripMenuItem
-            // 
-            this.decodeMP3ToWAVToolStripMenuItem.Name = "decodeMP3ToWAVToolStripMenuItem";
-            this.decodeMP3ToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.decodeMP3ToWAVToolStripMenuItem.Text = "Decode MP3 to WAV";
-            this.decodeMP3ToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeMP3ToWAVToolStripMenuItem_Click);
             // 
             // decodeM4AToWAVToolStripMenuItem
             // 
             this.decodeM4AToWAVToolStripMenuItem.Name = "decodeM4AToWAVToolStripMenuItem";
-            this.decodeM4AToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.decodeM4AToWAVToolStripMenuItem.Text = "Decode M4A to WAV";
+            this.decodeM4AToWAVToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.decodeM4AToWAVToolStripMenuItem.Text = "Decode M4A";
             this.decodeM4AToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeM4AToWAVToolStripMenuItem_Click);
+            // 
+            // decodeMP3ToWAVToolStripMenuItem
+            // 
+            this.decodeMP3ToWAVToolStripMenuItem.Name = "decodeMP3ToWAVToolStripMenuItem";
+            this.decodeMP3ToWAVToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.decodeMP3ToWAVToolStripMenuItem.Text = "Decode MP3";
+            this.decodeMP3ToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeMP3ToWAVToolStripMenuItem_Click);
+            // 
+            // decodeOpusToWAVToolStripMenuItem
+            // 
+            this.decodeOpusToWAVToolStripMenuItem.Name = "decodeOpusToWAVToolStripMenuItem";
+            this.decodeOpusToWAVToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.decodeOpusToWAVToolStripMenuItem.Text = "Decode Opus";
+            this.decodeOpusToWAVToolStripMenuItem.Click += new System.EventHandler(this.decodeOpusToWAVToolStripMenuItem_Click);
+            // 
+            // decodeWMAToWAVToolStripMenuItem
+            // 
+            this.decodeWMAToWAVToolStripMenuItem.Name = "decodeWMAToWAVToolStripMenuItem";
+            this.decodeWMAToWAVToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.decodeWMAToWAVToolStripMenuItem.Text = "Decode WMA";
+            this.decodeWMAToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeWMAToWAVToolStripMenuItem_Click);
             // 
             // useFfmpegForDecodingToolStripMenuItem
             // 
             this.useFfmpegForDecodingToolStripMenuItem.Name = "useFfmpegForDecodingToolStripMenuItem";
-            this.useFfmpegForDecodingToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.useFfmpegForDecodingToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
             this.useFfmpegForDecodingToolStripMenuItem.Text = "Use ffmpeg for decoding";
             this.useFfmpegForDecodingToolStripMenuItem.Click += new System.EventHandler(this.UseFfmpegForDecodingToolStripMenuItem_Click);
+            // 
+            // decodeToFLACInsteadOfWAVToolStripMenuItem
+            // 
+            this.decodeToFLACInsteadOfWAVToolStripMenuItem.Name = "decodeToFLACInsteadOfWAVToolStripMenuItem";
+            this.decodeToFLACInsteadOfWAVToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.decodeToFLACInsteadOfWAVToolStripMenuItem.Text = "Decode to FLAC instead of WAV (Only ffmpeg)";
+            this.decodeToFLACInsteadOfWAVToolStripMenuItem.Click += new System.EventHandler(this.decodeToFLACInsteadOfWAVToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -471,13 +487,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // decodeWMAToWAVToolStripMenuItem
-            // 
-            this.decodeWMAToWAVToolStripMenuItem.Name = "decodeWMAToWAVToolStripMenuItem";
-            this.decodeWMAToWAVToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.decodeWMAToWAVToolStripMenuItem.Text = "Decode WMA to WAV";
-            this.decodeWMAToWAVToolStripMenuItem.Click += new System.EventHandler(this.DecodeWMAToWAVToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -551,6 +560,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem decodeWMAToWAVToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem decodeToFLACInsteadOfWAVToolStripMenuItem;
     }
 }
 
