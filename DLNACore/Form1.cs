@@ -207,8 +207,9 @@ namespace DLNAPlayer
                         }
                         else
                         {
-                            FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                            FileStream MediaFile = new FileStream(file_to_play, FileMode.Open, FileAccess.Read);
                             await MediaFile.CopyToAsync(NextTrack);
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             MediaFile.Close();
                         }
                     }
@@ -308,8 +309,9 @@ namespace DLNAPlayer
                             }
                             else
                             {
-                                FileStream MediaFile = new FileStream(file_to_play, FileMode.Open);
+                                FileStream MediaFile = new FileStream(file_to_play, FileMode.Open, FileAccess.Read);
                                 await MediaFile.CopyToAsync(MServer.FS);
+                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                                 MediaFile.Close();
                             }
                         }
@@ -654,7 +656,7 @@ namespace DLNAPlayer
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("GUI created by Moisés Cardona" + Environment.NewLine +
-              "Version 0.6" + Environment.NewLine +
+              "Version 1.0" + Environment.NewLine +
               "GitHub: https://github.com/moisespr123/DLNA-Player" + Environment.NewLine + Environment.NewLine +
               "This software contains code based on the following Open Source code from CodeProject:" + Environment.NewLine +
               "DLNAMediaServer: https://www.codeproject.com/Articles/1079847/DLNA-Media-Server-to-feed-Smart-TVs" + Environment.NewLine +

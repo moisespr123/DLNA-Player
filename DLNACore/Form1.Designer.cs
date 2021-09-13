@@ -398,6 +398,7 @@
             this.tidalToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.T)));
             this.tidalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tidalToolStripMenuItem.Text = "Tidal";
+            this.tidalToolStripMenuItem.Visible = false;
             this.tidalToolStripMenuItem.Click += new System.EventHandler(this.tidalToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
