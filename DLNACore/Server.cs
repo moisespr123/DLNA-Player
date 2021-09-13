@@ -14,7 +14,7 @@ namespace DLNAPlayer
     public class MediaServer
     {
         public bool Running = false;//Flag set to true when running and false to kill the service
-        public string IP = "192.168.0.10";//The ip of this service we will listen on for DLNA requests
+        public string IP = null;//The ip of this service we will listen on for DLNA requests
         public int Port = 9090;//The post we will listen on for incoming DLNA requests 
         public MemoryStream FS = null;
         private Socket SocServer = null;
