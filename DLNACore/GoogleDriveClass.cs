@@ -36,7 +36,7 @@ namespace DLNAPlayer
                     {
                         string credPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
                         credPath = Path.Combine(credPath, ".credentials/DLNAPlayer");
-                        credential = GoogleWebAuthorizationBroker.AuthorizeAsync(GoogleClientSecrets.Load(stream).Secrets, Scopes, "user", CancellationToken.None, new FileDataStore(credPath, true)).Result;
+                        credential = GoogleWebAuthorizationBroker.AuthorizeAsync(GoogleClientSecrets.FromStream(stream).Secrets, Scopes, "user", CancellationToken.None, new FileDataStore(credPath, true)).Result;
                     }
                     service = new DriveService(new BaseClientService.Initializer()
                     {

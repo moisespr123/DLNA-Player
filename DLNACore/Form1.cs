@@ -86,6 +86,34 @@ namespace DLNAPlayer
             decodeWMAToWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeWMA;
             useFfmpegForDecodingToolStripMenuItem.Checked = Properties.Settings.Default.UseFFMPEG;
             decodeToFLACInsteadOfWAVToolStripMenuItem.Checked = Properties.Settings.Default.DecodeToFLAC;
+
+            bool foundFfmpeg = testSoftware("ffmpeg.exe");
+            bool foundFlac = testSoftware("flac.exe");
+            bool foundOpus = testSoftware("opusdec.exe");
+            if (!foundFfmpeg)
+            {
+                decodeMP3ToWAVToolStripMenuItem.Checked = false;
+                decodeM4AToWAVToolStripMenuItem.Checked = false;
+                decodeWMAToWAVToolStripMenuItem.Checked = false;
+                useFfmpegForDecodingToolStripMenuItem.Checked = false;
+                decodeToFLACInsteadOfWAVToolStripMenuItem.Checked = false;
+                decodeMP3ToWAVToolStripMenuItem.Enabled = false;
+                decodeM4AToWAVToolStripMenuItem.Enabled = false;
+                decodeWMAToWAVToolStripMenuItem.Enabled = false;
+                useFfmpegForDecodingToolStripMenuItem.Enabled = false;
+                decodeToFLACInsteadOfWAVToolStripMenuItem.Enabled = false;
+            }
+            if (!foundFlac)
+            {
+                decodeFLACToWAVToolStripMenuItem.Checked = false;
+                decodeFLACToWAVToolStripMenuItem.Enabled = false;
+            }
+            if (!foundOpus)
+            {
+                decodeOpusToWAVToolStripMenuItem.Checked = false;
+                decodeOpusToWAVToolStripMenuItem.Enabled = false;
+            }
+            
             ScanDLNARenderers();
         }
 
@@ -703,7 +731,29 @@ namespace DLNAPlayer
             Properties.Settings.Default.DecodeOpus = decodeOpusToWAVToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
-
+        private bool testSoftware(string software)
+        {
+            try
+            {
+                ProcessStartInfo ProcessInfo = new ProcessStartInfo()
+                {
+                    FileName = software,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                };
+                Process process = new Process
+                {
+                    StartInfo = ProcessInfo
+                };
+                process.Start();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         private void decodeFLACToWAVToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!decodeFLACToWAVToolStripMenuItem.Checked)

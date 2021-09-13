@@ -68,14 +68,8 @@ public static class Extentions
         {
             dec = "ffmpeg.exe";
             if (DLNAPlayer.Properties.Settings.Default.DecodeToFLAC)
-            {
                 tempFilename = "temp.flac";
-                args = "-i \"" + file + "\" " + tempFilename + " -y";
-            }
-            else
-            {
-                args = "-i \"" + file + "\" " + tempFilename + " -y";
-            }
+            args = "-i \"" + file + "\" " + tempFilename + " -y";
         }
         else
             switch (format)
@@ -114,10 +108,9 @@ public static class Extentions
                 decoded = true;
                 deleteTempFile();
             }
-            catch (System.Exception ex)
+            catch
             {
                 decoded = false;
-                //MessageBox.Show(ex.ToString());
             }
         }
         return Task.FromResult<MemoryStream>(decodedWav);

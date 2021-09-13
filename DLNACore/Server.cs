@@ -208,14 +208,7 @@ namespace DLNAPlayer
                 Socket Client = this.TempClient;
                 this.TempClient = null;
                 string Reply = null;
-                //if (TempEndRange == FS.Length)
-                //{
-                //    Reply = SendHeadData();
-                //}
-                //else{
                 Reply = ContentString(TempStartRange, TempEndRange, ContentType, FS.Length);
-                //}
-                
                 Client.Send(UTF8Encoding.UTF8.GetBytes(Reply), SocketFlags.None);
                 FS.Seek(TempStartRange, SeekOrigin.Begin);
                 ByteToSend = TempEndRange - TempStartRange;
