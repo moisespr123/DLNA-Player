@@ -3,6 +3,7 @@ using System.Net;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 public static class Extentions
 {
@@ -35,11 +36,34 @@ public static class Extentions
             Source = Regex.Replace(Source, Pattern, Replacement, RegexOptions.IgnoreCase);
         return Source;
     }
+
+    private static void deleteTempFile()
+    {
+        try
+        {
+            ProcessStartInfo decProcessInfo = new ProcessStartInfo()
+            {
+                FileName = "cmd.exe",
+                Arguments = "/C del temp.wav",
+                CreateNoWindow = true,
+                RedirectStandardOutput = false,
+                UseShellExecute = false
+            };
+            Process.Start(decProcessInfo).WaitForExit();
+        }
+        catch
+        {
+            
+        }
+    }
     public static Task<MemoryStream> decodeAudio(string file, int format)
     {
         string dec = string.Empty;
         string args = string.Empty;
         string tempFilename = "temp.wav";
+        if (File.Exists(tempFilename)){
+            deleteTempFile();
+        }
         if (DLNAPlayer.Properties.Settings.Default.UseFFMPEG)
         {
             dec = "ffmpeg.exe";
@@ -84,18 +108,18 @@ public static class Extentions
         {
             try
             {
-                FileStream temp = new FileStream(tempFilename, FileMode.Open);
+                FileStream temp = new FileStream(tempFilename, FileMode.Open, FileAccess.Read);
                 temp.CopyTo(decodedWav);
                 temp.Close();
                 decoded = true;
+                deleteTempFile();
             }
-            catch
+            catch (System.Exception ex)
             {
                 decoded = false;
+                //MessageBox.Show(ex.ToString());
             }
         }
-
-        File.Delete(tempFilename);
         return Task.FromResult<MemoryStream>(decodedWav);
     }
     public static Task<string[]> getMetadata(string file)
