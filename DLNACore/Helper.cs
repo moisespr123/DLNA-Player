@@ -37,56 +37,62 @@ public static class Extentions
         return Source;
     }
 
-    private static void deleteTempFile()
+    private static void deleteTempFile(string path)
     {
         try
+        {
+            FileAttributes attrs = File.GetAttributes(path);
+            if (attrs.HasFlag(FileAttributes.ReadOnly))
+                File.SetAttributes(path, attrs & ~FileAttributes.ReadOnly);
+            File.Delete(path);
+        }
+        catch
         {
             ProcessStartInfo decProcessInfo = new ProcessStartInfo()
             {
                 FileName = "cmd.exe",
-                Arguments = "/C del temp.wav",
+                Arguments = "/C del \"" + path +"\"",
                 CreateNoWindow = true,
                 RedirectStandardOutput = false,
                 UseShellExecute = false
             };
             Process.Start(decProcessInfo).WaitForExit();
         }
-        catch
-        {
-            
-        }
     }
     public static Task<MemoryStream> decodeAudio(string file, int format)
     {
         string dec = string.Empty;
         string args = string.Empty;
-        string tempFilename = "temp.wav";
-        if (File.Exists(tempFilename)){
-            deleteTempFile();
-        }
+        string tempFilename = Path.GetTempFileName();
+        File.Delete(tempFilename);
         if (DLNAPlayer.Properties.Settings.Default.UseFFMPEG)
         {
             dec = "ffmpeg.exe";
             if (DLNAPlayer.Properties.Settings.Default.DecodeToFLAC)
-                tempFilename = "temp.flac";
-            args = "-i \"" + file + "\" " + tempFilename + " -y";
+                tempFilename = tempFilename + ".flac";
+            else
+                tempFilename = tempFilename + ".wav";
+            args = "-i \"" + file + "\" \"" + tempFilename + "\" - y";
         }
         else
+        {
+            tempFilename = tempFilename + ".wav";
             switch (format)
             {
                 case 1:
                     dec = "opusdec.exe";
-                    args = "--rate 48000 --no-dither --float \"" + file + "\" " + tempFilename;
+                    args = "--rate 48000 --no-dither --float \"" + file + "\" \"" + tempFilename + "\"";
                     break;
                 case 2:
                     dec = "flac.exe";
-                    args = "-d \"" + file + "\" -o " + tempFilename;
+                    args = "-d \"" + file + "\" -o \"" + tempFilename + "\"";
                     break;
                 case 3:
                     dec = "ffmpeg.exe";
-                    args = "-i \"" + file + "\" " + tempFilename + " -y";
+                    args = "-i \"" + file + "\" \"" + tempFilename + "\" - y";
                     break;
             }
+        }
         ProcessStartInfo decProcessInfo = new ProcessStartInfo()
         {
             FileName = dec,
@@ -106,13 +112,13 @@ public static class Extentions
                 temp.CopyTo(decodedWav);
                 temp.Close();
                 decoded = true;
-                deleteTempFile();
             }
             catch
             {
                 decoded = false;
             }
         }
+        deleteTempFile(tempFilename);
         return Task.FromResult<MemoryStream>(decodedWav);
     }
     public static Task<string[]> getMetadata(string file)

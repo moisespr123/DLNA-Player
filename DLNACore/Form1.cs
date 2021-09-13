@@ -102,6 +102,9 @@ namespace DLNAPlayer
                 decodeWMAToWAVToolStripMenuItem.Enabled = false;
                 useFfmpegForDecodingToolStripMenuItem.Enabled = false;
                 decodeToFLACInsteadOfWAVToolStripMenuItem.Enabled = false;
+                Properties.Settings.Default.UseFFMPEG = false;
+                Properties.Settings.Default.DecodeToFLAC = false;
+                Properties.Settings.Default.Save();
             }
             if (!foundFlac)
             {
