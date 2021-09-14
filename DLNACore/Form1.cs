@@ -206,12 +206,7 @@ namespace DLNAPlayer
 
         private void MediaFiles_DoubleClick(object sender, EventArgs e)
         {
-            if (MediaFiles.SelectedIndex > -1)
-            {
-                trackNum = MediaFiles.SelectedIndex;
-                Thread thread = new Thread(() => LoadFile(trackNum));
-                thread.Start();
-            }
+            Play();
         }
         private async void LoadNextTrack(int item)
         {
@@ -256,10 +251,11 @@ namespace DLNAPlayer
                     else if (location_type == 2) //Google Drive file
                     {
                         GDrive drive = GDriveForm.drive;
+                        string tempFilename = Path.GetTempFileName();
                         TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloading"; });
-                        await drive.DownloadFile(file_to_play, "tempfile");
+                        await drive.DownloadFile(file_to_play, tempFilename);
                         TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloaded"; });
-                        nextMediainfo = await Extentions.getMetadata("tempfile");
+                        nextMediainfo = await Extentions.getMetadata(tempFilename);
                         int decodeMode = 0;
                         if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                         {
@@ -277,10 +273,15 @@ namespace DLNAPlayer
                         if (decodeMode != 0)
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
-                            NextTrack = await Extentions.decodeAudio("tempfile", decodeMode);
-
+                            NextTrack = await Extentions.decodeAudio(tempFilename, decodeMode);
                         }
-                        File.Delete("tempfile");
+                        else
+                        {
+                            FileStream MediaFile = new FileStream(tempFilename, FileMode.Open, FileAccess.Read);
+                            await MediaFile.CopyToAsync(NextTrack);
+                            MediaFile.Close();
+                        }
+                        Extentions.deleteTempFile(tempFilename);
                     }
                     else if (location_type == 3) //CD Drive Audio Track
                     {
@@ -359,11 +360,12 @@ namespace DLNAPlayer
                         else if (location_type == 2) //Google Drive file (local download)
                         {
                             GDrive drive = GDriveForm.drive;
+                            string tempFilename = Path.GetTempFileName();
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloading"; });
-                            await drive.DownloadFile(file_to_play, "tempfile");
+                            await drive.DownloadFile(file_to_play, tempFilename);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloaded"; });
                             int decodeMode = 0;
-                            mediainfo = await Extentions.getMetadata("tempfile");
+                            mediainfo = await Extentions.getMetadata(tempFilename);
                             if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
                             {
                                 decodeMode = 1;
@@ -380,9 +382,15 @@ namespace DLNAPlayer
                             if (decodeMode != 0)
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
-                                MServer.FS = await Extentions.decodeAudio("tempfile", decodeMode);
+                                MServer.FS = await Extentions.decodeAudio(tempFilename, decodeMode);
                             }
-                            File.Delete("tempfile");
+                            else
+                            {
+                                FileStream MediaFile = new FileStream(tempFilename, FileMode.Open, FileAccess.Read);
+                                await MediaFile.CopyToAsync(MServer.FS);
+                                MediaFile.Close();
+                            }
+                            Extentions.deleteTempFile(tempFilename);
                         }
                         else if (location_type == 3) //CD Drive Audio Track
                         {
@@ -400,9 +408,16 @@ namespace DLNAPlayer
                         else if (location_type == 5) //Google Drive file (stream)
                         {
                             GDrive drive = GDriveForm.drive;
-                            url = await drive.GetUrl(file_to_play);
-                            mediainfo[0] = "Unknown";
-                            mediainfo[1] = "Unknown";
+                            try
+                            {
+                                url = await drive.GetUrl(file_to_play);
+                                mediainfo[0] = "Unknown";
+                                mediainfo[1] = "Unknown";
+                            }
+                            catch
+                            {
+                                MessageBox.Show("Cannot stream the file directly. Please change the Google Drive mode to \"download first\" and add them again to the queue.");
+                            }
                         }
                         TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                     }

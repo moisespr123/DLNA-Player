@@ -37,7 +37,7 @@ public static class Extentions
         return Source;
     }
 
-    private static void deleteTempFile(string path)
+    public static void deleteTempFile(string path)
     {
         try
         {
