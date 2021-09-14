@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Timers;
 
 namespace DLNAPlayer
 {
@@ -25,8 +26,11 @@ namespace DLNAPlayer
         private static MemoryStream NextTrack = new MemoryStream();
         private static int trackLoaded = -1;
         private static bool trackLoading = false;
+        private static int status = 0;
+        private static int renderer = -1;
         string[] mediainfo = { "Unknown", "Unknown" };
         string[] nextMediainfo = { "Unknown", "Unknown" };
+        private System.Timers.Timer timer1 = new System.Timers.Timer(1000);
 
         private void ScanDLNARenderers()
         {
@@ -116,22 +120,27 @@ namespace DLNAPlayer
                 decodeOpusToWAVToolStripMenuItem.Checked = false;
                 decodeOpusToWAVToolStripMenuItem.Enabled = false;
             }
-            
+
             ScanDLNARenderers();
+            timer1.Elapsed += TimerTick;
         }
 
         private void Play()
         {
+            status = 1;
             if (MediaFiles.SelectedIndex != -1)
             {
                 trackNum = MediaFiles.SelectedIndex;
-                LoadFile(trackNum);
+                Thread thread = new Thread(() => LoadFile(trackNum));
+                thread.Start();
+                ;
             }
             else if (MediaFiles.Items.Count > 0)
             {
                 trackNum = 0;
                 MediaFiles.SelectedIndex = 0;
-                LoadFile(trackNum);
+                Thread thread = new Thread(() => LoadFile(trackNum));
+                thread.Start();
             }
 
         }
@@ -199,8 +208,9 @@ namespace DLNAPlayer
         {
             if (MediaFiles.SelectedIndex > -1)
             {
-                LoadFile(MediaFiles.SelectedIndex);
                 trackNum = MediaFiles.SelectedIndex;
+                Thread thread = new Thread(() => LoadFile(trackNum));
+                thread.Start();
             }
         }
         private async void LoadNextTrack(int item)
@@ -212,6 +222,7 @@ namespace DLNAPlayer
             {
                 try
                 {
+                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Loading"; });
                     NextTrack = new MemoryStream();
                     if (location_type == 1) //local file 
                     {
@@ -234,13 +245,11 @@ namespace DLNAPlayer
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = await Extentions.decodeAudio(file_to_play, decodeMode);
-                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                         }
                         else
                         {
                             FileStream MediaFile = new FileStream(file_to_play, FileMode.Open, FileAccess.Read);
                             await MediaFile.CopyToAsync(NextTrack);
-                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             MediaFile.Close();
                         }
                     }
@@ -269,7 +278,7 @@ namespace DLNAPlayer
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                             NextTrack = await Extentions.decodeAudio("tempfile", decodeMode);
-                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
+
                         }
                         File.Delete("tempfile");
                     }
@@ -277,11 +286,13 @@ namespace DLNAPlayer
                     {
                         AudioCD drive = CDDriveChooser.drive;
                         NextTrack = drive.getTrack(file_to_play);
-                        nextMediainfo[0] = filename;
+                        nextMediainfo[0] = "Track " + (item + 1).ToString();
+                        nextMediainfo[1] = "Audio CD";
                         mediainfo[1] = string.Empty;
                     }
                     trackLoaded = item;
                     trackLoading = false;
+                    TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                 }
                 catch { trackLoading = false; }
             }
@@ -291,9 +302,9 @@ namespace DLNAPlayer
             string file_to_play = MediaFileLocation[item];
             int location_type = MediaFileLocationType[item];
             string filename = MediaFiles.Items[item].ToString();
-            if (MediaRenderers.SelectedIndex != -1)
+            if (renderer != -1)
             {
-                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[renderer]);
                 if (Device.IsConnected())
                 {
                     if (timer1.Enabled) timer1.Stop();
@@ -314,6 +325,7 @@ namespace DLNAPlayer
                     string url = null;
                     if (item != trackLoaded)
                     {
+                        TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Loading"; });
                         if (location_type == 1) //local file 
                         {
                             mediainfo = await Extentions.getMetadata(file_to_play);
@@ -336,13 +348,11 @@ namespace DLNAPlayer
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = await Extentions.decodeAudio(file_to_play, decodeMode);
-                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
                             else
                             {
                                 FileStream MediaFile = new FileStream(file_to_play, FileMode.Open, FileAccess.Read);
                                 await MediaFile.CopyToAsync(MServer.FS);
-                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                                 MediaFile.Close();
                             }
                         }
@@ -371,7 +381,6 @@ namespace DLNAPlayer
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
                                 MServer.FS = await Extentions.decodeAudio("tempfile", decodeMode);
-                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                             }
                             File.Delete("tempfile");
                         }
@@ -379,8 +388,8 @@ namespace DLNAPlayer
                         {
                             AudioCD drive = CDDriveChooser.drive;
                             MServer.FS = drive.getTrack(file_to_play);
-                            mediainfo[0] = filename;
-                            mediainfo[1] = string.Empty;
+                            mediainfo[0] = "Track " + (trackNum + 1).ToString();
+                            mediainfo[1] = "Audio CD";
                         }
                         else if (location_type == 4) //Tidal Track
                         {
@@ -395,17 +404,18 @@ namespace DLNAPlayer
                             mediainfo[0] = "Unknown";
                             mediainfo[1] = "Unknown";
                         }
+                        TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Ready"; });
                     }
                     else
                     {
                         nextMediainfo.CopyTo(mediainfo, 0);
                         MServer.FS = NextTrack;
-                        trackLoaded = -1;
                     }
                     Thread.Sleep(100);
                     if (location_type != 4 && location_type != 5)
                         url = "http://" + ip + ":" + port.ToString() + "/track" + Path.GetExtension(MServer.Filename);
-                    SendFile(Device, item, url, mediainfo);
+                    if (status != 0)
+                        SendFile(Device, item, url, mediainfo);
 
                 }
                 else
@@ -469,6 +479,7 @@ namespace DLNAPlayer
         }
         private void Stop_Function()
         {
+            status = 0;
             DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
             if (Device.IsConnected())
             {
@@ -488,7 +499,8 @@ namespace DLNAPlayer
         {
             if (MediaFiles.Items.Count > 0 && trackNum > 0)
             {
-                LoadFile(trackNum - 1);
+                Thread thread = new Thread(() => LoadFile(trackNum));
+                thread.Start();
                 MediaFiles.ClearSelected();
                 MediaFiles.SelectedIndex = trackNum - 1;
                 trackNum--;
@@ -505,7 +517,8 @@ namespace DLNAPlayer
             if (MediaFiles.Items.Count > 0 && trackNum < (MediaFiles.Items.Count - 1))
             {
                 trackNum++;
-                LoadFile(trackNum);
+                Thread thread = new Thread(() => LoadFile(trackNum));
+                thread.Start();
                 MediaFiles.ClearSelected();
                 MediaFiles.SelectedIndex = trackNum;
             }
@@ -516,67 +529,64 @@ namespace DLNAPlayer
             }
         }
 
-        private async void timer1_Tick(object sender, EventArgs e)
+        private void TimerTick(Object source, ElapsedEventArgs e)
         {
-            await Task.Run(() =>
+            MediaRenderers.Invoke((MethodInvoker)delegate
             {
-                MediaRenderers.Invoke((MethodInvoker)delegate
+                if (MediaRenderers.SelectedIndex != -1)
                 {
-                    if (MediaRenderers.SelectedIndex != -1)
+                    DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
+                    if (Device.IsConnected())
                     {
-                        DLNA.DLNADevice Device = new DLNA.DLNADevice(DLNA.SSDP.Renderers[MediaRenderers.SelectedIndex]);
-                        if (Device.IsConnected())
+                        string info = Device.GetPosition();
+                        string status = Device.GetTransportInfo();
+                        string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
+                        string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
+                        string currentStatus = status.ChopOffBefore("<CurrentTransportState>").Trim().ChopOffAfter("</CurrentTransportState>");
+                        if (currentStatus != "TRANSITIONING")
                         {
-                            string info = Device.GetPosition();
-                            string status = Device.GetTransportInfo();
-                            string trackDurationString = info.ChopOffBefore("<TrackDuration>").Trim().ChopOffAfter("</TrackDuration>");
-                            string trackPositionString = info.ChopOffBefore("<RelTime>").Trim().ChopOffAfter("</RelTime>");
-                            string currentStatus = status.ChopOffBefore("<CurrentTransportState>").Trim().ChopOffAfter("</CurrentTransportState>");
-                            if (currentStatus != "TRANSITIONING")
-                            {
-                                if (!trackDurationString.Contains("HTTP"))
-                                    if (trackDurationString.Contains(":") && trackPositionString.Contains(":"))
-                                        try
+                            if (!trackDurationString.Contains("HTTP"))
+                                if (trackDurationString.Contains(":") && trackPositionString.Contains(":"))
+                                    try
+                                    {
+                                        TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
+                                        TimeSpan trackPositionTimeSpan = TimeSpan.Parse(trackPositionString);
+                                        if (currentStatus == "PAUSED_PLAYBACK" && !paused)
                                         {
-                                            TimeSpan trackDurationTimeSpan = TimeSpan.Parse(trackDurationString);
-                                            TimeSpan trackPositionTimeSpan = TimeSpan.Parse(trackPositionString);
-                                            if (currentStatus == "PAUSED_PLAYBACK" && !paused)
-                                            {
-                                                paused = true;
-                                                UpdatePauseText();
-                                            }
-                                            else if (currentStatus == "PLAYING")
-                                            {
-                                                paused = false;
-                                                UpdatePauseText();
-                                            }
-                                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
-                                            if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
-                                            {
-                                                TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
+                                            paused = true;
+                                            UpdatePauseText();
+                                        }
+                                        else if (currentStatus == "PLAYING")
+                                        {
+                                            paused = false;
+                                            UpdatePauseText();
+                                        }
+                                        TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = trackPositionString; });
+                                        if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) != 0)
+                                        {
+                                            TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = trackDurationString; });
 
-                                                trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeSpan.TotalSeconds); });
-                                                if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeSpan.TotalSeconds) <= 2)
-                                                {
-                                                    Thread.Sleep(2000);
-                                                    timer1.Stop();
-                                                    PlayNextTrack();
-                                                }
-                                            }
-                                            else
+                                            trackProgress.Invoke((MethodInvoker)delegate { trackProgress.Maximum = Convert.ToInt32(trackDurationTimeSpan.TotalSeconds); trackProgress.Value = Convert.ToInt32(trackPositionTimeSpan.TotalSeconds); });
+                                            if (Convert.ToInt32(trackDurationTimeSpan.TotalSeconds) - Convert.ToInt32(trackPositionTimeSpan.TotalSeconds) <= 2)
                                             {
-                                                TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = ""; });
+                                                Thread.Sleep(2000);
+                                                timer1.Stop();
+                                                PlayNextTrack();
                                             }
                                         }
-                                        catch { }
-                            }
-                            else
-                            {
-                                TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Loading"; });
-                            }
+                                        else
+                                        {
+                                            TrackDurationLabel.Invoke((MethodInvoker)delegate { TrackDurationLabel.Text = ""; });
+                                        }
+                                    }
+                                    catch { }
+                        }
+                        else
+                        {
+                            TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Loading"; });
                         }
                     }
-                });
+                }
             });
         }
 
@@ -845,6 +855,11 @@ namespace DLNAPlayer
                 decodeToFLACInsteadOfWAVToolStripMenuItem.Checked = false;
             Properties.Settings.Default.DecodeToFLAC = decodeToFLACInsteadOfWAVToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void MediaRenderers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            renderer = MediaRenderers.SelectedIndex;
         }
     }
 }

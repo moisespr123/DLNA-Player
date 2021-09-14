@@ -52,7 +52,6 @@
             this.TrackDurationLabel = new System.Windows.Forms.Label();
             this.ClearQueue = new System.Windows.Forms.Button();
             this.Stop = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -124,6 +123,7 @@
             this.MediaRenderers.Name = "MediaRenderers";
             this.MediaRenderers.Size = new System.Drawing.Size(239, 394);
             this.MediaRenderers.TabIndex = 4;
+            this.MediaRenderers.SelectedIndexChanged += new System.EventHandler(this.MediaRenderers_SelectedIndexChanged);
             // 
             // renderersMenuStrip
             // 
@@ -332,10 +332,6 @@
             this.Stop.UseVisualStyleBackColor = true;
             this.Stop.Click += new System.EventHandler(this.Stop_Click);
             // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -539,7 +535,6 @@
         private System.Windows.Forms.TrackBar trackProgress;
         private System.Windows.Forms.Label TrackPositionLabel;
         public System.Windows.Forms.ListBox MediaRenderers;
-        private System.Windows.Forms.Timer timer1;
         public System.Windows.Forms.ListBox MediaFiles;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;

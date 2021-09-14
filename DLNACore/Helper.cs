@@ -72,7 +72,7 @@ public static class Extentions
                 tempFilename = tempFilename + ".flac";
             else
                 tempFilename = tempFilename + ".wav";
-            args = "-i \"" + file + "\" \"" + tempFilename + "\" - y";
+            args = "-i \"" + file + "\" \"" + tempFilename + "\" -y";
         }
         else
         {
