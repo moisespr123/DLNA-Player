@@ -89,7 +89,7 @@ public static class Extentions
                     break;
                 case 3:
                     dec = "ffmpeg.exe";
-                    args = "-i \"" + file + "\" \"" + tempFilename + "\" - y";
+                    args = "-i \"" + file + "\" \"" + tempFilename + "\" -y";
                     break;
             }
         }
