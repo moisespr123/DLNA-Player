@@ -50,7 +50,7 @@ namespace DLNAPlayer
                         {
                             RendererXML.Load(DLNA.SSDP.Renderers[i]);
                             XmlElement rootXML = RendererXML.DocumentElement;
-                            deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText;
+                            deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText + " (" + DLNA.SSDP.Renderers[i] + ")";
                         }
                         catch
                         {
