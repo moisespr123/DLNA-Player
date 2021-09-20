@@ -142,7 +142,6 @@ namespace DLNAPlayer
                 Thread thread = new Thread(() => LoadFile(trackNum));
                 thread.Start();
             }
-
         }
         private void CmdPlay_Click(object sender, EventArgs e)
         {
