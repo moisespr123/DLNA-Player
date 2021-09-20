@@ -126,34 +126,41 @@ public static class Extentions
         string track = "Unknown";
         string artist = "Unknown";
         string performer = "Unknown";
-        ProcessStartInfo ProcessInfo = new ProcessStartInfo()
+        try
         {
-            FileName = "mediainfo.exe",
-            Arguments = "\"" + file + "\"",
-            CreateNoWindow = true,
-            RedirectStandardOutput = true,
-            UseShellExecute = false
-        };
-        Process process = new Process
-        {
-            StartInfo = ProcessInfo
-        };
-        process.Start();
-        string line = string.Empty;
-        while (true)
-        {
-            if (!process.StandardOutput.EndOfStream)
+            ProcessStartInfo ProcessInfo = new ProcessStartInfo()
             {
-                string[] splitted_line = process.StandardOutput.ReadLine().Split(':');
-                if (splitted_line[0].Contains("Track name") && !splitted_line[0].Contains("/"))
-                    track = splitted_line[1].Trim();
-                else if (splitted_line[0].Contains("Artist") && !splitted_line[0].Contains("/"))
-                    artist = splitted_line[1].Trim();
-                else if (splitted_line[0].Contains("Performer") && !splitted_line[0].Contains("/"))
-                    performer = splitted_line[1].Trim();
+                FileName = "mediainfo.exe",
+                Arguments = "\"" + file + "\"",
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+            Process process = new Process
+            {
+                StartInfo = ProcessInfo
+            };
+            process.Start();
+            string line = string.Empty;
+            while (true)
+            {
+                if (!process.StandardOutput.EndOfStream)
+                {
+                    string[] splitted_line = process.StandardOutput.ReadLine().Split(':');
+                    if (splitted_line[0].Contains("Track name") && !splitted_line[0].Contains("/"))
+                        track = splitted_line[1].Trim();
+                    else if (splitted_line[0].Contains("Artist") && !splitted_line[0].Contains("/"))
+                        artist = splitted_line[1].Trim();
+                    else if (splitted_line[0].Contains("Performer") && !splitted_line[0].Contains("/"))
+                        performer = splitted_line[1].Trim();
+                }
+                else
+                    break;
             }
-            else
-                break;
+        }
+        catch
+        {
+
         }
         if (artist == "Unknown" && performer != "Unknown")
             artist = performer;
