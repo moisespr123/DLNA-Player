@@ -51,13 +51,12 @@ namespace DLNAPlayer
                             RendererXML.Load(DLNA.SSDP.Renderers[i]);
                             XmlElement rootXML = RendererXML.DocumentElement;
                             deviceInfo = rootXML.GetElementsByTagName("friendlyName")[0].InnerText + " (" + DLNA.SSDP.Renderers[i] + ")";
+                            if (!MediaRenderers.Items.Contains(deviceInfo))
+                                MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
                         }
                         catch
                         {
-                            deviceInfo = DLNA.SSDP.Renderers[i];
                         }
-                        if (!MediaRenderers.Items.Contains(deviceInfo))
-                            MediaRenderers.Invoke((MethodInvoker)delegate { MediaRenderers.Items.Add(deviceInfo); });
                     }
                     if (!DLNA.SSDP.Run) break;
                 }
@@ -207,6 +206,26 @@ namespace DLNAPlayer
         {
             Play();
         }
+
+        private int getDecodeMode(string filename)
+        {
+            if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
+            {
+                return 1;
+            }
+            else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
+            {
+                return 2;
+            }
+            else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) ||
+                     (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
+                     (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
+            {
+                return 3;
+            }
+            return 0;
+        }
+
         private async void LoadNextTrack(int item)
         {
             string file_to_play = MediaFileLocation[item];
@@ -221,20 +240,7 @@ namespace DLNAPlayer
                     if (location_type == 1) //local file 
                     {
                         nextMediainfo = await Extentions.getMetadata(file_to_play);
-                        int decodeMode = 0;
-                        if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                        {
-                            decodeMode = 1;
-                        }
-                        else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                        {
-                            decodeMode = 2;
-                        }
-                        else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
-                                 (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
-                        {
-                            decodeMode = 3;
-                        }
+                        int decodeMode = getDecodeMode(filename);
                         if (decodeMode != 0)
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
@@ -255,20 +261,7 @@ namespace DLNAPlayer
                         await drive.DownloadFile(file_to_play, tempFilename);
                         TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloaded"; });
                         nextMediainfo = await Extentions.getMetadata(tempFilename);
-                        int decodeMode = 0;
-                        if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                        {
-                            decodeMode = 1;
-                        }
-                        else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                        {
-                            decodeMode = 2;
-                        }
-                        else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
-                                 (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
-                        {
-                            decodeMode = 3;
-                        }
+                        int decodeMode = getDecodeMode(filename);
                         if (decodeMode != 0)
                         {
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
@@ -329,21 +322,7 @@ namespace DLNAPlayer
                         if (location_type == 1) //local file 
                         {
                             mediainfo = await Extentions.getMetadata(file_to_play);
-                            int decodeMode = 0;
-                            if (file_to_play.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                            {
-                                decodeMode = 1;
-                            }
-                            else if (file_to_play.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                            {
-                                decodeMode = 2;
-                            }
-                            else if ((file_to_play.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) ||
-                                     (file_to_play.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
-                                     (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
-                            {
-                                decodeMode = 3;
-                            }
+                            int decodeMode = getDecodeMode(filename);
                             if (decodeMode != 0)
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
@@ -363,21 +342,8 @@ namespace DLNAPlayer
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloading"; });
                             await drive.DownloadFile(file_to_play, tempFilename);
                             TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Downloaded"; });
-                            int decodeMode = 0;
+                            int decodeMode = getDecodeMode(filename);
                             mediainfo = await Extentions.getMetadata(tempFilename);
-                            if (filename.EndsWith(".opus") && decodeOpusToWAVToolStripMenuItem.Checked)
-                            {
-                                decodeMode = 1;
-                            }
-                            else if (filename.EndsWith(".flac") && decodeFLACToWAVToolStripMenuItem.Checked)
-                            {
-                                decodeMode = 2;
-                            }
-                            else if ((filename.EndsWith(".mp3") && decodeMP3ToWAVToolStripMenuItem.Checked) || (filename.EndsWith(".m4a") && decodeM4AToWAVToolStripMenuItem.Checked) ||
-                                     (filename.EndsWith(".wma") && decodeWMAToWAVToolStripMenuItem.Checked))
-                            {
-                                decodeMode = 3;
-                            }
                             if (decodeMode != 0)
                             {
                                 TrackPositionLabel.Invoke((MethodInvoker)delegate { TrackPositionLabel.Text = "Decoding"; });
